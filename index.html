@@ -99,6 +99,7 @@
       font-weight: 600;
     }
 
+    /* SPECIFICATION OVERRIDES: 25% WIDTH REDUCTION & BOTTOM ROW OBJECT ALIGNMENT */
     .measurement-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -109,8 +110,21 @@
       border: 1px solid #000;
       margin-bottom: 10px;
     }
+    .measurement-grid > div {
+      width: 75%; /* Reduced entry block element width by 25% */
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end; /* Align inputs to bottom of row */
+    }
     .measurement-grid label { margin-top: 4px; font-size:13px; color:var(--muted); }
     .measurement-grid input { padding: 10px; font-size:16px !important; margin-bottom:4px; text-align:center;}
+
+    .form-row-bottom {
+      display: flex;
+      align-items: flex-end; /* Force horizontal row elements to bottom align */
+      gap: 10px;
+    }
 
     .action-btn { 
       background: var(--text); 
@@ -152,6 +166,8 @@
     .active-view { display: block; }
     .photo-strip { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
     .photo-box { border: 2px dashed #000; padding: 10px; border-radius: 12px; text-align: center; background:#fff;}
+    .gallery-preview { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; margin-top: 6px; }
+    .gallery-img { width: 35px; height: 35px; object-fit: cover; border: 1px solid #000; border-radius: 4px; }
 
     #report-print-container { display: none; background: #fff; color: #000; padding: 0; }
     .print-table { width: 100%; border-collapse: collapse; margin-top: 12px; margin-bottom: 18px; font-size: 14px; }
@@ -440,40 +456,52 @@
       else if (type === 'order') {
         const uniqueId = isEdit ? editData.orderId : "ORD-" + Math.random().toString(36).substr(2, 5).toUpperCase();
         title.innerText = isEdit ? "Update Design Docket" : "Create Production Order";
-        let designPhoto = isEdit ? editData.designPhotos : "";
-        let finishedPhoto = isEdit ? editData.finishedPhotos : "";
+        
+        // Storage strings converted to array arrays internally to safely parse multiple URLs
+        let designPhotosArray = isEdit && editData.designPhotos ? editData.designPhotos.split(',') : [];
+        let finishedPhotosArray = isEdit && editData.finishedPhotos ? editData.finishedPhotos.split(',') : [];
 
         body.innerHTML = `
           <label ${labelStyle}>Select Ordering Client</label><select id="o_cust" ${largeInput} ${isEdit?'disabled':''}></select>
           <label ${labelStyle}>Garment Design Classification Brief</label><input id="o_desc" value="${isEdit?editData.designDescription:''}" placeholder="e.g. Gown Set, 2-Piece Corporate Suit" ${largeInput}>
           <label ${labelStyle}>Fabric Details & Textile Notes</label><input id="o_fabric" value="${isEdit?editData.fabricNotes:''}" placeholder="e.g. 4 Yards Cashmere Blue" ${largeInput}>
           
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <div><label ${labelStyle}>Total Price (₦)</label><input id="o_cost" type="number" value="${isEdit?editData.totalCost:''}" ${largeInput}></div>
-            <div><label ${labelStyle}>Deposit Paid (₦)</label><input id="o_paid" type="number" value="${isEdit?editData.amountPaid:''}" ${largeInput}></div>
+          <label ${labelStyle}>Total Price (₦)</label>
+          <input id="o_cost" type="number" value="${isEdit?editData.totalCost:''}" ${largeInput}>
+          
+          <label ${labelStyle}>Deposit Paid (₦)</label>
+          <input id="o_paid" type="number" value="${isEdit?editData.amountPaid:''}" ${largeInput}>
+          
+          <div class="form-row-bottom">
+            <div style="flex:1;">
+              <label ${labelStyle}>Target Delivery Due Date</label>
+              <input id="o_due" type="date" value="${isEdit?fromSheetDate(editData.dateDue):''}" style="margin-bottom:0;">
+            </div>
+            <div style="flex:1;">
+              <label ${labelStyle}>Workflow Phase State</label>
+              <select id="o_status" style="margin-bottom:0;">
+                <option value="Measurements Taken">Measurements Taken</option>
+                <option value="Cutting Phase">Cutting Phase</option>
+                <option value="Sewing Construction">Sewing Construction</option>
+                <option value="Fitting / Review">Fitting / Review</option>
+                <option value="Completed Ready">Completed Ready</option>
+                <option value="Delivered">Delivered & Handed Over</option>
+              </select>
+            </div>
           </div>
-          <label ${labelStyle}>Target Delivery Due Date</label><input id="o_due" type="date" value="${isEdit?fromSheetDate(editData.dateDue):''}" ${largeInput}>
-          <label ${labelStyle}>Workflow Production Phase State</label>
-          <select id="o_status" ${largeInput}>
-            <option value="Measurements Taken">Measurements Taken</option>
-            <option value="Cutting Phase">Cutting Phase</option>
-            <option value="Sewing Construction">Sewing Construction</option>
-            <option value="Fitting / Review">Fitting / Review</option>
-            <option value="Completed Ready">Completed Ready</option>
-            <option value="Delivered">Delivered & Handed Over</option>
-          </select>
-          <label ${labelStyle}>Styling Remarks / Internal Adjustments</label><textarea id="o_notes" rows="2" ${largeInput}>${isEdit?editData.notes:''}</textarea>
+          
+          <label ${labelStyle}>Styling Remarks / Internal Adjustments</label><textarea id="o_notes" rows="2" ${largeInput}></textarea>
           
           <div class="photo-strip">
             <div class="photo-box">
               <span style="font-size:11px; font-weight:800; color:var(--primary);">STYLE ARCHETYPE</span>
-              <label style="background:var(--card-light); padding:8px; border-radius:6px; display:block; font-size:12px; cursor:pointer; margin:4px 0;"><i class="fas fa-camera"></i> Style Capture<input type="file" id="cam_design" accept="image/*" style="display:none"></label>
-              <div id="p_design_indicator" style="font-size:10px; font-weight:700;">${designPhoto?'✅ Attached':'No Photo'}</div>
+              <label style="background:var(--card-light); padding:8px; border-radius:6px; display:block; font-size:12px; cursor:pointer; margin:4px 0;"><i class="fas fa-camera"></i> Style Capture<input type="file" id="cam_design" accept="image/*" multiple style="display:none"></label>
+              <div id="p_design_indicator" class="gallery-preview"></div>
             </div>
             <div class="photo-box">
               <span style="font-size:11px; font-weight:800; color:var(--success);">FINISHED QC PROOF</span>
-              <label style="background:var(--card-light); padding:8px; border-radius:6px; display:block; font-size:12px; cursor:pointer; margin:4px 0;"><i class="fas fa-camera"></i> QC Capture<input type="file" id="cam_finished" accept="image/*" style="display:none"></label>
-              <div id="p_finished_indicator" style="font-size:10px; font-weight:700;">${finishedPhoto?'✅ Captured':'No Photo'}</div>
+              <label style="background:var(--card-light); padding:8px; border-radius:6px; display:block; font-size:12px; cursor:pointer; margin:4px 0;"><i class="fas fa-camera"></i> QC Capture<input type="file" id="cam_finished" accept="image/*" multiple style="display:none"></label>
+              <div id="p_finished_indicator" class="gallery-preview"></div>
             </div>
           </div>
         `;
@@ -481,32 +509,75 @@
         const cSel = document.getElementById('o_cust');
         const fillSelector = () => { (cache.customers || []).forEach(c => { const o=document.createElement('option'); o.value=c.customerId; o.innerText=c.fullName; if(isEdit&&c.customerId===editData.customerId) o.selected=true; cSel.appendChild(o); }); };
         if(cache.customers.length === 0) { callApi('getCustomers', {}).then(res => { cache.customers = res || []; fillSelector(); }); } else { fillSelector(); }
-        if(isEdit) document.getElementById('o_status').value = editData.status;
+        if(isEdit) {
+          document.getElementById('o_status').value = editData.status;
+          document.getElementById('o_notes').value = editData.notes || '';
+          renderImageThumbnailsInline('p_design_indicator', designPhotosArray);
+          renderImageThumbnailsInline('p_finished_indicator', finishedPhotosArray);
+        }
 
+        // Multiple File Pipeline Processors with strict size constraints
         document.getElementById('cam_design').onchange = (e) => {
-          const file = e.target.files[0]; if(!file) return;
-          const r = new FileReader(); r.onload = async (evt) => {
-            const comp = await compressImage(evt.target.result);
-            document.getElementById('p_design_indicator').innerText = "UPLOADING...";
-            callApi('uploadImage', { base64: comp, name: "design_" + uniqueId + ".jpg" }).then(res => { if(res.url){ designPhoto = res.url; document.getElementById('p_design_indicator').innerText = "✅ ATTACHED"; } });
-          }; r.readAsDataURL(file);
+          handleBatchImageUpload(e.target.files, uniqueId, "design", (url) => {
+            designPhotosArray.push(url);
+            renderImageThumbnailsInline('p_design_indicator', designPhotosArray);
+          });
         };
 
         document.getElementById('cam_finished').onchange = (e) => {
-          const file = e.target.files[0]; if(!file) return;
-          const r = new FileReader(); r.onload = async (evt) => {
-            const comp = await compressImage(evt.target.result);
-            document.getElementById('p_finished_indicator').innerText = "UPLOADING...";
-            callApi('uploadImage', { base64: comp, name: "finished_" + uniqueId + ".jpg" }).then(res => { if(res.url){ finishedPhoto = res.url; document.getElementById('p_finished_indicator').innerText = "✅ QC COMPLETE"; } });
-          }; r.readAsDataURL(file);
+          handleBatchImageUpload(e.target.files, uniqueId, "finished", (url) => {
+            finishedPhotosArray.push(url);
+            renderImageThumbnailsInline('p_finished_indicator', finishedPhotosArray);
+          });
         };
 
         submit.onclick = () => {
           submit.disabled = true;
-          const payload = { orderId: uniqueId, customerId: isEdit?editData.customerId:cSel.value, designDescription: document.getElementById('o_desc').value, fabricNotes: document.getElementById('o_fabric').value, totalCost: document.getElementById('o_cost').value, amountPaid: document.getElementById('o_paid').value, dateDue: toSheetDate(document.getElementById('o_due').value), status: document.getElementById('o_status').value, notes: document.getElementById('o_notes').value, designPhotos: designPhoto, finishedPhotos: finishedPhoto };
+          const payload = { orderId: uniqueId, customerId: isEdit?editData.customerId:cSel.value, designDescription: document.getElementById('o_desc').value, fabricNotes: document.getElementById('o_fabric').value, totalCost: document.getElementById('o_cost').value, amountPaid: document.getElementById('o_paid').value, dateDue: toSheetDate(document.getElementById('o_due').value), status: document.getElementById('o_status').value, notes: document.getElementById('o_notes').value, designPhotos: designPhotosArray.join(','), finishedPhotos: finishedPhotosArray.join(',') };
           callApi(isEdit?'updateOrder':'saveOrder', payload).then(() => { closeModal(); refreshData('orders'); });
         };
       }
+    }
+
+    // Helper functions for scaling, handling arrays, and checking strict sizes
+    function renderImageThumbnailsInline(containerId, urlArray) {
+      const box = document.getElementById(containerId);
+      if(!box) return;
+      if(urlArray.length === 0) { box.innerHTML = '<span style="font-size:10px; color:#999;">No Photos</span>'; return; }
+      box.innerHTML = urlArray.map(url => `<img src="${getDirectImageUrl(url)}" class="gallery-img">`).join('');
+    }
+
+    function handleBatchImageUpload(filesList, trackingId, prefix, successCallback) {
+      if(!filesList || filesList.length === 0) return;
+      Array.from(filesList).forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = async (evt) => {
+          const processedBase64 = await compressImageToTargetLimit(evt.target.result);
+          callApi('uploadImage', { base64: processedBase64, name: `${prefix}_${trackingId}_${index}.jpg` }).then(res => {
+            if(res && res.url) successCallback(res.url);
+          });
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function compressImageToTargetLimit(base64Str) {
+      return new Promise((resolve) => {
+        const img = new Image(); img.src = base64Str; img.onload = () => {
+          const canvas = document.createElement('canvas'); let w = img.width; let h = img.height;
+          if (w > h) { if (w > 800) { h *= 800 / w; w = 800; } } else { if (h > 800) { w *= 800 / h; h = 800; } }
+          canvas.width = w; canvas.height = h; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, w, h);
+          
+          let q = 0.75; 
+          let res = canvas.toDataURL('image/jpeg', q);
+          // SPECIFICATION REQUIREMENT: MAX BYTES BOUNDARY CHECK OF 200kB
+          while (res.length > 200000 && q > 0.1) { 
+            q -= 0.08; 
+            res = canvas.toDataURL('image/jpeg', q); 
+          }
+          resolve(res);
+        };
+      });
     }
 
     function renderDynamicGarmentSketch(shoulder, bust, underbust, waist, hips, shirtLen, trsLen) {
@@ -579,19 +650,6 @@
       ctx.setLineDash([]); 
     }
 
-    function compressImage(base64Str) {
-      return new Promise((resolve) => {
-        const img = new Image(); img.src = base64Str; img.onload = () => {
-          const canvas = document.createElement('canvas'); let w = img.width; let h = img.height;
-          if (w > h) { if (w > 1000) { h *= 1000 / w; w = 1000; } } else { if (h > 1000) { w *= 1000 / h; h = 1000; } }
-          canvas.width = w; canvas.height = h; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, w, h);
-          let q = 0.8; let res = canvas.toDataURL('image/jpeg', q);
-          while (res.length > 266000 && q > 0.15) { q -= 0.1; res = canvas.toDataURL('image/jpeg', q); }
-          resolve(res);
-        };
-      });
-    }
-
     function getDirectImageUrl(url) { if (!url || !url.includes('drive.google.com')) return url; const id = url.split('/d/')[1]?.split('/')[0] || url.split('id=')[1]?.split('&')[0]; return `https://drive.google.com/thumbnail?id=${id}&sz=w800`; }
     function closeModal() { document.getElementById('modalOverlay').style.display = 'none'; updateDashboardCounters(); }
     function toSheetDate(dStr) { if (!dStr) return ""; const [y, m, d] = dStr.split('-'); return `${d}/${m}/${y}`; }
@@ -620,6 +678,10 @@
       const balance = Number(orderItem.totalCost) - Number(orderItem.amountPaid);
       
       const logoUrl = "YOUR_LOGO_URL_HERE";
+      
+      // Handles parsing multiple design / QC images inside the printed invoice layout smoothly
+      const designThumbsHtml = orderItem.designPhotos ? orderItem.designPhotos.split(',').map(url => `<img src="${getDirectImageUrl(url)}" class="report-thumb">`).join('') : '';
+      const finishedThumbsHtml = orderItem.finishedPhotos ? orderItem.finishedPhotos.split(',').map(url => `<img src="${getDirectImageUrl(url)}" class="report-thumb">`).join('') : '';
 
       let headerStr = `
         <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 12px; border-bottom: 3px solid #000; margin-bottom: 15px;">
@@ -668,9 +730,9 @@
           <tbody><tr style="font-size:15px; font-weight:800;"><td>₦${Number(orderItem.totalCost).toLocaleString()}</td><td>₦${Number(orderItem.amountPaid).toLocaleString()}</td><td style="color:${balance>0?'var(--danger)':'var(--success)'};">₦${balance.toLocaleString()}</td></tr></tbody>
         </table>
         
-        <div style="display:flex; gap:10px; justify-content:center; margin-top:15px;">
-          ${orderItem.designPhotos ? `<div style="text-align:center;"><span style="font-size:10px; font-weight:800; display:block;">SPEC BLUEPRINT</span><img src="${getDirectImageUrl(orderItem.designPhotos)}" class="report-thumb"></div>` : ''}
-          ${orderItem.finishedPhotos ? `<div style="text-align:center;"><span style="font-size:10px; font-weight:800; display:block;">QC PRODUCTION PROOF</span><img src="${getDirectImageUrl(orderItem.finishedPhotos)}" class="report-thumb"></div>` : ''}
+        <div style="display:flex; flex-direction:column; gap:15px; align-items:center; margin-top:15px;">
+          ${designThumbsHtml ? `<div><span style="font-size:10px; font-weight:800; display:block; text-align:center;">STYLE BLUEPRINTS</span><div style="display:flex; flex-wrap:wrap; justify-content:center;">${designThumbsHtml}</div></div>` : ''}
+          ${finishedThumbsHtml ? `<div><span style="font-size:10px; font-weight:800; display:block; text-align:center;">PRODUCTION IMAGES</span><div style="display:flex; flex-wrap:wrap; justify-content:center;">${finishedThumbsHtml}</div></div>` : ''}
         </div>`;
 
       const fullPackage = headerStr + clientStr + measurementsTable + jobBriefHtml;
