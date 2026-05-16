@@ -1,1 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>StitchTrack Pro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --bg: #FFFFFF;           
+      --card: #F8F9FA;        
+      --card-light: #E9ECEF;
+      --primary: #6f42c1;     /* Regal Tailoring Deep Purple Accent Theme */
+      --text: #000000;        
+      --muted: #495057;       
+      --danger: #D9534F;      
+      --success: #28A745;     
+      --border: #CED4DA;      
+    }
 
+    body { 
+      font-family: 'Inter', sans-serif; 
+      background: var(--bg); 
+      color: var(--text); 
+      width: 100%; 
+      overflow-x: hidden; 
+      line-height: 1.5;
+    }
+    
+    .main { 
+      width: 100%; 
+      max-width: 500px; 
+      margin: 0 auto; 
+      padding: 20px 16px 100px 16px; 
+      min-height: 100vh; 
+    }
+
+    .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+    .nav-card {
+      background: var(--card); 
+      border: 2px solid var(--text); 
+      border-radius: 24px; 
+      padding: 15px;
+      text-align: center; 
+      aspect-ratio: 1.1 / 1; 
+      display: flex; 
+      flex-direction: column;
+      justify-content: center; 
+      align-items: center; 
+      cursor: pointer; 
+    }
+    .nav-card:active { background: var(--card-light); transform: scale(0.98); }
+    .nav-card i { font-size: 26px; color: var(--primary); margin-bottom: 6px; }
+    .nav-card .count { font-size: 30px; font-weight: 900; color: var(--text); }
+    .nav-card small { font-size: 11px; text-transform: uppercase; color: var(--text); font-weight: 800; }
+
+    .page-header { 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      margin-bottom: 25px; 
+      padding-bottom: 15px; 
+      border-bottom: 3px solid var(--text); 
+    }
+    .header-group { display: flex; align-items: center; gap: 12px; }
+    .home-btn { background: var(--text); border: none; color: white; width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size:16px; cursor: pointer;}
+    h2 { font-size: 24px; font-weight: 800; color: var(--text); }
+
+    .card { 
+      background: var(--bg); 
+      border-radius: 20px; 
+      padding: 20px; 
+      border: 2px solid #000; 
+      margin-bottom: 15px; 
+      box-shadow: 0 4px 0px #000;
+    }
+    
+    label { 
+      display: block; 
+      font-weight: 800; 
+      font-size: 15px; 
+      color: var(--text); 
+      margin-bottom: 4px; 
+      margin-top: 10px; 
+    }
+
+    input, select, textarea { 
+      width: 100%; 
+      padding: 14px; 
+      margin-bottom: 10px; 
+      border-radius: 12px; 
+      border: 2px solid var(--text); 
+      background: white; 
+      color: black; 
+      font-size: 18px !important; 
+      font-weight: 600;
+    }
+
+    .measurement-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      background: #f8f9fa;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid #000;
+      margin-bottom: 10px;
+    }
+    .measurement-grid label { margin-top: 4px; font-size:13px; color:var(--muted); }
+    .measurement-grid input { padding: 10px; font-size:16px !important; margin-bottom:4px; text-align:center;}
+
+    .action-btn { 
+      background: var(--text); 
+      color: white; 
+      border: none; 
+      padding: 18px; 
+      border-radius: 14px; 
+      font-weight: 900; 
+      width: 100%; 
+      font-size: 18px; 
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+    }
+    .action-btn:active { opacity:0.9; }
+
+    .modal-overlay { 
+      position: fixed; 
+      inset: 0; 
+      background: rgba(0,0,0,0.6); 
+      display: none; 
+      justify-content: center; 
+      align-items: center; 
+      z-index: 5000; 
+      padding: 15px; 
+    }
+    .modal { 
+      background: var(--bg); 
+      width: 100%; 
+      max-width: 480px; 
+      padding: 25px; 
+      border-radius: 24px; 
+      border: 3px solid var(--text); 
+      max-height: 94vh; 
+      overflow-y: auto; 
+    }
+
+    .page-view { display: none; }
+    .active-view { display: block; }
+    .photo-strip { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+    .photo-box { border: 2px dashed #000; padding: 10px; border-radius: 12px; text-align: center; background:#fff;}
+
+    /* PRINT LAYOUT COUTURES FRAME */
+    #report-print-container { display: none; background: #fff; color: #000; padding: 0; }
+    .print-table { width: 100%; border-collapse: collapse; margin-top: 12px; margin-bottom: 18px; font-size: 14px; }
+    .print-table th, .print-table td { border: 1px solid #000; padding: 8px 10px; text-align: left; }
+    .print-table th { background: #f2f2f2; font-weight: 800; }
+  </style>
+</head>
+<body>
+
+  <div class="app">
+    <main class="main">
+      
+      <div id="view-dashboard" class="page-view active-view">
+        <h2 style="margin-bottom:20px; color:var(--primary); font-weight:800; font-size:26px;"><i class="fas fa-scissors"></i> StitchTrack Pro</h2>
+        
+        <div class="nav-grid">
+          <div class="nav-card" onclick="showPage('customers')">
+            <i class="fas fa-users"></i>
+            <div id="s-clients" class="count">--</div>
+            <small>Clients Profile</small>
+          </div>
+          <div class="nav-card" onclick="showPage('orders'); refreshData('orders');">
+            <i class="fas fa-tape"></i>
+            <div id="s-pending" class="count">--</div>
+            <small>Active Jobs</small>
+          </div>
+          <div class="nav-card" onclick="showPage('orders'); refreshData('orders');">
+            <i class="fas fa-mitten"></i>
+            <div id="s-review" class="count">--</div>
+            <small>Fitting Alerts</small>
+          </div>
+          <div class="nav-card" onclick="showPage('reports');">
+            <i class="fas fa-print"></i>
+            <div style="font-size:18px; margin-top:4px;"><i class="fas fa-file-invoice"></i></div>
+            <small>Print Invoices</small>
+          </div>
+        </div>
+
+        <div style="margin-top:20px;">
+          <button class="action-btn" onclick="openModal('customer')"><i class="fas fa-user-plus"></i> Register Client Profile</button>
+          <button class="action-btn" style="margin-top:10px; background:var(--primary);" onclick="openModal('order')"><i class="fas fa-file-signature"></i> Create New Design Order</button>
+        </div>
+      </div>
+
+      <div id="view-customers" class="page-view">
+        <div class="page-header">
+          <div class="header-group">
+            <button class="home-btn" onclick="showPage('dashboard')"><i class="fas fa-home"></i></button>
+            <h2>Studio Clients</h2>
+          </div>
+        </div>
+        <div id="customer-master-list"></div>
+      </div>
+
+      <div id="view-orders" class="page-view">
+        <div class="page-header">
+          <div class="header-group">
+            <button class="home-btn" onclick="showPage('dashboard')"><i class="fas fa-home"></i></button>
+            <h2>Production Tracker</h2>
+          </div>
+        </div>
+        <div style="margin-bottom: 20px;">
+          <label>WORKFLOW PRODUCTION PHASE FILTER:</label>
+          <select id="order-status-filter" onchange="refreshData('orders')" style="border: 2px solid #000; font-weight:700;">
+            <option value="ALL">-- ALL PRODUCTION JOBS --</option>
+            <option value="Measurements Taken">Measurements Taken</option>
+            <option value="Cutting Phase">Cutting Phase</option>
+            <option value="Sewing Construction">Sewing Construction</option>
+            <option value="Fitting / Review">Fitting / Review</option>
+            <option value="Completed Ready">Completed Ready</option>
+            <option value="Delivered">Delivered & Handed Over</option>
+          </select>
+        </div>
+        <div id="order-master-list"></div>
+      </div>
+
+      <div id="view-reports" class="page-view">
+        <div class="page-header">
+          <div class="header-group">
+            <button class="home-btn" onclick="showPage('dashboard')"><i class="fas fa-home"></i></button>
+            <h2>Atelier Invoices</h2>
+          </div>
+        </div>
+        <div class="card">
+          <label>CHOOSE ACTIVE STUDIO ORDER BRIEF:</label>
+          <select id="rep-order-sel"></select>
+          <button class="action-btn" style="background:var(--primary); margin-top:15px;" onclick="compileStudioInvoice()">Generate Design Invoice</button>
+        </div>
+
+        <div id="report-onscreen-preview-card" class="card" style="display:none; border:3px dashed var(--text);">
+          <h4 style="text-transform:uppercase; font-weight:800; margin-bottom:10px;"><i class="fas fa-eye"></i> Production Invoice Preview</h4>
+          <div id="report-preview-viewport" style="max-height:350px; overflow-y:auto; background:#fff; border:1px solid #000; padding:10px;"></div>
+          <button class="action-btn" style="margin-top:15px; background:var(--success);" onclick="window.print()"><i class="fas fa-print"></i> Dispatch To Paper A4</button>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <div id="report-print-container"></div>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <h3 id="modalTitle">Form</h3>
+      <div id="modalBody" style="margin-top:15px;"></div>
+      <div style="display:flex; gap:10px; margin-top:20px;">
+        <button class="action-btn" style="background:#444" onclick="closeModal()">Cancel</button>
+        <button class="action-btn" id="modalSubmit">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ==========================================
+    // SCRIPT CONNECTION CONNECTOR PIPELINE
+    // Paste your Google sheet deployment URL string between quotes below:
+    // ==========================================
+    const GAS_URL = "YOUR_DEPLOYED_WEB_APP_URL_HERE"; 
+                     
+    async function callApi(action, data = {}) {
+      try {
+        const response = await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: action, data: data }) });
+        return await response.json();
+      } catch (err) { console.error("API PIPE ERROR:", err); return null; }
+    }
+    
+    let cache = { customers: [], orders: [] };
+
+    function updateDashboardCounters() {
+      callApi('getStats', {}).then(stats => {
+        if (!stats) return;
+        document.getElementById('s-clients').innerText = stats.activeClients;
+        document.getElementById('s-pending').innerText = stats.pendingOrders;
+        document.getElementById('s-review').innerText = stats.fittingReview;
+      }).catch(err => console.error("Telemetry failure:", err));
+    }
+
+    function showPage(p) {
+      document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active-view'));
+      const target = document.getElementById('view-' + p);
+      if (target) { target.classList.add('active-view'); window.scrollTo(0,0); }
+      if (p === 'dashboard') updateDashboardCounters(); 
+      else if (p === 'reports') initInvoiceConsoleEngine();
+      else refreshData(p);
+    }
+
+    function openRecordRow(type, id) {
+      let match = null;
+      if (type === 'customer') match = cache.customers.find(c => String(c.customerId) === String(id));
+      if (type === 'order') match = cache.orders.find(o => String(o.orderId) === String(id));
+      if (match) openModal(type, match);
+    }
+
+    function refreshData(p) {
+      const idMap = { 'customers': 'customer-master-list', 'orders': 'order-master-list' };
+      const listEl = document.getElementById(idMap[p]); if (!listEl) return;
+    
+      let apiCmd = p === 'customers' ? 'getCustomers' : 'getOrders';
+      listEl.innerHTML = `<p style="text-align:center; padding:20px; font-weight:800;"><i class="fas fa-spinner fa-spin"></i> Reading atelier registers...</p>`;
+    
+      callApi(apiCmd, {}).then(data => {
+        let displayData = data || [];
+        if (p === 'customers') {
+          cache.customers = displayData;
+          listEl.innerHTML = displayData.map(c => `
+            <div class="card" onclick="openRecordRow('customer', '${c.customerId}')" style="cursor:pointer;">
+              <strong style="font-size:22px;">${c.fullName}</strong><br>
+              <span style="font-weight:700; color:var(--primary); font-size:14px;"><i class="fas fa-phone"></i> Mobile: ${c.phone}</span>
+              <div style="margin-top:8px; font-size:12px; font-weight:800; color:var(--muted); border-top:1px dashed #ccc; padding-top:4px;">Couture Profile Key: ${c.customerId}</div>
+            </div>`).join('');
+        } else {
+          cache.orders = displayData;
+          const filter = document.getElementById('order-status-filter').value;
+          if (filter !== "ALL") displayData = displayData.filter(o => o.status === filter);
+          
+          if(displayData.length === 0) { listEl.innerHTML = `<p style="font-style:italic; color:var(--muted); text-align:center; padding:20px;">No clothing orders matching this production state.</p>`; return;}
+          
+          listEl.innerHTML = displayData.map(o => {
+            const clientObj = cache.customers.find(c => c.customerId === o.customerId) || { fullName: "Unlinked Profile" };
+            const balance = Number(o.totalCost) - Number(o.amountPaid);
+            return `
+              <div class="card" onclick="openRecordRow('order', '${o.orderId}')" style="cursor:pointer; border-left: 6px solid ${balance > 0 ? 'var(--danger)' : 'var(--success)'};">
+                <div style="display:flex; justify-content:between; align-items:start; margin-bottom:6px; gap:5px;">
+                  <div style="flex:1;"><strong style="font-size:20px;">${clientObj.fullName}</strong><br><small style="font-family:monospace; font-weight:700; color:var(--muted);">${o.orderId}</small></div>
+                  <span style="font-size:12px; font-weight:900; background:#000; color:#fff; padding:4px 8px; border-radius:6px; text-transform:uppercase; text-align:center; line-height:1.2;">${o.status}</span>
+                </div>
+                <div style="font-size:16px; font-weight:700; color:var(--primary);"><i class="fas fa-cut"></i> ${o.designDescription}</div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; font-size:14px; font-weight:800; background:var(--card-light); padding:8px; border-radius:8px; margin-top:8px; gap:4px;">
+                  <div>Cost: ₦${Number(o.totalCost).toLocaleString()}</div>
+                  <div style="text-align:right; color:${balance > 0 ? 'var(--danger)':'var(--success)'};">Bal: ₦${balance.toLocaleString()}</div>
+                </div>
+                <div style="font-size:12px; font-weight:800; color:var(--danger); margin-top:6px;"><i class="fas fa-calendar-alt"></i> Delivery Due: ${o.dateDue || 'No Date Assigned'}</div>
+              </div>`;
+          }).join('');
+        }
+      });
+    }
+
+    function openModal(type, editData = null) {
+      const body = document.getElementById('modalBody'); const submit = document.getElementById('modalSubmit');
+      const title = document.getElementById('modalTitle'); const overlay = document.getElementById('modalOverlay');
+      const isEdit = !!editData; overlay.style.display = 'flex'; body.innerHTML = ''; submit.disabled = false;
+      const largeInput = 'style="font-size: 19px; padding: 12px; margin-bottom: 6px;"';
+      const labelStyle = 'style="font-size: 15px; color: var(--text); font-weight:800; display: block; margin-top: 8px; margin-bottom: 2px;"';
+
+      if (type === 'customer') {
+        const uniqueId = isEdit ? editData.customerId : "TLR-" + Math.random().toString(36).substr(2, 5).toUpperCase();
+        title.innerText = isEdit ? "Update Client Records" : "Register Client Account";
+        body.innerHTML = `
+          <label ${labelStyle}>Customer Full Name</label><input id="c_name" value="${isEdit?editData.fullName:''}" ${largeInput}>
+          <label ${labelStyle}>Primary Contact Mobile</label><input id="c_phone" type="tel" maxlength="11" value="${isEdit?editData.phone:''}" ${largeInput}>
+          <label ${labelStyle}>Email Route</label><input id="c_email" type="email" value="${isEdit?editData.email:''}" ${largeInput}>
+          
+          <div style="margin-top:12px; margin-bottom:4px; font-weight:900; font-size:14px; border-bottom:2px solid #000; text-transform:uppercase; color:var(--primary);"><i class="fas fa-ruler-combined"></i> Standard Measurement Profile (Inches)</div>
+          <div class="measurement-grid">
+            <div><label>Neck</label><input id="m_neck" type="number" step="0.25" value="${isEdit?editData.neck:''}"></div>
+            <div><label>Shoulder</label><input id="m_sh" type="number" step="0.25" value="${isEdit?editData.shoulder:''}"></div>
+            <div><label>Chest / Bust</label><input id="m_ch" type="number" step="0.25" value="${isEdit?editData.chestBust:''}"></div>
+            <div><label>Waist</label><input id="m_wst" type="number" step="0.25" value="${isEdit?editData.waist:''}"></div>
+            <div><label>Hips</label><input id="m_hip" type="number" step="0.25" value="${isEdit?editData.hips:''}"></div>
+            <div><label>Sleeve Length</label><input id="m_slv" type="number" step="0.25" value="${isEdit?editData.sleeveLength:''}"></div>
+            <div><label>Bicep / Muscle</label><input id="m_bic" type="number" step="0.25" value="${isEdit?editData.bicep:''}"></div>
+            <div><label>Shirt / Gown Len</label><input id="m_top" type="number" step="0.25" value="${isEdit?editData.shirtLength:''}"></div>
+            <div><label>Trouser Length</label><input id="m_trs" type="number" step="0.25" value="${isEdit?editData.trouserLength:''}"></div>
+            <div><label>Thigh Circumf.</label><input id="m_thg" type="number" step="0.25" value="${isEdit?editData.thigh:''}"></div>
+            <div><label>Crotch / Seat</label><input id="m_crt" type="number" step="0.25" value="${isEdit?editData.crotch:''}"></div>
+            <div><label>Ankle Width</label><input id="m_ank" type="number" step="0.25" value="${isEdit?editData.ankle:''}"></div>
+          </div>
+          <label ${labelStyle}>Special Body Notes (Anomalies/Posture)</label><textarea id="c_notes" rows="2" ${largeInput}>${isEdit?editData.notes:''}</textarea>
+        `;
+        submit.onclick = () => {
+          submit.disabled = true;
+          const payload = { customerId: uniqueId, fullName: document.getElementById('c_name').value, phone: document.getElementById('c_phone').value, email: document.getElementById('c_email').value, neck: document.getElementById('m_neck').value, shoulder: document.getElementById('m_sh').value, chestBust: document.getElementById('m_ch').value, waist: document.getElementById('m_wst').value, hips: document.getElementById('m_hip').value, sleeveLength: document.getElementById('m_slv').value, bicep: document.getElementById('m_bic').value, shirtLength: document.getElementById('m_top').value, trouserLength: document.getElementById('m_trs').value, thigh: document.getElementById('m_thg').value, crotch: document.getElementById('m_crt').value, ankle: document.getElementById('m_ank').value, notes: document.getElementById('c_notes').value };
+          callApi(isEdit?'updateCustomer':'saveCustomer', payload).then(() => { closeModal(); refreshData('customers'); });
+        };
+      }
+      else if (type === 'order') {
+        const uniqueId = isEdit ? editData.orderId : "ORD-" + Math.random().toString(36).substr(2, 5).toUpperCase();
+        title.innerText = isEdit ? "Update Design Docket" : "Create Production Order";
+        let designPhoto = isEdit ? editData.designPhotos : "";
+        let finishedPhoto = isEdit ? editData.finishedPhotos : "";
+
+        body.innerHTML = `
+          <label ${labelStyle}>Select Ordering Client</label><select id="o_cust" ${largeInput} ${isEdit?'disabled':''}></select>
+          <label ${labelStyle}>Garment Design Classification Brief</label><input id="o_desc" value="${isEdit?editData.designDescription:''}" placeholder="e.g. Agbada Set, 3-Piece Corporate Suit" ${largeInput}>
+          <label ${labelStyle}>Fabric Details & Textile Notes</label><input id="o_fabric" value="${isEdit?editData.fabricNotes:''}" placeholder="e.g. 4 Yards Cashmere Blue, Customer Supplied" ${largeInput}>
+          
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div><label ${labelStyle}>Total Price (₦)</label><input id="o_cost" type="number" value="${isEdit?editData.totalCost:''}" ${largeInput}></div>
+            <div><label ${labelStyle}>Deposit Paid (₦)</label><input id="o_paid" type="number" value="${isEdit?editData.amountPaid:''}" ${largeInput}></div>
+          </div>
+          <label ${labelStyle}>Target Delivery Due Date</label><input id="o_due" type="date" value="${isEdit?fromSheetDate(editData.dateDue):''}" ${largeInput}>
+          <label ${labelStyle}>Workflow Production Phase State</label>
+          <select id="o_status" ${largeInput}>
+            <option value="Measurements Taken">Measurements Taken</option>
+            <option value="Cutting Phase">Cutting Phase</option>
+            <option value="Sewing Construction">Sewing Construction</option>
+            <option value="Fitting / Review">Fitting / Review</option>
+            <option value="Completed Ready">Completed Ready</option>
+            <option value="Delivered">Delivered & Handed Over</option>
+          </select>
+          <label ${labelStyle}>Styling Remarks / Internal Adjustments</label><textarea id="o_notes" rows="2" ${largeInput}>${isEdit?editData.notes:''}</textarea>
+          
+          <div class="photo-strip">
+            <div class="photo-box">
+              <span style="font-size:11px; font-weight:800; color:var(--primary);">STYLE SPEC BLUEPRINT</span>
+              <label style="background:var(--card-light); padding:8px; border-radius:6px; display:block; font-size:12px; cursor:pointer; margin:4px 0;"><i class="fas fa-camera"></i> Style Capture<input type="file" id="cam_design" accept="image/*" style="display:none"></label>
+              <div id="p_design_indicator" style="font-size:10px; font-weight:700;">${designPhoto?'✅ Attached':'No Photo'}</div>
+            </div>
+            <div class="photo-box">
+              <span style="font-size:11px; font-weight:800; color:var(--success);">FINISHED GARMENT QC</span>
+              <label style="background:var(--card-light); padding:8px; border-radius:6px; display:block; font-size:12px; cursor:pointer; margin:4px 0;"><i class="fas fa-camera"></i> QC Capture<input type="file" id="cam_finished" accept="image/*" style="display:none"></label>
+              <div id="p_finished_indicator" style="font-size:10px; font-weight:700;">${finishedPhoto?'✅ Captured':'No Photo'}</div>
+            </div>
+          </div>
+        `;
+        
+        const cSel = document.getElementById('o_cust');
+        const fillSelector = () => { (cache.customers || []).forEach(c => { const o=document.createElement('option'); o.value=c.customerId; o.innerText=c.fullName; if(isEdit&&c.customerId===editData.customerId) o.selected=true; cSel.appendChild(o); }); };
+        if(cache.customers.length === 0) { callApi('getCustomers', {}).then(res => { cache.customers = res || []; fillSelector(); }); } else { fillSelector(); }
+        if(isEdit) document.getElementById('o_status').value = editData.status;
+
+        document.getElementById('cam_design').onchange = (e) => {
+          const file = e.target.files[0]; if(!file) return;
+          const r = new FileReader(); r.onload = async (evt) => {
+            const comp = await compressImage(evt.target.result);
+            document.getElementById('p_design_indicator').innerText = "UPLOADING...";
+            callApi('uploadImage', { base64: comp, name: "design_" + uniqueId + ".jpg" }).then(res => { if(res.url){ designPhoto = res.url; document.getElementById('p_design_indicator').innerText = "✅ STREAM TRACED"; } });
+          }; r.readAsDataURL(file);
+        };
+
+        document.getElementById('cam_finished').onchange = (e) => {
+          const file = e.target.files[0]; if(!file) return;
+          const r = new FileReader(); r.onload = async (evt) => {
+            const comp = await compressImage(evt.target.result);
+            document.getElementById('p_finished_indicator').innerText = "UPLOADING...";
+            callApi('uploadImage', { base64: comp, name: "finished_" + uniqueId + ".jpg" }).then(res => { if(res.url){ finishedPhoto = res.url; document.getElementById('p_finished_indicator').innerText = "✅ QC CAPTURED"; } });
+          }; r.readAsDataURL(file);
+        };
+
+        submit.onclick = () => {
+          submit.disabled = true;
+          const payload = { orderId: uniqueId, customerId: isEdit?editData.customerId:cSel.value, designDescription: document.getElementById('o_desc').value, fabricNotes: document.getElementById('o_fabric').value, totalCost: document.getElementById('o_cost').value, amountPaid: document.getElementById('o_paid').value, dateDue: toSheetDate(document.getElementById('o_due').value), status: document.getElementById('o_status').value, notes: document.getElementById('o_notes').value, designPhotos: designPhoto, finishedPhotos: finishedPhoto };
+          callApi(isEdit?'updateOrder':'saveOrder', payload).then(() => { closeModal(); refreshData('orders'); });
+        };
+      }
+    }
+
+    function compressImage(base64Str) {
+      return new Promise((resolve) => {
+        const img = new Image(); img.src = base64Str; img.onload = () => {
+          const canvas = document.createElement('canvas'); let w = img.width; let h = img.height;
+          if (w > h) { if (w > 1000) { h *= 1000 / w; w = 1000; } } else { if (h > 1000) { w *= 1000 / h; h = 1000; } }
+          canvas.width = w; canvas.height = h; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, w, h);
+          let q = 0.8; let res = canvas.toDataURL('image/jpeg', q);
+          while (res.length > 266000 && q > 0.15) { q -= 0.1; res = canvas.toDataURL('image/jpeg', q); }
+          resolve(res);
+        };
+      });
+    }
+
+    function getDirectImageUrl(url) { if (!url || !url.includes('drive.google.com')) return url; const id = url.split('/d/')[1]?.split('/')[0] || url.split('id=')[1]?.split('&')[0]; return `https://drive.google.com/thumbnail?id=${id}&sz=w800`; }
+    function closeModal() { document.getElementById('modalOverlay').style.display = 'none'; updateDashboardCounters(); }
+    function toSheetDate(dStr) { if (!dStr) return ""; const [y, m, d] = dStr.split('-'); return `${d}/${m}/${y}`; }
+    function fromSheetDate(dStr) { if (!dStr || !dStr.includes('/')) return ""; const [d, m, y] = dStr.split('/'); return `${y}-${m}-${d}`; }
+
+    function initInvoiceConsoleEngine() {
+      callApi('getCustomers', {}).then(c => cache.customers = c || []);
+      callApi('getOrders', {}).then(o => {
+        cache.orders = o || [];
+        const oSel = document.getElementById('rep-order-sel');
+        oSel.innerHTML = '<option value="">-- Choose Client Order Reference --</option>' + cache.orders.map(item => {
+          const client = cache.customers.find(c => c.customerId === item.customerId) || { fullName: 'Unknown' };
+          return `<option value="${item.orderId}">${client.fullName} - ${item.designDescription} [${item.orderId}]</option>`;
+        }).join('');
+        document.getElementById('report-onscreen-preview-card').style.display = "none";
+      });
+    }
+
+    function compileStudioInvoice() {
+      const orderId = document.getElementById('rep-order-sel').value; if(!orderId) return;
+      const orderItem = cache.orders.find(o => o.orderId === orderId);
+      const clientItem = cache.customers.find(c => c.customerId === orderItem.customerId);
+      const balance = Number(orderItem.totalCost) - Number(orderItem.amountPaid);
+      
+      // ==========================================
+      // STUDIO LOGO INCORPORATION ENDPOINT 
+      // Replace with your hosted corporate graphic link asset
+      // ==========================================
+      const logoUrl = "YOUR_LOGO_URL_HERE";
+
+      let headerStr = `
+        <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 12px; border-bottom: 3px solid #000; margin-bottom: 15px;">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <img src="${logoUrl}" style="height: 60px; max-width: 140px; object-fit: contain;" onerror="this.style.display='none';">
+            <div style="text-align: left;">
+              <h2 style="font-size: 22px; font-weight: 800; margin: 0; color:#6f42c1;">STITCHTRACK BESPOKE STUDIO INVOICE</h2>
+              <p style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--muted); margin:0;">Apparel Specification & Bill of Statement Ledger</p>
+            </div>
+          </div>
+          <div style="text-align: right; font-size: 12px; font-weight: 800;">SYNC DATE:<br><span>${new Date().toLocaleDateString()}</span></div>
+        </div>`;
+
+      let clientStr = `
+        <div style="background:#f8f9fa; border:1px solid #000; padding:12px; border-radius:10px; font-size:14px; font-weight:700; margin-bottom:15px; display:grid; grid-template-columns:1fr 1fr;">
+          <div>CLIENT: <span style="font-weight:500;">${clientItem.fullName}</span><br>CONTACT: <span style="font-weight:500;">${clientItem.phone}</span></div>
+          <div style="text-align:right;">ORDER ID: <span style="font-family:monospace;">${orderItem.orderId}</span><br>DELIVERY DUE: <span style="font-weight:800; color:var(--danger);">${orderItem.dateDue}</span></div>
+        </div>`;
+
+      let measurementsTable = `
+        <h4 style="text-transform:uppercase; font-size:13px; margin-bottom:5px; border-bottom:1px solid #000;">Client Technical Anatomy Specs (Inches)</h4>
+        <table class="print-table" style="margin-bottom:15px; text-align:center;">
+          <thead><tr><th>Nck</th><th>Shldr</th><th>Chst</th><th>Wst</th><th>Hip</th><th>Slv</th><th>Bic</th><th>TopLen</th><th>TrsLen</th><th>Thgh</th></tr></thead>
+          <tbody><tr><td>${clientItem.neck||'-'}</td><td>${clientItem.shoulder||'-'}</td><td>${clientItem.chestBust||'-'}</td><td>${clientItem.waist||'-'}</td><td>${clientItem.hips||'-'}</td><td>${clientItem.sleeveLength||'-'}</td><td>${clientItem.bicep||'-'}</td><td>${clientItem.shirtLength||'-'}</td><td>${clientItem.trouserLength||'-'}</td><td>${clientItem.thigh||'-'}</td></tr></tbody>
+        </table>`;
+
+      let jobBriefHtml = `
+        <h4 style="text-transform:uppercase; font-size:13px; margin-bottom:5px; border-bottom:1px solid #000;">Design Specification Brief</h4>
+        <p style="font-size:15px; margin-bottom:4px;"><strong>Style Order:</strong> ${orderItem.designDescription}</p>
+        <p style="font-size:15px; margin-bottom:10px;"><strong>Fabric Log Assignment:</strong> ${orderItem.fabricNotes || 'Standard catalog select.'}</p>
+        
+        <table class="print-table" style="margin-bottom:15px;">
+          <thead><tr><th>Total Billing Cost</th><th>Total Financial Commitment Paid</th><th>Outstanding Balance Balance Due</th></tr></thead>
+          <tbody><tr style="font-size:16px; font-weight:800;"><td>₦${Number(orderItem.totalCost).toLocaleString()}</td><td>₦${Number(orderItem.amountPaid).toLocaleString()}</td><td style="color:${balance>0?'var(--danger)':'var(--success)'};">₦${balance.toLocaleString()}</td></tr></tbody>
+        </table>
+        
+        <div style="display:flex; gap:10px; justify-content:center; margin-top:15px;">
+          ${orderItem.designPhotos ? `<div style="text-align:center;"><span style="font-size:10px; font-weight:800; display:block;">STYLE ARCHETYPE CAPTURE</span><img src="${getDirectImageUrl(orderItem.designPhotos)}" class="report-thumb"></div>` : ''}
+          ${orderItem.finishedPhotos ? `<div style="text-align:center;"><span style="font-size:10px; font-weight:800; display:block;">FINISHED GARMENT QUALITY CLEARANCE</span><img src="${getDirectImageUrl(orderItem.finishedPhotos)}" class="report-thumb"></div>` : ''}
+        </div>`;
+
+      const fullPackage = headerStr + clientStr + measurementsTable + jobBriefHtml;
+      document.getElementById('report-preview-viewport').innerHTML = fullPackage;
+      document.getElementById('report-print-container').innerHTML = fullPackage;
+      document.getElementById('report-onscreen-preview-card').style.display = "block";
+    }
+  </script>
+</body>
+</html>
