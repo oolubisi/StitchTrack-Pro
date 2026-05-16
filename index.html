@@ -13,7 +13,7 @@
       --bg: #FFFFFF;           
       --card: #F8F9FA;        
       --card-light: #E9ECEF;
-      --primary: #6f42c1;     /* Regal Tailoring Deep Purple Accent Theme */
+      --primary: #6f42c1;     
       --text: #000000;        
       --muted: #495057;       
       --danger: #D9534F;      
@@ -153,11 +153,18 @@
     .photo-strip { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
     .photo-box { border: 2px dashed #000; padding: 10px; border-radius: 12px; text-align: center; background:#fff;}
 
-    /* PRINT LAYOUT COUTURES FRAME */
     #report-print-container { display: none; background: #fff; color: #000; padding: 0; }
     .print-table { width: 100%; border-collapse: collapse; margin-top: 12px; margin-bottom: 18px; font-size: 14px; }
     .print-table th, .print-table td { border: 1px solid #000; padding: 8px 10px; text-align: left; }
     .print-table th { background: #f2f2f2; font-weight: 800; }
+    .report-thumb { max-width: 140px; max-height: 140px; object-fit: cover; border: 2px solid #000000; margin: 6px; border-radius: 6px; }
+
+    @media print {
+      body * { visibility: hidden; }
+      #report-print-container, #report-print-container * { visibility: visible; }
+      #report-print-container { display: block !important; position: absolute; left: 0; top: 0; width: 100%; }
+      @page { size: A4; margin: 15mm; }
+    }
   </style>
 </head>
 <body>
@@ -174,19 +181,19 @@
             <div id="s-clients" class="count">--</div>
             <small>Clients Profile</small>
           </div>
-          <div class="nav-card" onclick="showPage('orders'); refreshData('orders');">
+          <div class="nav-card" onclick="showPage('orders');">
             <i class="fas fa-tape"></i>
             <div id="s-pending" class="count">--</div>
             <small>Active Jobs</small>
           </div>
-          <div class="nav-card" onclick="showPage('orders'); refreshData('orders');">
+          <div class="nav-card" onclick="showPage('orders');">
             <i class="fas fa-mitten"></i>
             <div id="s-review" class="count">--</div>
             <small>Fitting Alerts</small>
           </div>
           <div class="nav-card" onclick="showPage('reports');">
-            <i class="fas fa-print"></i>
-            <div style="font-size:18px; margin-top:4px;"><i class="fas fa-file-invoice"></i></div>
+            <i class="fas fa-file-invoice"></i>
+            <div style="font-size:18px; margin-top:4px;"><i class="fas fa-print"></i></div>
             <small>Print Invoices</small>
           </div>
         </div>
@@ -268,7 +275,6 @@
   <script>
     // ==========================================
     // SCRIPT CONNECTION CONNECTOR PIPELINE
-    // Paste your Google sheet deployment URL string between quotes below:
     // ==========================================
     const GAS_URL = "YOUR_DEPLOYED_WEB_APP_URL_HERE"; 
                      
@@ -303,7 +309,14 @@
       let match = null;
       if (type === 'customer') match = cache.customers.find(c => String(c.customerId) === String(id));
       if (type === 'order') match = cache.orders.find(o => String(o.orderId) === String(id));
-      if (match) openModal(type, match);
+      if (match) {
+        openModal(type, match);
+        if(type === 'customer') {
+          setTimeout(() => {
+            renderDynamicGarmentSketch(match.shoulder, match.chestBust, match.underbust, match.waist, match.hips, match.shirtLength, match.trouserLength);
+          }, 200);
+        }
+      }
     }
 
     function refreshData(p) {
@@ -366,26 +379,61 @@
           <label ${labelStyle}>Primary Contact Mobile</label><input id="c_phone" type="tel" maxlength="11" value="${isEdit?editData.phone:''}" ${largeInput}>
           <label ${labelStyle}>Email Route</label><input id="c_email" type="email" value="${isEdit?editData.email:''}" ${largeInput}>
           
-          <div style="margin-top:12px; margin-bottom:4px; font-weight:900; font-size:14px; border-bottom:2px solid #000; text-transform:uppercase; color:var(--primary);"><i class="fas fa-ruler-combined"></i> Standard Measurement Profile (Inches)</div>
+          <div style="margin-top:15px; margin-bottom:4px; font-weight:900; font-size:14px; border-bottom:2px solid #000; text-transform:uppercase; color:var(--primary);"><i class="fas fa-female"></i> I. Upper Body & Torso (Inches)</div>
           <div class="measurement-grid">
+            <div><label>Bust</label><input id="m_ch" type="number" step="0.25" value="${isEdit?editData.chestBust:''}"></div>
+            <div><label>Under-Bust</label><input id="m_underbust" type="number" step="0.25" value="${isEdit?editData.underbust || '':''}"></div>
+            <div><label>Shoulder Width</label><input id="m_sh" type="number" step="0.25" value="${isEdit?editData.shoulder:''}"></div>
             <div><label>Neck</label><input id="m_neck" type="number" step="0.25" value="${isEdit?editData.neck:''}"></div>
-            <div><label>Shoulder</label><input id="m_sh" type="number" step="0.25" value="${isEdit?editData.shoulder:''}"></div>
-            <div><label>Chest / Bust</label><input id="m_ch" type="number" step="0.25" value="${isEdit?editData.chestBust:''}"></div>
-            <div><label>Waist</label><input id="m_wst" type="number" step="0.25" value="${isEdit?editData.waist:''}"></div>
-            <div><label>Hips</label><input id="m_hip" type="number" step="0.25" value="${isEdit?editData.hips:''}"></div>
-            <div><label>Sleeve Length</label><input id="m_slv" type="number" step="0.25" value="${isEdit?editData.sleeveLength:''}"></div>
-            <div><label>Bicep / Muscle</label><input id="m_bic" type="number" step="0.25" value="${isEdit?editData.bicep:''}"></div>
-            <div><label>Shirt / Gown Len</label><input id="m_top" type="number" step="0.25" value="${isEdit?editData.shirtLength:''}"></div>
-            <div><label>Trouser Length</label><input id="m_trs" type="number" step="0.25" value="${isEdit?editData.trouserLength:''}"></div>
-            <div><label>Thigh Circumf.</label><input id="m_thg" type="number" step="0.25" value="${isEdit?editData.thigh:''}"></div>
-            <div><label>Crotch / Seat</label><input id="m_crt" type="number" step="0.25" value="${isEdit?editData.crotch:''}"></div>
-            <div><label>Ankle Width</label><input id="m_ank" type="number" step="0.25" value="${isEdit?editData.ankle:''}"></div>
+            <div><label>Across Chest</label><input id="m_across_chest" type="number" step="0.25" value="${isEdit?editData.acrossChest || '':''}"></div>
+            <div><label>Across Back</label><input id="m_across_back" type="number" step="0.25" value="${isEdit?editData.acrossBack || '':''}"></div>
           </div>
+
+          <div style="margin-top:15px; margin-bottom:4px; font-weight:900; font-size:14px; border-bottom:2px solid #000; text-transform:uppercase; color:var(--primary);"><i class="fas fa-socks"></i> II. Lower Body Specs (Inches)</div>
+          <div class="measurement-grid">
+            <div><label>Natural Waist</label><input id="m_wst" type="number" step="0.25" value="${isEdit?editData.waist:''}"></div>
+            <div><label>Low Waist</label><input id="m_low_waist" type="number" step="0.25" value="${isEdit?editData.lowWaist || '':''}"></div>
+            <div><label>Full Hips</label><input id="m_hip" type="number" step="0.25" value="${isEdit?editData.hips:''}"></div>
+            <div><label>Thigh Circumf.</label><input id="m_thg" type="number" step="0.25" value="${isEdit?editData.thigh:''}"></div>
+            <div><label>Ankle / Hem</label><input id="m_ank" type="number" step="0.25" value="${isEdit?editData.ankle:''}"></div>
+            <div><label>Crotch Depth</label><input id="m_crt" type="number" step="0.25" value="${isEdit?editData.crotch:''}"></div>
+          </div>
+
+          <div style="margin-top:15px; margin-bottom:4px; font-weight:900; font-size:14px; border-bottom:2px solid #000; text-transform:uppercase; color:var(--primary);"><i class="fas fa-ruler-vertical"></i> III. Lengths & Verticals (Inches)</div>
+          <div class="measurement-grid">
+            <div><label>Shirt/Top Len</label><input id="m_top" type="number" step="0.25" value="${isEdit?editData.shirtLength:''}"></div>
+            <div><label>Gown Length</label><input id="m_gown_len" type="number" step="0.25" value="${isEdit?editData.gownLength || '':''}"></div>
+            <div><label>Sleeve Length</label><input id="m_slv" type="number" step="0.25" value="${isEdit?editData.sleeveLength:''}"></div>
+            <div><label>Bicep Circumf.</label><input id="m_bic" type="number" step="0.25" value="${isEdit?editData.bicep:''}"></div>
+            <div><label>Skirt Length</label><input id="m_skirt_len" type="number" step="0.25" value="${isEdit?editData.skirtLength || '':''}"></div>
+            <div><label>Trouser Inseam</label><input id="m_trs" type="number" step="0.25" value="${isEdit?editData.trouserLength:''}"></div>
+          </div>
+
           <label ${labelStyle}>Special Body Notes (Anomalies/Posture)</label><textarea id="c_notes" rows="2" ${largeInput}>${isEdit?editData.notes:''}</textarea>
+          
+          <div class="card" id="canvas-sketch-frame" style="margin-top: 15px; text-align: center; display:none; background:#fff;">
+            <span style="font-size:12px; font-weight:800; color:var(--primary); display:block; margin-bottom:8px; text-transform:uppercase;">
+              <i class="fas fa-drafting-compass"></i> Proportion Outline Blueprint
+            </span>
+            <canvas id="studioSketchCanvas" width="300" height="480" style="background:#fff; border:2px solid #000; border-radius:12px; max-width:100%;"></canvas>
+          </div>
         `;
+
+        if (isEdit) {
+          setTimeout(() => {
+            renderDynamicGarmentSketch(editData.shoulder, editData.chestBust, editData.underbust, editData.waist, editData.hips, editData.shirtLength, editData.trouserLength);
+          }, 150);
+        }
+
         submit.onclick = () => {
           submit.disabled = true;
-          const payload = { customerId: uniqueId, fullName: document.getElementById('c_name').value, phone: document.getElementById('c_phone').value, email: document.getElementById('c_email').value, neck: document.getElementById('m_neck').value, shoulder: document.getElementById('m_sh').value, chestBust: document.getElementById('m_ch').value, waist: document.getElementById('m_wst').value, hips: document.getElementById('m_hip').value, sleeveLength: document.getElementById('m_slv').value, bicep: document.getElementById('m_bic').value, shirtLength: document.getElementById('m_top').value, trouserLength: document.getElementById('m_trs').value, thigh: document.getElementById('m_thg').value, crotch: document.getElementById('m_crt').value, ankle: document.getElementById('m_ank').value, notes: document.getElementById('c_notes').value };
+          const payload = { 
+            customerId: uniqueId, fullName: document.getElementById('c_name').value, phone: document.getElementById('c_phone').value, email: document.getElementById('c_email').value, 
+            neck: document.getElementById('m_neck').value, shoulder: document.getElementById('m_sh').value, chestBust: document.getElementById('m_ch').value, underbust: document.getElementById('m_underbust').value, acrossChest: document.getElementById('m_across_chest').value, acrossBack: document.getElementById('m_across_back').value,
+            waist: document.getElementById('m_wst').value, lowWaist: document.getElementById('m_low_waist').value, hips: document.getElementById('m_hip').value, thigh: document.getElementById('m_thg').value, ankle: document.getElementById('m_ank').value, crotch: document.getElementById('m_crt').value, 
+            shirtLength: document.getElementById('m_top').value, gownLength: document.getElementById('m_gown_len').value, sleeveLength: document.getElementById('m_slv').value, bicep: document.getElementById('m_bic').value, skirtLength: document.getElementById('m_skirt_len').value, trouserLength: document.getElementById('m_trs').value, 
+            notes: document.getElementById('c_notes').value 
+          };
           callApi(isEdit?'updateCustomer':'saveCustomer', payload).then(() => { closeModal(); refreshData('customers'); });
         };
       }
@@ -397,8 +445,8 @@
 
         body.innerHTML = `
           <label ${labelStyle}>Select Ordering Client</label><select id="o_cust" ${largeInput} ${isEdit?'disabled':''}></select>
-          <label ${labelStyle}>Garment Design Classification Brief</label><input id="o_desc" value="${isEdit?editData.designDescription:''}" placeholder="e.g. Agbada Set, 3-Piece Corporate Suit" ${largeInput}>
-          <label ${labelStyle}>Fabric Details & Textile Notes</label><input id="o_fabric" value="${isEdit?editData.fabricNotes:''}" placeholder="e.g. 4 Yards Cashmere Blue, Customer Supplied" ${largeInput}>
+          <label ${labelStyle}>Garment Design Classification Brief</label><input id="o_desc" value="${isEdit?editData.designDescription:''}" placeholder="e.g. Gown Set, 2-Piece Corporate Suit" ${largeInput}>
+          <label ${labelStyle}>Fabric Details & Textile Notes</label><input id="o_fabric" value="${isEdit?editData.fabricNotes:''}" placeholder="e.g. 4 Yards Cashmere Blue" ${largeInput}>
           
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
             <div><label ${labelStyle}>Total Price (₦)</label><input id="o_cost" type="number" value="${isEdit?editData.totalCost:''}" ${largeInput}></div>
@@ -418,12 +466,12 @@
           
           <div class="photo-strip">
             <div class="photo-box">
-              <span style="font-size:11px; font-weight:800; color:var(--primary);">STYLE SPEC BLUEPRINT</span>
+              <span style="font-size:11px; font-weight:800; color:var(--primary);">STYLE ARCHETYPE</span>
               <label style="background:var(--card-light); padding:8px; border-radius:6px; display:block; font-size:12px; cursor:pointer; margin:4px 0;"><i class="fas fa-camera"></i> Style Capture<input type="file" id="cam_design" accept="image/*" style="display:none"></label>
               <div id="p_design_indicator" style="font-size:10px; font-weight:700;">${designPhoto?'✅ Attached':'No Photo'}</div>
             </div>
             <div class="photo-box">
-              <span style="font-size:11px; font-weight:800; color:var(--success);">FINISHED GARMENT QC</span>
+              <span style="font-size:11px; font-weight:800; color:var(--success);">FINISHED QC PROOF</span>
               <label style="background:var(--card-light); padding:8px; border-radius:6px; display:block; font-size:12px; cursor:pointer; margin:4px 0;"><i class="fas fa-camera"></i> QC Capture<input type="file" id="cam_finished" accept="image/*" style="display:none"></label>
               <div id="p_finished_indicator" style="font-size:10px; font-weight:700;">${finishedPhoto?'✅ Captured':'No Photo'}</div>
             </div>
@@ -440,7 +488,7 @@
           const r = new FileReader(); r.onload = async (evt) => {
             const comp = await compressImage(evt.target.result);
             document.getElementById('p_design_indicator').innerText = "UPLOADING...";
-            callApi('uploadImage', { base64: comp, name: "design_" + uniqueId + ".jpg" }).then(res => { if(res.url){ designPhoto = res.url; document.getElementById('p_design_indicator').innerText = "✅ STREAM TRACED"; } });
+            callApi('uploadImage', { base64: comp, name: "design_" + uniqueId + ".jpg" }).then(res => { if(res.url){ designPhoto = res.url; document.getElementById('p_design_indicator').innerText = "✅ ATTACHED"; } });
           }; r.readAsDataURL(file);
         };
 
@@ -449,7 +497,7 @@
           const r = new FileReader(); r.onload = async (evt) => {
             const comp = await compressImage(evt.target.result);
             document.getElementById('p_finished_indicator').innerText = "UPLOADING...";
-            callApi('uploadImage', { base64: comp, name: "finished_" + uniqueId + ".jpg" }).then(res => { if(res.url){ finishedPhoto = res.url; document.getElementById('p_finished_indicator').innerText = "✅ QC CAPTURED"; } });
+            callApi('uploadImage', { base64: comp, name: "finished_" + uniqueId + ".jpg" }).then(res => { if(res.url){ finishedPhoto = res.url; document.getElementById('p_finished_indicator').innerText = "✅ QC COMPLETE"; } });
           }; r.readAsDataURL(file);
         };
 
@@ -459,6 +507,76 @@
           callApi(isEdit?'updateOrder':'saveOrder', payload).then(() => { closeModal(); refreshData('orders'); });
         };
       }
+    }
+
+    function renderDynamicGarmentSketch(shoulder, bust, underbust, waist, hips, shirtLen, trsLen) {
+      const canvas = document.getElementById('studioSketchCanvas');
+      const frame = document.getElementById('canvas-sketch-frame');
+      if (!canvas) return;
+
+      const sh = parseFloat(shoulder) || 15;
+      const bst = parseFloat(bust) || 34;
+      const ubst = parseFloat(underbust) || 30;
+      const wst = parseFloat(waist) || 26;
+      const hp = parseFloat(hips) || 38;
+
+      frame.style.display = "block";
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const cx = canvas.width / 2;
+      const startY = 40;
+      const factorX = 4.0; 
+
+      const halfShoulder = (sh * factorX) / 2;
+      const halfBust = (bst * factorX) / 2.4;
+      const halfUnderbust = (ubst * factorX) / 2.4;
+      const halfWaist = (wst * factorX) / 2.4;
+      const halfHips = (hp * factorX) / 2.4;
+
+      const neckY = startY;
+      const shoulderY = startY + 12;
+      const bustY = shoulderY + 40;
+      const underbustY = bustY + 20;
+      const waistY = underbustY + 35;
+      const hipY = waistY + 45;
+      const hemY = hipY + 60;
+
+      ctx.strokeStyle = '#000000';
+      ctx.lineWidth = 3;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      ctx.beginPath();
+      ctx.moveTo(cx - 15, neckY);
+      ctx.lineTo(cx - halfShoulder, shoulderY);
+      ctx.lineTo(cx - halfBust, bustY);
+      ctx.lineTo(cx - halfUnderbust, underbustY);
+      ctx.lineTo(cx - halfWaist, waistY);
+      ctx.lineTo(cx - halfHips, hipY);
+      ctx.lineTo(cx - halfHips + 4, hemY);
+      ctx.lineTo(cx, hemY);
+
+      ctx.moveTo(cx + 15, neckY);
+      ctx.lineTo(cx + halfShoulder, shoulderY);
+      ctx.lineTo(cx + halfBust, bustY);
+      ctx.lineTo(cx + halfUnderbust, underbustY);
+      ctx.lineTo(cx + halfWaist, waistY);
+      ctx.lineTo(cx + halfHips, hipY);
+      ctx.lineTo(cx + halfHips - 4, hemY);
+      ctx.lineTo(cx, hemY);
+      ctx.stroke();
+
+      ctx.strokeStyle = '#6f42c1';
+      ctx.lineWidth = 1.2;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(cx - halfShoulder, shoulderY); ctx.lineTo(cx + halfShoulder, shoulderY);
+      ctx.moveTo(cx - halfBust, bustY); ctx.lineTo(cx + halfBust, bustY);
+      ctx.moveTo(cx - halfWaist, waistY); ctx.lineTo(cx + halfWaist, waistY);
+      ctx.moveTo(cx - halfHips, hipY); ctx.lineTo(cx + halfHips, hipY);
+      ctx.stroke();
+      ctx.setLineDash([]); 
     }
 
     function compressImage(base64Str) {
@@ -478,17 +596,20 @@
     function closeModal() { document.getElementById('modalOverlay').style.display = 'none'; updateDashboardCounters(); }
     function toSheetDate(dStr) { if (!dStr) return ""; const [y, m, d] = dStr.split('-'); return `${d}/${m}/${y}`; }
     function fromSheetDate(dStr) { if (!dStr || !dStr.includes('/')) return ""; const [d, m, y] = dStr.split('/'); return `${y}-${m}-${d}`; }
+    window.onload = () => { updateDashboardCounters(); };
 
     function initInvoiceConsoleEngine() {
-      callApi('getCustomers', {}).then(c => cache.customers = c || []);
-      callApi('getOrders', {}).then(o => {
-        cache.orders = o || [];
-        const oSel = document.getElementById('rep-order-sel');
-        oSel.innerHTML = '<option value="">-- Choose Client Order Reference --</option>' + cache.orders.map(item => {
-          const client = cache.customers.find(c => c.customerId === item.customerId) || { fullName: 'Unknown' };
-          return `<option value="${item.orderId}">${client.fullName} - ${item.designDescription} [${item.orderId}]</option>`;
-        }).join('');
-        document.getElementById('report-onscreen-preview-card').style.display = "none";
+      callApi('getCustomers', {}).then(c => {
+        cache.customers = c || [];
+        callApi('getOrders', {}).then(o => {
+          cache.orders = o || [];
+          const oSel = document.getElementById('rep-order-sel');
+          oSel.innerHTML = '<option value="">-- Choose Client Order Reference --</option>' + cache.orders.map(item => {
+            const client = cache.customers.find(c => c.customerId === item.customerId) || { fullName: 'Unknown User' };
+            return `<option value="${item.orderId}">${client.fullName} - ${item.designDescription} [${item.orderId}]</option>`;
+          }).join('');
+          document.getElementById('report-onscreen-preview-card').style.display = "none";
+        });
       });
     }
 
@@ -498,10 +619,6 @@
       const clientItem = cache.customers.find(c => c.customerId === orderItem.customerId);
       const balance = Number(orderItem.totalCost) - Number(orderItem.amountPaid);
       
-      // ==========================================
-      // STUDIO LOGO INCORPORATION ENDPOINT 
-      // Replace with your hosted corporate graphic link asset
-      // ==========================================
       const logoUrl = "YOUR_LOGO_URL_HERE";
 
       let headerStr = `
@@ -509,39 +626,51 @@
           <div style="display: flex; align-items: center; gap: 14px;">
             <img src="${logoUrl}" style="height: 60px; max-width: 140px; object-fit: contain;" onerror="this.style.display='none';">
             <div style="text-align: left;">
-              <h2 style="font-size: 22px; font-weight: 800; margin: 0; color:#6f42c1;">STITCHTRACK BESPOKE STUDIO INVOICE</h2>
-              <p style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--muted); margin:0;">Apparel Specification & Bill of Statement Ledger</p>
+              <h2 style="font-size: 21px; font-weight: 800; margin: 0; color:#6f42c1;">STITCHTRACK BESPOKE STUDIO INVOICE</h2>
+              <p style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--muted); margin:0;">Apparel Specification & Balance Statement Dossier</p>
             </div>
           </div>
-          <div style="text-align: right; font-size: 12px; font-weight: 800;">SYNC DATE:<br><span>${new Date().toLocaleDateString()}</span></div>
+          <div style="text-align: right; font-size: 12px; font-weight: 800;">RUN DATE:<br><span>${new Date().toLocaleDateString()}</span></div>
         </div>`;
 
       let clientStr = `
         <div style="background:#f8f9fa; border:1px solid #000; padding:12px; border-radius:10px; font-size:14px; font-weight:700; margin-bottom:15px; display:grid; grid-template-columns:1fr 1fr;">
-          <div>CLIENT: <span style="font-weight:500;">${clientItem.fullName}</span><br>CONTACT: <span style="font-weight:500;">${clientItem.phone}</span></div>
-          <div style="text-align:right;">ORDER ID: <span style="font-family:monospace;">${orderItem.orderId}</span><br>DELIVERY DUE: <span style="font-weight:800; color:var(--danger);">${orderItem.dateDue}</span></div>
+          <div>CLIENT PROFILE: <span style="font-weight:500;">${clientItem.fullName}</span><br>MOBILE: <span style="font-weight:500;">${clientItem.phone}</span></div>
+          <div style="text-align:right;">ORDER TOK: <span style="font-family:monospace;">${orderItem.orderId}</span><br>DUE TARGET: <span style="font-weight:800; color:var(--danger);">${orderItem.dateDue}</span></div>
         </div>`;
 
       let measurementsTable = `
-        <h4 style="text-transform:uppercase; font-size:13px; margin-bottom:5px; border-bottom:1px solid #000;">Client Technical Anatomy Specs (Inches)</h4>
-        <table class="print-table" style="margin-bottom:15px; text-align:center;">
-          <thead><tr><th>Nck</th><th>Shldr</th><th>Chst</th><th>Wst</th><th>Hip</th><th>Slv</th><th>Bic</th><th>TopLen</th><th>TrsLen</th><th>Thgh</th></tr></thead>
-          <tbody><tr><td>${clientItem.neck||'-'}</td><td>${clientItem.shoulder||'-'}</td><td>${clientItem.chestBust||'-'}</td><td>${clientItem.waist||'-'}</td><td>${clientItem.hips||'-'}</td><td>${clientItem.sleeveLength||'-'}</td><td>${clientItem.bicep||'-'}</td><td>${clientItem.shirtLength||'-'}</td><td>${clientItem.trouserLength||'-'}</td><td>${clientItem.thigh||'-'}</td></tr></tbody>
+        <h4 style="text-transform:uppercase; font-size:12px; margin-bottom:5px; border-bottom:1px solid #000; color:var(--primary)">I. Anatomical Profile Summary (Inches)</h4>
+        <table class="print-table" style="margin-bottom:12px; text-align:center; font-size:12px;">
+          <thead>
+            <tr><th>Bust</th><th>U-Bust</th><th>Shldr</th><th>Neck</th><th>Chst</th><th>Back</th><th>Waist</th><th>Hip</th><th>Thigh</th><th>Ank</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>${clientItem.chestBust||'-'}</td><td>${clientItem.underbust||'-'}</td><td>${clientItem.shoulder||'-'}</td><td>${clientItem.neck||'-'}</td><td>${clientItem.acrossChest||'-'}</td><td>${clientItem.acrossBack||'-'}</td><td>${clientItem.waist||'-'}</td><td>${clientItem.hips||'-'}</td><td>${clientItem.thigh||'-'}</td><td>${clientItem.ankle||'-'}</td></tr>
+          </tbody>
+        </table>
+        <table class="print-table" style="margin-bottom:15px; text-align:center; font-size:12px;">
+          <thead>
+            <tr><th>Shirt Len</th><th>Gown Len</th><th>Sleeve</th><th>Bicep</th><th>Skirt Len</th><th>Inseam</th><th>Crotch</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>${clientItem.shirtLength||'-'}</td><td>${clientItem.gownLength||'-'}</td><td>${clientItem.sleeveLength||'-'}</td><td>${clientItem.bicep||'-'}</td><td>${clientItem.skirtLength||'-'}</td><td>${clientItem.trouserLength||'-'}</td><td>${clientItem.crotch||'-'}</td></tr>
+          </tbody>
         </table>`;
 
       let jobBriefHtml = `
-        <h4 style="text-transform:uppercase; font-size:13px; margin-bottom:5px; border-bottom:1px solid #000;">Design Specification Brief</h4>
-        <p style="font-size:15px; margin-bottom:4px;"><strong>Style Order:</strong> ${orderItem.designDescription}</p>
-        <p style="font-size:15px; margin-bottom:10px;"><strong>Fabric Log Assignment:</strong> ${orderItem.fabricNotes || 'Standard catalog select.'}</p>
+        <h4 style="text-transform:uppercase; font-size:12px; margin-bottom:5px; border-bottom:1px solid #000; color:var(--primary)">II. Design Build Parameters & Ledger</h4>
+        <p style="font-size:14px; margin-bottom:2px;"><strong>Garment Order Silhouette:</strong> ${orderItem.designDescription}</p>
+        <p style="font-size:14px; margin-bottom:10px;"><strong>Fabric Log:</strong> ${orderItem.fabricNotes || 'Standard catalog profile selection.'}</p>
         
         <table class="print-table" style="margin-bottom:15px;">
-          <thead><tr><th>Total Billing Cost</th><th>Total Financial Commitment Paid</th><th>Outstanding Balance Balance Due</th></tr></thead>
-          <tbody><tr style="font-size:16px; font-weight:800;"><td>₦${Number(orderItem.totalCost).toLocaleString()}</td><td>₦${Number(orderItem.amountPaid).toLocaleString()}</td><td style="color:${balance>0?'var(--danger)':'var(--success)'};">₦${balance.toLocaleString()}</td></tr></tbody>
+          <thead><tr><th>Total Cost Tariff</th><th>Commitment Paid Amount</th><th>Outstanding Balance Remaining</th></tr></thead>
+          <tbody><tr style="font-size:15px; font-weight:800;"><td>₦${Number(orderItem.totalCost).toLocaleString()}</td><td>₦${Number(orderItem.amountPaid).toLocaleString()}</td><td style="color:${balance>0?'var(--danger)':'var(--success)'};">₦${balance.toLocaleString()}</td></tr></tbody>
         </table>
         
         <div style="display:flex; gap:10px; justify-content:center; margin-top:15px;">
-          ${orderItem.designPhotos ? `<div style="text-align:center;"><span style="font-size:10px; font-weight:800; display:block;">STYLE ARCHETYPE CAPTURE</span><img src="${getDirectImageUrl(orderItem.designPhotos)}" class="report-thumb"></div>` : ''}
-          ${orderItem.finishedPhotos ? `<div style="text-align:center;"><span style="font-size:10px; font-weight:800; display:block;">FINISHED GARMENT QUALITY CLEARANCE</span><img src="${getDirectImageUrl(orderItem.finishedPhotos)}" class="report-thumb"></div>` : ''}
+          ${orderItem.designPhotos ? `<div style="text-align:center;"><span style="font-size:10px; font-weight:800; display:block;">SPEC BLUEPRINT</span><img src="${getDirectImageUrl(orderItem.designPhotos)}" class="report-thumb"></div>` : ''}
+          ${orderItem.finishedPhotos ? `<div style="text-align:center;"><span style="font-size:10px; font-weight:800; display:block;">QC PRODUCTION PROOF</span><img src="${getDirectImageUrl(orderItem.finishedPhotos)}" class="report-thumb"></div>` : ''}
         </div>`;
 
       const fullPackage = headerStr + clientStr + measurementsTable + jobBriefHtml;
