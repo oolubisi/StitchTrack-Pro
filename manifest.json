@@ -1,11 +1,11 @@
 {
-  "name": "Your App Name",
-  "short_name": "AppMenuName",
-  "description": "App description here.",
+  "name": "StitchTrack Pro",
+  "short_name": "StitchTrack",
+  "description": "Bespoke studio and atelier tracking platform.",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#000000",
+  "theme_color": "#6f42c1",
   "icons": [
     {
       "src": "icon-192x192.png",
