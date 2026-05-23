@@ -1,8 +1,9 @@
-const CACHE_NAME = 'stitchtrack-cache-v1';
+const CACHE_NAME = 'stitchtrack-cache-v2'; // Bumped to v2 to force an update
 const urlsToCache = [
   './',
   './index.html',
-  './manifest.json'
+  './manifest.json',
+  './tailor.png' // Ensure the icon is cached for offline use
 ];
 
 // Install the Service Worker and Cache Files
@@ -33,6 +34,7 @@ self.addEventListener('activate', event => {
       return Promise.all(
         cacheNames.map(cacheName => {
           if (cacheWhitelist.indexOf(cacheName) === -1) {
+            console.log('Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
