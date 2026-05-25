@@ -1,878 +1,885 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>StitchTrack Pro</title>
-  
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="StitchTrack">
-  <meta name="mobile-web-app-capable" content="yes">
-  <link rel="manifest" href="manifest.json">
-  
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>StitchTrack Pro</title>
+  
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="StitchTrack">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="manifest.json">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    
-    :root {
-      --bg: #F2F2F7;            /* Native iOS light gray background */
-      --card: #FFFFFF;          
-      --card-light: #F8F9FA;
-      --primary: #6B4CE6;       /* Slightly softer, modern purple */
-      --primary-light: #EBE5FF;
-      --text: #1C1C1E;          /* Off-black for better readability */
-      --muted: #8E8E93;         
-      --danger: #FF3B30;        
-      --success: #34C759;       
-      --border: #E5E5EA;        
-    }
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --bg: #F2F2F7;            /* Native iOS light gray background */
+      --card: #FFFFFF;          
+      --card-light: #F8F9FA;
+      --primary: #6B4CE6;       /* Slightly softer, modern purple */
+      --primary-light: #EBE5FF;
+      --text: #1C1C1E;          /* Off-black for better readability */
+      --muted: #8E8E93;         
+      --danger: #FF3B30;        
+      --success: #34C759;       
+      --border: #E5E5EA;        
+    }
 
-    body { 
-      font-family: 'Inter', sans-serif; 
-      background: var(--bg); 
-      color: var(--text); 
-      width: 100%; 
-      overflow-x: hidden; 
-      line-height: 1.5;
-      -webkit-tap-highlight-color: transparent;
-      padding-bottom: env(safe-area-inset-bottom);
-    }
-    
-    .main { 
-      width: 100%; 
-      max-width: 500px; 
-      margin: 0 auto; 
-      padding: env(safe-area-inset-top, 20px) 16px calc(80px + env(safe-area-inset-bottom)) 16px; 
-      min-height: 100vh; 
-    }
+    body { 
+      font-family: 'Inter', sans-serif; 
+      background: var(--bg); 
+      color: var(--text); 
+      width: 100%; 
+      overflow-x: hidden; 
+      line-height: 1.5;
+      -webkit-tap-highlight-color: transparent;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    
+    .main { 
+      width: 100%; 
+      max-width: 500px; 
+      margin: 0 auto; 
+      padding: env(safe-area-inset-top, 20px) 16px calc(80px + env(safe-area-inset-bottom)) 16px; 
+      min-height: 100vh; 
+    }
 
-    /* Page Transitions */
-    .page-view { display: none; opacity: 0; }
-    .active-view { display: block; animation: slideUpFade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    @keyframes slideUpFade {
-      from { opacity: 0; transform: translateY(15px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    /* Page Transitions */
+    .page-view { display: none; opacity: 0; }
+    .active-view { display: block; animation: slideUpFade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    @keyframes slideUpFade {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-    /* Modern App Dashboard UI */
-    .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-    .nav-card {
-      background: var(--card); 
-      border-radius: 20px; 
-      padding: 16px;
-      text-align: center; 
-      aspect-ratio: 1.1 / 1; 
-      display: flex; 
-      flex-direction: column;
-      justify-content: center; 
-      align-items: center; 
-      box-shadow: 0 4px 15px rgba(0,0,0,0.04);
-      border: 1px solid rgba(0,0,0,0.02);
-    }
-    .nav-card i { font-size: 24px; color: var(--primary); margin-bottom: 8px; }
-    .nav-card .count { font-size: 28px; font-weight: 800; color: var(--text); letter-spacing: -0.5px;}
-    .nav-card small { font-size: 11px; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-top: 2px;}
+    /* Modern App Dashboard UI */
+    .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+    .nav-card {
+      background: var(--card); 
+      border-radius: 20px; 
+      padding: 16px;
+      text-align: center; 
+      aspect-ratio: 1.1 / 1; 
+      display: flex; 
+      flex-direction: column;
+      justify-content: center; 
+      align-items: center; 
+      box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+      border: 1px solid rgba(0,0,0,0.02);
+    }
+    .nav-card i { font-size: 24px; color: var(--primary); margin-bottom: 8px; }
+    .nav-card .count { font-size: 28px; font-weight: 800; color: var(--text); letter-spacing: -0.5px;}
+    .nav-card small { font-size: 11px; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-top: 2px;}
 
-    .page-header { 
-      display: flex; 
-      align-items: center; 
-      justify-content: space-between; 
-      margin-bottom: 20px; 
-      padding-top: 10px;
-    }
-    h2 { font-size: 28px; font-weight: 800; color: var(--text); letter-spacing: -0.5px;}
+    .page-header { 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      margin-bottom: 20px; 
+      padding-top: 10px;
+    }
+    h2 { font-size: 28px; font-weight: 800; color: var(--text); letter-spacing: -0.5px;}
 
-    .card * { 
-  font-size: 24px !important; 
-  font-weight: 900 !important;
-}
+    /* --- FIXED AND CONSOLIDATED LARGE TEXT STYLES --- */
+    .card {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+      border: 1px solid rgba(0,0,0,0.02);
+    }
 
-/* Also ensure your inputs are forced to be huge */
-input, select, textarea { 
-  width: 100%; 
-  padding: 16px 20px !important; 
-  margin-bottom: 6px; 
-  border-radius: 14px; 
-  border: 1px solid var(--border); 
-  background: #FAFAFC; 
-  color: var(--text); 
-  font-size: 26px !important; 
-  font-weight: 900 !important;
-  appearance: none; 
-  -webkit-appearance: none;
-}
-    
-    /* Native-like Forms */
-    label { display: block; font-weight: 700; font-size: 13px; color: var(--muted); margin-bottom: 6px; margin-top: 12px; text-transform: uppercase; letter-spacing: 0.5px;}
-    input, select, textarea { 
-      width: 100%; padding: 14px 16px; margin-bottom: 6px; border-radius: 14px; 
-      border: 1px solid var(--border); background: #FAFAFC; color: var(--text); 
-      font-size: 16px !important; font-weight: 500; transition: all 0.2s;
-      appearance: none; -webkit-appearance: none;
-    }
-    input:focus, select:focus, textarea:focus {
-      outline: none; border-color: var(--primary); background: #FFF; box-shadow: 0 0 0 4px var(--primary-light);
-    }
+    .card, .card * { 
+      font-size: 24px !important; 
+      font-weight: 900 !important;
+    }
 
-    .measurement-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
-      background: var(--card-light); padding: 16px; border-radius: 16px; margin-bottom: 10px;
-    }
-    .measurement-grid > div { display: flex; flex-direction: column; }
-    .measurement-grid label { margin-top: 0; font-size: 12px; }
-    .measurement-grid input { padding: 12px; text-align: center; background: #FFF;}
+    /* Native-like Forms */
+    label { 
+      display: block; 
+      font-weight: 700; 
+      font-size: 16px !important; 
+      color: var(--muted); 
+      margin-bottom: 6px; 
+      margin-top: 12px; 
+      text-transform: uppercase; 
+      letter-spacing: 0.5px;
+    }
+    
+    input, select, textarea { 
+      width: 100%; 
+      padding: 16px 20px !important; 
+      margin-bottom: 6px; 
+      border-radius: 14px; 
+      border: 1px solid var(--border); 
+      background: #FAFAFC; 
+      color: var(--text); 
+      font-size: 26px !important; 
+      font-weight: 900 !important;
+      appearance: none; 
+      -webkit-appearance: none;
+      transition: all 0.2s;
+    }
 
-    .action-btn { 
-      background: var(--text); color: white; border: none; padding: 16px; 
-      border-radius: 16px; font-weight: 700; width: 100%; font-size: 16px; 
-      cursor: pointer; transition: transform 0.1s, opacity 0.2s;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    .action-btn:active { transform: scale(0.97); opacity: 0.9; }
+    input:focus, select:focus, textarea:focus {
+      outline: none; border-color: var(--primary); background: #FFF; box-shadow: 0 0 0 4px var(--primary-light);
+    }
+    /* ------------------------------------------------ */
 
-    /* Bottom Tab Bar */
-    .bottom-nav {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-      border-top: 1px solid var(--border);
-      display: flex; justify-content: space-around; align-items: center;
-      padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
-      z-index: 4000;
-      max-width: 500px; margin: 0 auto;
-    }
-    .nav-item { 
-      display: flex; flex-direction: column; align-items: center; gap: 4px; 
-      color: var(--muted); text-decoration: none; font-size: 10px; font-weight: 700; cursor: pointer;
-      transition: color 0.2s; width: 25%;
-    }
-    .nav-item i { font-size: 20px; margin-bottom: 2px;}
-    .nav-item.active { color: var(--primary); }
+    .measurement-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+      background: var(--card-light); padding: 16px; border-radius: 16px; margin-bottom: 10px;
+    }
+    .measurement-grid > div { display: flex; flex-direction: column; }
+    .measurement-grid label { margin-top: 0; font-size: 12px !important; }
+    .measurement-grid input { padding: 12px; text-align: center; background: #FFF;}
 
-    /* Modals & Views */
-    .modal-overlay { 
-      position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); display: none; 
-      justify-content: center; align-items: flex-end; z-index: 5000; 
-    }
-    .modal { 
-      background: var(--card); width: 100%; max-width: 500px; padding: 25px 20px calc(20px + env(safe-area-inset-bottom)); 
-      border-radius: 24px 24px 0 0; max-height: 90vh; overflow-y: auto; 
-      animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    .action-btn { 
+      background: var(--text); color: white; border: none; padding: 16px; 
+      border-radius: 16px; font-weight: 700; width: 100%; font-size: 16px; 
+      cursor: pointer; transition: transform 0.1s, opacity 0.2s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .action-btn:active { transform: scale(0.97); opacity: 0.9; }
 
-    .photo-strip { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-    .photo-box { border: 2px dashed var(--border); padding: 15px 10px; border-radius: 16px; text-align: center; background:var(--card-light);}
-    .gallery-preview { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 10px; }
-    .gallery-img { width: 50px; height: 50px; object-fit: cover; border-radius: 10px; }
-    .profile-avatar { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; display: block; }
+    /* Bottom Tab Bar */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
+      display: flex; justify-content: space-around; align-items: center;
+      padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
+      z-index: 4000;
+      max-width: 500px; margin: 0 auto;
+    }
+    .nav-item { 
+      display: flex; flex-direction: column; align-items: center; gap: 4px; 
+      color: var(--muted); text-decoration: none; font-size: 10px; font-weight: 700; cursor: pointer;
+      transition: color 0.2s; width: 25%;
+    }
+    .nav-item i { font-size: 20px; margin-bottom: 2px;}
+    .nav-item.active { color: var(--primary); }
 
-    /* Print & Invoice Styles */
-    #report-print-container { display: none; background: #fff; color: #000; padding: 0; }
-    .print-table { width: 100%; border-collapse: collapse; margin-top: 12px; margin-bottom: 18px; font-size: 14px; }
-    .print-table th, .print-table td { border: 1px solid #000; padding: 8px 10px; text-align: left; }
-    .print-table th { background: #f2f2f2 !important; font-weight: 800; }
-    .report-thumb { max-width: 140px; max-height: 140px; object-fit: cover; border: 2px solid #000000; margin: 6px; border-radius: 6px; }
+    /* Modals & Views */
+    .modal-overlay { 
+      position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); display: none; 
+      justify-content: center; align-items: flex-end; z-index: 5000; 
+    }
+    .modal { 
+      background: var(--card); width: 100%; max-width: 500px; padding: 25px 20px calc(20px + env(safe-area-inset-bottom)); 
+      border-radius: 24px 24px 0 0; max-height: 90vh; overflow-y: auto; 
+      animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-    @media print {
-      body { background: #ffffff !important; margin: 0; padding: 0; }
-      .app, .modal-overlay, #sync-status, #pdf-toast, .bottom-nav { display: none !important; }
-      #report-print-container { display: block !important; position: relative !important; width: 100%; left: auto; top: auto; }
-      #report-print-container * { visibility: visible; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-      .print-table { border: 1px solid #000; }
-      @page { size: A4 portrait; margin: 15mm; }
-    }
-  </style>
+    .photo-strip { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+    .photo-box { border: 2px dashed var(--border); padding: 15px 10px; border-radius: 16px; text-align: center; background:var(--card-light);}
+    .gallery-preview { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 10px; }
+    .gallery-img { width: 50px; height: 50px; object-fit: cover; border-radius: 10px; }
+    .profile-avatar { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; display: block; }
+
+    /* Print & Invoice Styles */
+    #report-print-container { display: none; background: #fff; color: #000; padding: 0; }
+    .print-table { width: 100%; border-collapse: collapse; margin-top: 12px; margin-bottom: 18px; font-size: 14px; }
+    .print-table th, .print-table td { border: 1px solid #000; padding: 8px 10px; text-align: left; }
+    .print-table th { background: #f2f2f2 !important; font-weight: 800; }
+    .report-thumb { max-width: 140px; max-height: 140px; object-fit: cover; border: 2px solid #000000; margin: 6px; border-radius: 6px; }
+
+    @media print {
+      body { background: #ffffff !important; margin: 0; padding: 0; }
+      .app, .modal-overlay, #sync-status, #pdf-toast, .bottom-nav { display: none !important; }
+      #report-print-container { display: block !important; position: relative !important; width: 100%; left: auto; top: auto; }
+      #report-print-container * { visibility: visible; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      .print-table { border: 1px solid #000; }
+      @page { size: A4 portrait; margin: 15mm; }
+    }
+  </style>
 </head>
 <body>
 
-  <div id="sync-status" style="position:fixed; top:0; right:10px; z-index:9999; font-size:11px; background:rgba(0,0,0,0.7); color:#fff; padding:4px 10px; border-radius:0 0 8px 8px; font-weight:bold; display:none;">
-    <i class="fas fa-sync-alt fa-spin"></i> Syncing Offline Data...
-  </div>
+  <div id="sync-status" style="position:fixed; top:0; right:10px; z-index:9999; font-size:11px; background:rgba(0,0,0,0.7); color:#fff; padding:4px 10px; border-radius:0 0 8px 8px; font-weight:bold; display:none;">
+    <i class="fas fa-sync-alt fa-spin"></i> Syncing Offline Data...
+  </div>
 
-  <div class="app">
-    <main class="main">
-      
-      <div id="view-dashboard" class="page-view active-view">
-        <div class="page-header" style="margin-top: 10px;">
-          <h2><i class="fas fa-scissors" style="color:var(--primary); font-size:24px; margin-right:8px;"></i>StitchTrack</h2>
-          <div style="background:var(--primary-light); color:var(--primary); width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="openModal('order')">
-            <i class="fas fa-plus"></i>
-          </div>
-        </div>
-        <button id="installAppBtn" class="action-btn" style="margin-top:12px; background:#1C1C1E; display:none; gap:8px; justify-content:center; align-items:center;">
-  <i class="fas fa-download"></i> Install StitchTrack App
-</button>
-        <div class="nav-grid">
-          <div class="nav-card">
-            <i class="fas fa-users"></i>
-            <div id="s-clients" class="count">--</div>
-            <small>Clients Profile</small>
-          </div>
-          <div class="nav-card">
-            <i class="fas fa-tape"></i>
-            <div id="s-pending" class="count">--</div>
-            <small>Active Jobs</small>
-          </div>
-          <div class="nav-card">
-            <i class="fas fa-mitten"></i>
-            <div id="s-review" class="count">--</div>
-            <small>Fitting Alerts</small>
-          </div>
-          <div class="nav-card">
-            <i class="fas fa-file-invoice"></i>
-            <div style="font-size:26px; margin-top:2px; font-weight:800; color:var(--text);"><i class="fas fa-print"></i></div>
-            <small>Invoices</small>
-          </div>
-        </div>
+  <div class="app">
+    <main class="main">
+      
+      <div id="view-dashboard" class="page-view active-view">
+        <div class="page-header" style="margin-top: 10px;">
+          <h2><i class="fas fa-scissors" style="color:var(--primary); font-size:24px; margin-right:8px;"></i>StitchTrack</h2>
+          <div style="background:var(--primary-light); color:var(--primary); width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="openModal('order')">
+            <i class="fas fa-plus"></i>
+          </div>
+        </div>
+        <button id="installAppBtn" class="action-btn" style="margin-top:12px; background:#1C1C1E; display:none; gap:8px; justify-content:center; align-items:center;">
+          <i class="fas fa-download"></i> Install StitchTrack App
+        </button>
+        <div class="nav-grid">
+          <div class="nav-card">
+            <i class="fas fa-users"></i>
+            <div id="s-clients" class="count">--</div>
+            <small>Clients Profile</small>
+          </div>
+          <div class="nav-card">
+            <i class="fas fa-tape"></i>
+            <div id="s-pending" class="count">--</div>
+            <small>Active Jobs</small>
+          </div>
+          <div class="nav-card">
+            <i class="fas fa-mitten"></i>
+            <div id="s-review" class="count">--</div>
+            <small>Fitting Alerts</small>
+          </div>
+          <div class="nav-card">
+            <i class="fas fa-file-invoice"></i>
+            <div style="font-size:26px; margin-top:2px; font-weight:800; color:var(--text);"><i class="fas fa-print"></i></div>
+            <small>Invoices</small>
+          </div>
+        </div>
 
-        <div style="margin-top:20px;">
-          <button class="action-btn" onclick="openModal('customer')"><i class="fas fa-user-plus"></i> Register Client Profile</button>
-          <button class="action-btn" style="margin-top:12px; background:var(--primary);" onclick="openModal('order')"><i class="fas fa-file-signature"></i> Create New Design Order</button>
-        </div>
-      </div>
+        <div style="margin-top:20px;">
+          <button class="action-btn" onclick="openModal('customer')"><i class="fas fa-user-plus"></i> Register Client Profile</button>
+          <button class="action-btn" style="margin-top:12px; background:var(--primary);" onclick="openModal('order')"><i class="fas fa-file-signature"></i> Create New Design Order</button>
+        </div>
+      </div>
 
-      <div id="view-customers" class="page-view">
-        <div class="page-header">
-          <h2>Studio Clients</h2>
-        </div>
-        <div id="customer-master-list"></div>
-      </div>
+      <div id="view-customers" class="page-view">
+        <div class="page-header">
+          <h2>Studio Clients</h2>
+        </div>
+        <div id="customer-master-list"></div>
+      </div>
 
-      <div id="view-orders" class="page-view">
-        <div class="page-header">
-          <h2>Tracker</h2>
-        </div>
-        <div style="margin-bottom: 20px;">
-          <select id="order-status-filter" onchange="refreshData('orders')" style="background:#fff; border-color:transparent; box-shadow:0 2px 8px rgba(0,0,0,0.05); font-weight:700;">
-            <option value="ALL">All Production Jobs</option>
-            <option value="Measurements Taken">Measurements Taken</option>
-            <option value="Cutting Phase">Cutting Phase</option>
-            <option value="Sewing Construction">Sewing Construction</option>
-            <option value="Fitting / Review">Fitting / Review</option>
-            <option value="Completed Ready">Completed Ready</option>
-            <option value="Delivered">Delivered & Handed Over</option>
-          </select>
-        </div>
-        <div id="order-master-list"></div>
-      </div>
+      <div id="view-orders" class="page-view">
+        <div class="page-header">
+          <h2>Tracker</h2>
+        </div>
+        <div style="margin-bottom: 20px;">
+          <select id="order-status-filter" onchange="refreshData('orders')" style="background:#fff; border-color:transparent; box-shadow:0 2px 8px rgba(0,0,0,0.05); font-weight:700;">
+            <option value="ALL">All Production Jobs</option>
+            <option value="Measurements Taken">Measurements Taken</option>
+            <option value="Cutting Phase">Cutting Phase</option>
+            <option value="Sewing Construction">Sewing Construction</option>
+            <option value="Fitting / Review">Fitting / Review</option>
+            <option value="Completed Ready">Completed Ready</option>
+            <option value="Delivered">Delivered & Handed Over</option>
+          </select>
+        </div>
+        <div id="order-master-list"></div>
+      </div>
 
-      <div id="view-reports" class="page-view">
-        <div class="page-header">
-          <h2>Invoices</h2>
-        </div>
-        <div class="card">
-          <label>Choose Active Studio Order Brief:</label>
-          <select id="rep-order-sel"></select>
-          <button class="action-btn" style="background:var(--primary); margin-top:15px; box-shadow: 0 4px 12px rgba(107, 76, 230, 0.3);" onclick="compileStudioInvoice()">Generate Invoice</button>
-        </div>
+      <div id="view-reports" class="page-view">
+        <div class="page-header">
+          <h2>Invoices</h2>
+        </div>
+        <div class="card">
+          <label>Choose Active Studio Order Brief:</label>
+          <select id="rep-order-sel"></select>
+          <button class="action-btn" style="background:var(--primary); margin-top:15px; box-shadow: 0 4px 12px rgba(107, 76, 230, 0.3);" onclick="compileStudioInvoice()">Generate Invoice</button>
+        </div>
 
-        <div id="report-onscreen-preview-card" class="card" style="display:none;">
-          <h4 style="text-transform:uppercase; font-weight:800; margin-bottom:15px; font-size:14px; color:var(--muted);"><i class="fas fa-eye"></i> Preview</h4>
-          <div id="report-preview-viewport" style="max-height:350px; overflow-y:auto; background:#fff; border:1px solid var(--border); border-radius:12px; padding:15px;"></div>
-          
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:15px;">
-            <button class="action-btn" style="background:#25D366; font-size:14px; padding:14px;" onclick="sendWhatsAppSummary()">
-              <i class="fab fa-whatsapp"></i> WhatsApp
-            </button>
-            <button class="action-btn" style="background:var(--success); font-size:14px; padding:14px;" onclick="window.print()">
-              <i class="fas fa-print"></i> Print A4
-            </button>
-            <button class="action-btn" style="background:var(--primary); grid-column:span 2; padding:14px;" onclick="shareInvoicePDF()">
-              <i class="fas fa-share-nodes"></i> Share PDF
-            </button>
-          </div>
-        </div>
-      </div>
+        <div id="report-onscreen-preview-card" class="card" style="display:none;">
+          <h4 style="text-transform:uppercase; font-weight:800; margin-bottom:15px; font-size:14px !important; color:var(--muted);"><i class="fas fa-eye"></i> Preview</h4>
+          <div id="report-preview-viewport" style="max-height:350px; overflow-y:auto; background:#fff; border:1px solid var(--border); border-radius:12px; padding:15px; font-size:14px !important; font-weight:normal !important;"></div>
+          
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:15px;">
+            <button class="action-btn" style="background:#25D366; font-size:14px; padding:14px;" onclick="sendWhatsAppSummary()">
+              <i class="fab fa-whatsapp"></i> WhatsApp
+            </button>
+            <button class="action-btn" style="background:var(--success); font-size:14px; padding:14px;" onclick="window.print()">
+              <i class="fas fa-print"></i> Print A4
+            </button>
+            <button class="action-btn" style="background:var(--primary); grid-column:span 2; padding:14px;" onclick="shareInvoicePDF()">
+              <i class="fas fa-share-nodes"></i> Share PDF
+            </button>
+          </div>
+        </div>
+      </div>
 
-    </main>
-    
-    <nav class="bottom-nav">
-      <div class="nav-item active" id="nav-dashboard" onclick="showPage('dashboard')">
-        <i class="fas fa-home"></i><span>Home</span>
-      </div>
-      <div class="nav-item" id="nav-customers" onclick="showPage('customers')">
-        <i class="fas fa-users"></i><span>Clients</span>
-      </div>
-      <div class="nav-item" id="nav-orders" onclick="showPage('orders')">
-        <i class="fas fa-tape"></i><span>Jobs</span>
-      </div>
-      <div class="nav-item" id="nav-reports" onclick="showPage('reports')">
-        <i class="fas fa-file-invoice"></i><span>Invoices</span>
-      </div>
-    </nav>
-  </div>
+    </main>
+    
+    <nav class="bottom-nav">
+      <div class="nav-item active" id="nav-dashboard" onclick="showPage('dashboard')">
+        <i class="fas fa-home"></i><span>Home</span>
+      </div>
+      <div class="nav-item" id="nav-customers" onclick="showPage('customers')">
+        <i class="fas fa-users"></i><span>Clients</span>
+      </div>
+      <div class="nav-item" id="nav-orders" onclick="showPage('orders')">
+        <i class="fas fa-tape"></i><span>Jobs</span>
+      </div>
+      <div class="nav-item" id="nav-reports" onclick="showPage('reports')">
+        <i class="fas fa-file-invoice"></i><span>Invoices</span>
+      </div>
+    </nav>
+  </div>
 
-  <div id="report-print-container"></div>
+  <div id="report-print-container"></div>
 
-  <div class="modal-overlay" id="modalOverlay">
-    <div class="modal">
-      <h3 id="modalTitle" style="font-size:22px; font-weight:800; margin-bottom:15px;">Form</h3>
-      <div id="modalBody"></div>
-      <div style="display:flex; gap:10px; margin-top:20px;">
-        <button class="action-btn" style="background:#E5E5EA; color:#1C1C1E;" onclick="closeModal()">Cancel</button>
-        <button class="action-btn" style="background:var(--primary);" id="modalSubmit">Save</button>
-      </div>
-    </div>
-  </div>
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <h3 id="modalTitle" style="font-size:22px; font-weight:800; margin-bottom:15px;">Form</h3>
+      <div id="modalBody"></div>
+      <div style="display:flex; gap:10px; margin-top:20px;">
+        <button class="action-btn" style="background:#E5E5EA; color:#1C1C1E;" onclick="closeModal()">Cancel</button>
+        <button class="action-btn" style="background:var(--primary);" id="modalSubmit">Save</button>
+      </div>
+    </div>
+  </div>
 
-  <script>
-    // ==========================================
-    // BACKEND PIPELINE & OFFLINE SYNC
-    // ==========================================
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbyUsMas8XlX3UxLd7vwWRBVrfTxVbX2muZ7f244J53gS9x4JJfpfTfwaB5pScfj0FVY8g/exec"; 
-    const QUEUE_KEY = "stitchtrack_sync_queue";
-                      
-    async function callApi(action, data = {}) {
-      try {
-        const response = await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: action, data: data }) });
-        const result = await response.json();
-        
-        if (action.startsWith('get')) {
-          localStorage.setItem('stitchtrack_backup_' + action, JSON.stringify(result));
-        }
-        return result;
-      } catch (err) { 
-        console.warn("Network Error / Offline. Queuing request:", err);
-        
-        if (action.startsWith('get')) {
-          const backup = localStorage.getItem('stitchtrack_backup_' + action);
-          return backup ? JSON.parse(backup) : (action === 'getStats' ? {activeClients: '--', pendingOrders: '--', fittingReview: '--'} : []); 
-        }
+  <script>
+    // ==========================================
+    // BACKEND PIPELINE & OFFLINE SYNC
+    // ==========================================
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbyUsMas8XlX3UxLd7vwWRBVrfTxVbX2muZ7f244J53gS9x4JJfpfTfwaB5pScfj0FVY8g/exec"; 
+    const QUEUE_KEY = "stitchtrack_sync_queue";
+                      
+    async function callApi(action, data = {}) {
+      try {
+        const response = await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: action, data: data }) });
+        const result = await response.json();
+        
+        if (action.startsWith('get')) {
+          localStorage.setItem('stitchtrack_backup_' + action, JSON.stringify(result));
+        }
+        return result;
+      } catch (err) { 
+        console.warn("Network Error / Offline. Queuing request:", err);
+        
+        if (action.startsWith('get')) {
+          const backup = localStorage.getItem('stitchtrack_backup_' + action);
+          return backup ? JSON.parse(backup) : (action === 'getStats' ? {activeClients: '--', pendingOrders: '--', fittingReview: '--'} : []); 
+        }
 
-        if (action === 'uploadImage') {
-          alert("Cannot upload photos while offline. Please try again when connected.");
-          return null; 
-        }
+        if (action === 'uploadImage') {
+          alert("Cannot upload photos while offline. Please try again when connected.");
+          return null; 
+        }
 
-        const queue = JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]');
-        queue.push({ action, data, timestamp: Date.now() });
-        localStorage.setItem(QUEUE_KEY, JSON.stringify(queue));
-        
-        document.getElementById('sync-status').style.display = 'block';
-        alert("Connection lost. Your data was saved locally and will sync automatically when you regain signal.");
-        return { status: "queued" };
-      }
-    }
-    
-    window.addEventListener('online', async () => {
-      document.getElementById('sync-status').style.display = 'none';
-      const queue = JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]');
-      if (queue.length === 0) return;
-      
-      alert("Connection restored! Syncing offline records...");
-      for (const item of queue) {
-        await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: item.action, data: item.data }) });
-      }
-      localStorage.removeItem(QUEUE_KEY);
-      
-      updateDashboardCounters();
-      if (document.getElementById('view-customers').classList.contains('active-view')) refreshData('customers');
-      if (document.getElementById('view-orders').classList.contains('active-view')) refreshData('orders');
-    });
+        const queue = JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]');
+        queue.push({ action, data, timestamp: Date.now() });
+        localStorage.setItem(QUEUE_KEY, JSON.stringify(queue));
+        
+        document.getElementById('sync-status').style.display = 'block';
+        alert("Connection lost. Your data was saved locally and will sync automatically when you regain signal.");
+        return { status: "queued" };
+      }
+    }
+    
+    window.addEventListener('online', async () => {
+      document.getElementById('sync-status').style.display = 'none';
+      const queue = JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]');
+      if (queue.length === 0) return;
+      
+      alert("Connection restored! Syncing offline records...");
+      for (const item of queue) {
+        await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: item.action, data: item.data }) });
+      }
+      localStorage.removeItem(QUEUE_KEY);
+      
+      updateDashboardCounters();
+      if (document.getElementById('view-customers').classList.contains('active-view')) refreshData('customers');
+      if (document.getElementById('view-orders').classList.contains('active-view')) refreshData('orders');
+    });
 
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js').catch(err => console.error('SW Failed:', err));
-      });
-    }
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(err => console.error('SW Failed:', err));
+      });
+    }
 
-    // ==========================================
-    // UI NAVIGATION & DASHBOARD
-    // ==========================================
-    let cache = { customers: [], orders: [] };
+    // ==========================================
+    // UI NAVIGATION & DASHBOARD
+    // ==========================================
+    let cache = { customers: [], orders: [] };
 
-    function updateDashboardCounters() {
-      callApi('getStats', {}).then(stats => {
-        if (!stats || stats.status === "queued") return;
-        document.getElementById('s-clients').innerText = stats.activeClients || '--';
-        document.getElementById('s-pending').innerText = stats.pendingOrders || '--';
-        document.getElementById('s-review').innerText = stats.fittingReview || '--';
-      }).catch(err => console.error("Telemetry failure:", err));
-    }
+    function updateDashboardCounters() {
+      callApi('getStats', {}).then(stats => {
+        if (!stats || stats.status === "queued") return;
+        document.getElementById('s-clients').innerText = stats.activeClients || '--';
+        document.getElementById('s-pending').innerText = stats.pendingOrders || '--';
+        document.getElementById('s-review').innerText = stats.fittingReview || '--';
+      }).catch(err => console.error("Telemetry failure:", err));
+    }
 
-    function showPage(p) {
-      // Swap views
-      document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active-view'));
-      const target = document.getElementById('view-' + p);
-      if (target) { target.classList.add('active-view'); window.scrollTo(0,0); }
-      
-      // Update Bottom Nav Active State
-      document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-      const activeNav = document.getElementById('nav-' + p);
-      if (activeNav) activeNav.classList.add('active');
+    function showPage(p) {
+      // Swap views
+      document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active-view'));
+      const target = document.getElementById('view-' + p);
+      if (target) { target.classList.add('active-view'); window.scrollTo(0,0); }
+      
+      // Update Bottom Nav Active State
+      document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+      const activeNav = document.getElementById('nav-' + p);
+      if (activeNav) activeNav.classList.add('active');
 
-      // Trigger logic
-      if (p === 'dashboard') updateDashboardCounters(); 
-      else if (p === 'reports') initInvoiceConsoleEngine();
-      else refreshData(p);
-    }
+      // Trigger logic
+      if (p === 'dashboard') updateDashboardCounters(); 
+      else if (p === 'reports') initInvoiceConsoleEngine();
+      else refreshData(p);
+    }
 
-    // ==========================================
-    // DATA RENDERING (LISTS)
-    // ==========================================
-    function refreshData(p) {
-      const idMap = { 'customers': 'customer-master-list', 'orders': 'order-master-list' };
-      const listEl = document.getElementById(idMap[p]); if (!listEl) return;
-      
-      let apiCmd = p === 'customers' ? 'getCustomers' : 'getOrders';
-      listEl.innerHTML = `<p style="text-align:center; padding:20px; font-weight:800; color:var(--muted);"><i class="fas fa-spinner fa-spin"></i> Reading atelier registers...</p>`;
-      
-      callApi(apiCmd, {}).then(data => {
-        let displayData = data || [];
-        if (p === 'customers') {
-          cache.customers = displayData;
-          listEl.innerHTML = displayData.map(c => `
-            <div class="card" onclick="openRecordRow('customer', '${c.customerId}')" style="cursor:pointer; display:flex; align-items:center; gap:15px;">
-              ${c.email ? `<img src="${getDirectImageUrl(c.email)}" class="gallery-img" style="width:60px; height:60px; border-radius:50%; border:2px solid var(--border);">` : `<div style="width:60px; height:60px; border-radius:50%; background:var(--card-light); border:2px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:22px; color:var(--muted);"><i class="fas fa-user"></i></div>`}
-              <div style="flex:1;">
-                <strong style="font-size:18px; color:var(--text);">${c.fullName}</strong><br>
-                <span style="font-weight:600; color:var(--muted); font-size:13px;"><i class="fas fa-phone" style="font-size:11px;"></i> ${c.phone}</span>
-              </div>
-            </div>`).join('');
-        } else {
-          cache.orders = displayData;
-          const filter = document.getElementById('order-status-filter').value;
-          if (filter !== "ALL") displayData = displayData.filter(o => o.status === filter);
-          
-          if(displayData.length === 0) { listEl.innerHTML = `<p style="font-style:italic; color:var(--muted); text-align:center; padding:20px;">No clothing orders matching this status.</p>`; return;}
-          
-          listEl.innerHTML = displayData.map(o => {
-            const clientObj = cache.customers.find(c => c.customerId === o.customerId) || { fullName: "Unlinked Profile" };
-            const balance = Number(o.totalCost) - Number(o.amountPaid);
-            return `
-              <div class="card" onclick="openRecordRow('order', '${o.orderId}')" style="cursor:pointer; position:relative; overflow:hidden;">
-                <div style="position:absolute; left:0; top:0; bottom:0; width:6px; background:${balance > 0 ? 'var(--danger)' : 'var(--success)'};"></div>
-                <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:6px; gap:5px;">
-                  <div style="flex:1;"><strong style="font-size:16px;">${clientObj.fullName}</strong><br><small style="font-family:monospace; font-weight:700; color:var(--muted);">#${o.orderId}</small></div>
-                  <span style="font-size:10px; font-weight:800; background:var(--primary-light); color:var(--primary); padding:4px 8px; border-radius:8px; text-transform:uppercase; text-align:center;">${o.status}</span>
-                </div>
-                <div style="font-size:14px; font-weight:600; color:var(--text); margin-bottom:10px;">${o.designDescription}</div>
-                <div style="display:grid; grid-template-columns:1fr 1fr; font-size:13px; font-weight:700; background:var(--card-light); padding:10px; border-radius:10px;">
-                  <div>Cost: ₦${Number(o.totalCost).toLocaleString()}</div>
-                  <div style="text-align:right; color:${balance > 0 ? 'var(--danger)':'var(--success)'};">Bal: ₦${balance.toLocaleString()}</div>
-                </div>
-              </div>`;
-          }).join('');
-        }
-      });
-    }
+    // ==========================================
+    // DATA RENDERING (LISTS)
+    // ==========================================
+    function refreshData(p) {
+      const idMap = { 'customers': 'customer-master-list', 'orders': 'order-master-list' };
+      const listEl = document.getElementById(idMap[p]); if (!listEl) return;
+      
+      let apiCmd = p === 'customers' ? 'getCustomers' : 'getOrders';
+      listEl.innerHTML = `<p style="text-align:center; padding:20px; font-weight:800; color:var(--muted);"><i class="fas fa-spinner fa-spin"></i> Reading atelier registers...</p>`;
+      
+      callApi(apiCmd, {}).then(data => {
+        let displayData = data || [];
+        if (p === 'customers') {
+          cache.customers = displayData;
+          listEl.innerHTML = displayData.map(c => `
+            <div class="card" onclick="openRecordRow('customer', '${c.customerId}')" style="cursor:pointer; display:flex; align-items:center; gap:15px;">
+              ${c.email ? `<img src="${getDirectImageUrl(c.email)}" class="gallery-img" style="width:60px; height:60px; border-radius:50%; border:2px solid var(--border);">` : `<div style="width:60px; height:60px; border-radius:50%; background:var(--card-light); border:2px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:22px; color:var(--muted);"><i class="fas fa-user"></i></div>`}
+              <div style="flex:1;">
+                <strong style="font-size:18px; color:var(--text);">${c.fullName}</strong><br>
+                <span style="font-weight:600; color:var(--muted); font-size:13px;"><i class="fas fa-phone" style="font-size:11px;"></i> ${c.phone}</span>
+              </div>
+            </div>`).join('');
+        } else {
+          cache.orders = displayData;
+          const filter = document.getElementById('order-status-filter').value;
+          if (filter !== "ALL") displayData = displayData.filter(o => o.status === filter);
+          
+          if(displayData.length === 0) { listEl.innerHTML = `<p style="font-style:italic; color:var(--muted); text-align:center; padding:20px;">No clothing orders matching this status.</p>`; return;}
+          
+          listEl.innerHTML = displayData.map(o => {
+            const clientObj = cache.customers.find(c => c.customerId === o.customerId) || { fullName: "Unlinked Profile" };
+            const balance = Number(o.totalCost) - Number(o.amountPaid);
+            return `
+              <div class="card" onclick="openRecordRow('order', '${o.orderId}')" style="cursor:pointer; position:relative; overflow:hidden;">
+                <div style="position:absolute; left:0; top:0; bottom:0; width:6px; background:${balance > 0 ? 'var(--danger)' : 'var(--success)'};"></div>
+                <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:6px; gap:5px;">
+                  <div style="flex:1;"><strong style="font-size:16px;">${clientObj.fullName}</strong><br><small style="font-family:monospace; font-weight:700; color:var(--muted);">#${o.orderId}</small></div>
+                  <span style="font-size:10px; font-weight:800; background:var(--primary-light); color:var(--primary); padding:4px 8px; border-radius:8px; text-transform:uppercase; text-align:center;">${o.status}</span>
+                </div>
+                <div style="font-size:14px; font-weight:600; color:var(--text); margin-bottom:10px;">${o.designDescription}</div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; font-size:13px; font-weight:700; background:var(--card-light); padding:10px; border-radius:10px;">
+                  <div>Cost: ₦${Number(o.totalCost).toLocaleString()}</div>
+                  <div style="text-align:right; color:${balance > 0 ? 'var(--danger)':'var(--success)'};">Bal: ₦${balance.toLocaleString()}</div>
+                </div>
+              </div>`;
+          }).join('');
+        }
+      });
+    }
 
-    function openRecordRow(type, id) {
-      let match = null;
-      if (type === 'customer') match = cache.customers.find(c => String(c.customerId) === String(id));
-      if (type === 'order') match = cache.orders.find(o => String(o.orderId) === String(id));
-      if (match) {
-        openModal(type, match);
-        if(type === 'customer') {
-          setTimeout(() => {
-            renderDynamicGarmentSketch(
-              parseMeasurementInches(match.shoulder), parseMeasurementInches(match.chestBust), 
-              parseMeasurementInches(match.underbust), parseMeasurementInches(match.waist), 
-              parseMeasurementInches(match.hips), parseMeasurementInches(match.shirtLength), 
-              parseMeasurementInches(match.trouserLength)
-            );
-          }, 200);
-        }
-      }
-    }
+    function openRecordRow(type, id) {
+      let match = null;
+      if (type === 'customer') match = cache.customers.find(c => String(c.customerId) === String(id));
+      if (type === 'order') match = cache.orders.find(o => String(o.orderId) === String(id));
+      if (match) {
+        openModal(type, match);
+        if(type === 'customer') {
+          setTimeout(() => {
+            renderDynamicGarmentSketch(
+              parseMeasurementInches(match.shoulder), parseMeasurementInches(match.chestBust), 
+              parseMeasurementInches(match.underbust), parseMeasurementInches(match.waist), 
+              parseMeasurementInches(match.hips), parseMeasurementInches(match.shirtLength), 
+              parseMeasurementInches(match.trouserLength)
+            );
+          }, 200);
+        }
+      }
+    }
 
-    // ==========================================
-    // FORMS & DATA ENTRY
-    // ==========================================
-    function openModal(type, editData = null) {
-      const body = document.getElementById('modalBody'); const submit = document.getElementById('modalSubmit');
-      const title = document.getElementById('modalTitle'); const overlay = document.getElementById('modalOverlay');
-      const isEdit = !!editData; overlay.style.display = 'flex'; body.innerHTML = ''; submit.disabled = false;
+    // ==========================================
+    // FORMS & DATA ENTRY
+    // ==========================================
+    function openModal(type, editData = null) {
+      const body = document.getElementById('modalBody'); const submit = document.getElementById('modalSubmit');
+      const title = document.getElementById('modalTitle'); const overlay = document.getElementById('modalOverlay');
+      const isEdit = !!editData; overlay.style.display = 'flex'; body.innerHTML = ''; submit.disabled = false;
 
-      if (type === 'customer') {
-        const uniqueId = isEdit ? editData.customerId : "TLR-" + Math.random().toString(36).substr(2, 5).toUpperCase();
-        title.innerText = isEdit ? "Update Client" : "Register Client";
-        let clientProfilePhoto = isEdit ? editData.email : ""; 
+      if (type === 'customer') {
+        const uniqueId = isEdit ? editData.customerId : "TLR-" + Math.random().toString(36).substr(2, 5).toUpperCase();
+        title.innerText = isEdit ? "Update Client" : "Register Client";
+        let clientProfilePhoto = isEdit ? editData.email : ""; 
 
-        body.innerHTML = `
-          <div style="position: relative; width: 90px; height: 90px; margin: 0 auto 20px auto;">
-            <img id="p_avatar_view" src="${clientProfilePhoto ? getDirectImageUrl(clientProfilePhoto) : 'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 width=%2280%22 height=%2280%22><circle cx=%2212%22 cy=%2212%22 r=%2212%22 fill=%22%23e9ecef%22/></svg>'}" class="profile-avatar">
-            <label style="position: absolute; bottom: 0; right: 0; background: var(--primary); color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; cursor: pointer; margin:0;"><i class="fas fa-camera"></i><input type="file" id="cam_avatar" accept="image/*" style="display:none"></label>
-          </div>
-          <div id="p_avatar_indicator" style="text-align:center; font-size:11px; font-weight:700; color:var(--success); margin-bottom:10px;"></div>
+        body.innerHTML = `
+          <div style="position: relative; width: 90px; height: 90px; margin: 0 auto 20px auto;">
+            <img id="p_avatar_view" src="${clientProfilePhoto ? getDirectImageUrl(clientProfilePhoto) : 'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 width=%2280%22 height=%2280%22><circle cx=%2212%22 cy=%2212%22 r=%2212%22 fill=%22%23e9ecef%22/></svg>'}" class="profile-avatar">
+            <label style="position: absolute; bottom: 0; right: 0; background: var(--primary); color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; cursor: pointer; margin:0;"><i class="fas fa-camera"></i><input type="file" id="cam_avatar" accept="image/*" style="display:none"></label>
+          </div>
+          <div id="p_avatar_indicator" style="text-align:center; font-size:11px; font-weight:700; color:var(--success); margin-bottom:10px;"></div>
 
-          <label>Full Name</label><input id="c_name" value="${isEdit?editData.fullName:''}">
-          <label>Mobile Number</label><input id="c_phone" type="tel" value="${isEdit?editData.phone:''}">
-          
-          <div style="margin-top:20px; margin-bottom:10px; font-weight:800; font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">I. Upper Body</div>
-          <div class="measurement-grid">
-            <div><label>Bust</label><input id="m_ch" type="text" value="${isEdit?editData.chestBust||'':''}"></div>
-            <div><label>Under-Bust</label><input id="m_underbust" type="text" value="${isEdit?editData.underbust || '':''}"></div>
-            <div><label>Across Chest</label><input id="m_ach" type="text" value="${isEdit?editData.acrossChest||'':''}"></div>
-            <div><label>Across Back</label><input id="m_abk" type="text" value="${isEdit?editData.acrossBack||'':''}"></div>
-            <div><label>Shoulder</label><input id="m_sh" type="text" value="${isEdit?editData.shoulder||'':''}"></div>
-            <div><label>Neck</label><input id="m_neck" type="text" value="${isEdit?editData.neck||'':''}"></div>
-            <div><label>Bicep</label><input id="m_bic" type="text" value="${isEdit?editData.bicep||'':''}"></div>
-          </div>
+          <label>Full Name</label><input id="c_name" value="${isEdit?editData.fullName:''}">
+          <label>Mobile Number</label><input id="c_phone" type="tel" value="${isEdit?editData.phone:''}">
+          
+          <div style="margin-top:20px; margin-bottom:10px; font-weight:800; font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">I. Upper Body</div>
+          <div class="measurement-grid">
+            <div><label>Bust</label><input id="m_ch" type="text" value="${isEdit?editData.chestBust||'':''}"></div>
+            <div><label>Under-Bust</label><input id="m_underbust" type="text" value="${isEdit?editData.underbust || '':''}"></div>
+            <div><label>Across Chest</label><input id="m_ach" type="text" value="${isEdit?editData.acrossChest||'':''}"></div>
+            <div><label>Across Back</label><input id="m_abk" type="text" value="${isEdit?editData.acrossBack||'':''}"></div>
+            <div><label>Shoulder</label><input id="m_sh" type="text" value="${isEdit?editData.shoulder||'':''}"></div>
+            <div><label>Neck</label><input id="m_neck" type="text" value="${isEdit?editData.neck||'':''}"></div>
+            <div><label>Bicep</label><input id="m_bic" type="text" value="${isEdit?editData.bicep||'':''}"></div>
+          </div>
 
-          <div style="margin-top:20px; margin-bottom:10px; font-weight:800; font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">II. Lower Body</div>
-          <div class="measurement-grid">
-            <div><label>Waist</label><input id="m_wst" type="text" value="${isEdit?editData.waist||'':''}"></div>
-            <div><label>Low Waist</label><input id="m_lwst" type="text" value="${isEdit?editData.lowWaist||'':''}"></div>
-            <div><label>Hips</label><input id="m_hip" type="text" value="${isEdit?editData.hips||'':''}"></div>
-            <div><label>Thigh</label><input id="m_thg" type="text" value="${isEdit?editData.thigh||'':''}"></div>
-            <div><label>Crotch</label><input id="m_cr" type="text" value="${isEdit?editData.crotch||'':''}"></div>
-            <div><label>Ankle</label><input id="m_ank" type="text" value="${isEdit?editData.ankle||'':''}"></div>
-          </div>
+          <div style="margin-top:20px; margin-bottom:10px; font-weight:800; font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">II. Lower Body</div>
+          <div class="measurement-grid">
+            <div><label>Waist</label><input id="m_wst" type="text" value="${isEdit?editData.waist||'':''}"></div>
+            <div><label>Low Waist</label><input id="m_lwst" type="text" value="${isEdit?editData.lowWaist||'':''}"></div>
+            <div><label>Hips</label><input id="m_hip" type="text" value="${isEdit?editData.hips||'':''}"></div>
+            <div><label>Thigh</label><input id="m_thg" type="text" value="${isEdit?editData.thigh||'':''}"></div>
+            <div><label>Crotch</label><input id="m_cr" type="text" value="${isEdit?editData.crotch||'':''}"></div>
+            <div><label>Ankle</label><input id="m_ank" type="text" value="${isEdit?editData.ankle||'':''}"></div>
+          </div>
 
-          <div style="margin-top:20px; margin-bottom:10px; font-weight:800; font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">III. Lengths</div>
-          <div class="measurement-grid">
-            <div><label>Top Length</label><input id="m_top" type="text" value="${isEdit?editData.shirtLength||'':''}"></div>
-            <div><label>Sleeve Length</label><input id="m_slv" type="text" value="${isEdit?editData.sleeveLength||'':''}"></div>
-            <div><label>Trouser Length</label><input id="m_trs" type="text" value="${isEdit?editData.trouserLength||'':''}"></div>
-            <div><label>Skirt Length</label><input id="m_sk_len" type="text" value="${isEdit?editData.skirtLength||'':''}"></div>
-            <div><label>Gown Length</label><input id="m_gown_len" type="text" value="${isEdit?editData.gownLength||'':''}"></div>
-          </div>
+          <div style="margin-top:20px; margin-bottom:10px; font-weight:800; font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">III. Lengths</div>
+          <div class="measurement-grid">
+            <div><label>Top Length</label><input id="m_top" type="text" value="${isEdit?editData.shirtLength||'':''}"></div>
+            <div><label>Sleeve Length</label><input id="m_slv" type="text" value="${isEdit?editData.sleeveLength||'':''}"></div>
+            <div><label>Trouser Length</label><input id="m_trs" type="text" value="${isEdit?editData.trouserLength||'':''}"></div>
+            <div><label>Skirt Length</label><input id="m_sk_len" type="text" value="${isEdit?editData.skirtLength||'':''}"></div>
+            <div><label>Gown Length</label><input id="m_gown_len" type="text" value="${isEdit?editData.gownLength||'':''}"></div>
+          </div>
 
-          <label>Special Body Notes</label><textarea id="c_notes" rows="2">${isEdit?editData.notes||'':''}</textarea>
-          
-          <div class="card" id="canvas-sketch-frame" style="margin-top: 15px; text-align: center; display:none; background:var(--card-light); border:none; box-shadow:none;">
-            <span style="font-size:11px; font-weight:800; color:var(--primary); display:block; margin-bottom:10px; text-transform:uppercase; letter-spacing:1px;">Proportion Blueprint</span>
-            <canvas id="studioSketchCanvas" width="300" height="480" style="background:#fff; border-radius:12px; max-width:100%; border:1px solid var(--border);"></canvas>
-          </div>
-        `;
+          <label>Special Body Notes</label><textarea id="c_notes" rows="2">${isEdit?editData.notes||'':''}</textarea>
+          
+          <div class="card" id="canvas-sketch-frame" style="margin-top: 15px; text-align: center; display:none; background:var(--card-light); border:none; box-shadow:none;">
+            <span style="font-size:11px; font-weight:800; color:var(--primary); display:block; margin-bottom:10px; text-transform:uppercase; letter-spacing:1px;">Proportion Blueprint</span>
+            <canvas id="studioSketchCanvas" width="300" height="480" style="background:#fff; border-radius:12px; max-width:100%; border:1px solid var(--border);"></canvas>
+          </div>
+        `;
 
-        document.getElementById('cam_avatar').onchange = (e) => {
-          const file = e.target.files[0]; if(!file) return;
-          const r = new FileReader(); r.onload = async (evt) => {
-            const comp = await compressImageToTargetLimit(evt.target.result);
-            document.getElementById('p_avatar_indicator').innerText = "UPLOADING...";
-            callApi('uploadImage', { base64: comp, name: "avatar_" + uniqueId + ".jpg" }).then(res => {
-              if(res && res.url) {
-                clientProfilePhoto = res.url;
-                document.getElementById('p_avatar_view').src = getDirectImageUrl(res.url);
-                document.getElementById('p_avatar_indicator').innerText = "✅ UPLOADED";
-              }
-            });
-          }; r.readAsDataURL(file);
-        };
+        document.getElementById('cam_avatar').onchange = (e) => {
+          const file = e.target.files[0]; if(!file) return;
+          const r = new FileReader(); r.onload = async (evt) => {
+            const comp = await compressImageToTargetLimit(evt.target.result);
+            document.getElementById('p_avatar_indicator').innerText = "UPLOADING...";
+            callApi('uploadImage', { base64: comp, name: "avatar_" + uniqueId + ".jpg" }).then(res => {
+              if(res && res.url) {
+                clientProfilePhoto = res.url;
+                document.getElementById('p_avatar_view').src = getDirectImageUrl(res.url);
+                document.getElementById('p_avatar_indicator').innerText = "✅ UPLOADED";
+              }
+            });
+          }; r.readAsDataURL(file);
+        };
 
-        if (isEdit) {
-          setTimeout(() => renderDynamicGarmentSketch(
-            parseMeasurementInches(editData.shoulder), parseMeasurementInches(editData.chestBust), 
-            parseMeasurementInches(editData.underbust), parseMeasurementInches(editData.waist), 
-            parseMeasurementInches(editData.hips), parseMeasurementInches(editData.shirtLength), 
-            parseMeasurementInches(editData.trouserLength)
-          ), 150);
-        }
+        if (isEdit) {
+          setTimeout(() => renderDynamicGarmentSketch(
+            parseMeasurementInches(editData.shoulder), parseMeasurementInches(editData.chestBust), 
+            parseMeasurementInches(editData.underbust), parseMeasurementInches(editData.waist), 
+            parseMeasurementInches(editData.hips), parseMeasurementInches(editData.shirtLength), 
+            parseMeasurementInches(editData.trouserLength)
+          ), 150);
+        }
 
-        submit.onclick = () => {
-          submit.disabled = true;
-          const payload = { 
-            customerId: uniqueId, 
-            fullName: document.getElementById('c_name').value, 
-            phone: document.getElementById('c_phone').value, 
-            email: clientProfilePhoto, 
-            
-            // Upper Body
-            neck: document.getElementById('m_neck').value, 
-            shoulder: document.getElementById('m_sh').value, 
-            chestBust: document.getElementById('m_ch').value, 
-            underbust: document.getElementById('m_underbust').value,
-            acrossChest: document.getElementById('m_ach').value,
-            acrossBack: document.getElementById('m_abk').value,
-            bicep: document.getElementById('m_bic').value,
-            
-            // Lower Body
-            waist: document.getElementById('m_wst').value, 
-            lowWaist: document.getElementById('m_lwst').value,
-            hips: document.getElementById('m_hip').value, 
-            thigh: document.getElementById('m_thg').value, 
-            crotch: document.getElementById('m_cr').value,
-            ankle: document.getElementById('m_ank').value, 
-            
-            // Lengths
-            shirtLength: document.getElementById('m_top').value, 
-            gownLength: document.getElementById('m_gown_len').value, 
-            sleeveLength: document.getElementById('m_slv').value, 
-            skirtLength: document.getElementById('m_sk_len').value,
-            trouserLength: document.getElementById('m_trs').value, 
-            
-            notes: document.getElementById('c_notes').value 
-          };
-          callApi(isEdit?'updateCustomer':'saveCustomer', payload).then(() => { closeModal(); refreshData('customers'); });
-        };
-      }
-      else if (type === 'order') {
-        const nextNum = (cache.orders.length + 1).toString().padStart(4, '0');
-        const uniqueId = isEdit ? editData.orderId : nextNum;
-        title.innerText = isEdit ? `Modify Order #${uniqueId}` : `Create Order #${uniqueId}`;
-        
-        let designPhotosArray = isEdit && editData.designPhotos ? editData.designPhotos.split(',') : [];
-        let finishedPhotosArray = isEdit && editData.finishedPhotos ? editData.finishedPhotos.split(',') : [];
+        submit.onclick = () => {
+          submit.disabled = true;
+          const payload = { 
+            customerId: uniqueId, 
+            fullName: document.getElementById('c_name').value, 
+            phone: document.getElementById('c_phone').value, 
+            email: clientProfilePhoto, 
+            
+            // Upper Body
+            neck: document.getElementById('m_neck').value, 
+            shoulder: document.getElementById('m_sh').value, 
+            chestBust: document.getElementById('m_ch').value, 
+            underbust: document.getElementById('m_underbust').value,
+            acrossChest: document.getElementById('m_ach').value,
+            acrossBack: document.getElementById('m_abk').value,
+            bicep: document.getElementById('m_bic').value,
+            
+            // Lower Body
+            waist: document.getElementById('m_wst').value, 
+            lowWaist: document.getElementById('m_lwst').value,
+            hips: document.getElementById('m_hip').value, 
+            thigh: document.getElementById('m_thg').value, 
+            crotch: document.getElementById('m_cr').value,
+            ankle: document.getElementById('m_ank').value, 
+            
+            // Lengths
+            shirtLength: document.getElementById('m_top').value, 
+            gownLength: document.getElementById('m_gown_len').value, 
+            sleeveLength: document.getElementById('m_slv').value, 
+            skirtLength: document.getElementById('m_sk_len').value,
+            trouserLength: document.getElementById('m_trs').value, 
+            
+            notes: document.getElementById('c_notes').value 
+          };
+          callApi(isEdit?'updateCustomer':'saveCustomer', payload).then(() => { closeModal(); refreshData('customers'); });
+        };
+      }
+      else if (type === 'order') {
+        const nextNum = (cache.orders.length + 1).toString().padStart(4, '0');
+        const uniqueId = isEdit ? editData.orderId : nextNum;
+        title.innerText = isEdit ? `Modify Order #${uniqueId}` : `Create Order #${uniqueId}`;
+        
+        let designPhotosArray = isEdit && editData.designPhotos ? editData.designPhotos.split(',') : [];
+        let finishedPhotosArray = isEdit && editData.finishedPhotos ? editData.finishedPhotos.split(',') : [];
 
-        body.innerHTML = `
-          <label>Select Client</label><select id="o_cust" ${isEdit?'disabled':''}></select>
-          <label>Design Description</label><input id="o_desc" value="${isEdit?editData.designDescription:''}">
-          <label>Fabric Details</label><input id="o_fabric" value="${isEdit?editData.fabricNotes||'':''}">
-          
-          <label>Total Price (₦)</label><input id="o_cost" type="number" value="${isEdit?editData.totalCost:''}">
-          <label>Deposit Paid (₦)</label><input id="o_paid" type="number" value="${isEdit?editData.amountPaid:''}">
-          
-          <label>Target Delivery Date</label><input id="o_due" type="date" value="${isEdit?fromSheetDate(editData.dateDue):''}">
-          
-          <label>Production Status</label>
-          <select id="o_status">
-            <option value="Measurements Taken">Measurements Taken</option>
-            <option value="Cutting Phase">Cutting Phase</option>
-            <option value="Sewing Construction">Sewing Construction</option>
-            <option value="Fitting / Review">Fitting / Review</option>
-            <option value="Completed Ready">Completed Ready</option>
-            <option value="Delivered">Delivered & Handed Over</option>
-          </select>
-          
-          <label>Styling Remarks</label><textarea id="o_notes" rows="2">${isEdit?editData.notes||'':''}</textarea>
-          
-          <div class="photo-strip">
-            <div class="photo-box">
-              <span style="font-size:10px; font-weight:800; color:var(--primary); text-transform:uppercase; display:block; margin-bottom:8px;">Style Photos</span>
-              <label style="background:#FFF; border:1px solid var(--border); padding:8px; border-radius:10px; display:block; font-size:12px; cursor:pointer; margin:0;"><i class="fas fa-camera"></i> Upload<input type="file" id="cam_design" accept="image/*" multiple style="display:none"></label>
-              <div id="p_design_indicator" class="gallery-preview"></div>
-            </div>
-            <div class="photo-box">
-              <span style="font-size:10px; font-weight:800; color:var(--success); text-transform:uppercase; display:block; margin-bottom:8px;">Finished QC</span>
-              <label style="background:#FFF; border:1px solid var(--border); padding:8px; border-radius:10px; display:block; font-size:12px; cursor:pointer; margin:0;"><i class="fas fa-camera"></i> Upload<input type="file" id="cam_finished" accept="image/*" multiple style="display:none"></label>
-              <div id="p_finished_indicator" class="gallery-preview"></div>
-            </div>
-          </div>
-        `;
-        
-        const cSel = document.getElementById('o_cust');
-        const fillSelector = () => { (cache.customers || []).forEach(c => { const o=document.createElement('option'); o.value=c.customerId; o.innerText=c.fullName; if(isEdit&&c.customerId===editData.customerId) o.selected=true; cSel.appendChild(o); }); };
-        if(cache.customers.length === 0) { callApi('getCustomers', {}).then(res => { cache.customers = res || []; fillSelector(); }); } else { fillSelector(); }
-        
-        if(isEdit) {
-          document.getElementById('o_status').value = editData.status;
-          renderImageThumbnailsInline('p_design_indicator', designPhotosArray);
-          renderImageThumbnailsInline('p_finished_indicator', finishedPhotosArray);
-        }
+        body.innerHTML = `
+          <label>Select Client</label><select id="o_cust" ${isEdit?'disabled':''}></select>
+          <label>Design Description</label><input id="o_desc" value="${isEdit?editData.designDescription:''}">
+          <label>Fabric Details</label><input id="o_fabric" value="${isEdit?editData.fabricNotes||'':''}">
+          
+          <label>Total Price (₦)</label><input id="o_cost" type="number" value="${isEdit?editData.totalCost:''}">
+          <label>Deposit Paid (₦)</label><input id="o_paid" type="number" value="${isEdit?editData.amountPaid:''}">
+          
+          <label>Target Delivery Date</label><input id="o_due" type="date" value="${isEdit?fromSheetDate(editData.dateDue):''}">
+          
+          <label>Production Status</label>
+          <select id="o_status">
+            <option value="Measurements Taken">Measurements Taken</option>
+            <option value="Cutting Phase">Cutting Phase</option>
+            <option value="Sewing Construction">Sewing Construction</option>
+            <option value="Fitting / Review">Fitting / Review</option>
+            <option value="Completed Ready">Completed Ready</option>
+            <option value="Delivered">Delivered & Handed Over</option>
+          </select>
+          
+          <label>Styling Remarks</label><textarea id="o_notes" rows="2">${isEdit?editData.notes||'':''}</textarea>
+          
+          <div class="photo-strip">
+            <div class="photo-box">
+              <span style="font-size:10px; font-weight:800; color:var(--primary); text-transform:uppercase; display:block; margin-bottom:8px;">Style Photos</span>
+              <label style="background:#FFF; border:1px solid var(--border); padding:8px; border-radius:10px; display:block; font-size:12px; cursor:pointer; margin:0;"><i class="fas fa-camera"></i> Upload<input type="file" id="cam_design" accept="image/*" multiple style="display:none"></label>
+              <div id="p_design_indicator" class="gallery-preview"></div>
+            </div>
+            <div class="photo-box">
+              <span style="font-size:10px; font-weight:800; color:var(--success); text-transform:uppercase; display:block; margin-bottom:8px;">Finished QC</span>
+              <label style="background:#FFF; border:1px solid var(--border); padding:8px; border-radius:10px; display:block; font-size:12px; cursor:pointer; margin:0;"><i class="fas fa-camera"></i> Upload<input type="file" id="cam_finished" accept="image/*" multiple style="display:none"></label>
+              <div id="p_finished_indicator" class="gallery-preview"></div>
+            </div>
+          </div>
+        `;
+        
+        const cSel = document.getElementById('o_cust');
+        const fillSelector = () => { (cache.customers || []).forEach(c => { const o=document.createElement('option'); o.value=c.customerId; o.innerText=c.fullName; if(isEdit&&c.customerId===editData.customerId) o.selected=true; cSel.appendChild(o); }); };
+        if(cache.customers.length === 0) { callApi('getCustomers', {}).then(res => { cache.customers = res || []; fillSelector(); }); } else { fillSelector(); }
+        
+        if(isEdit) {
+          document.getElementById('o_status').value = editData.status;
+          renderImageThumbnailsInline('p_design_indicator', designPhotosArray);
+          renderImageThumbnailsInline('p_finished_indicator', finishedPhotosArray);
+        }
 
-        document.getElementById('cam_design').onchange = (e) => handleBatchImageUpload(e.target.files, uniqueId, "design", (url) => { designPhotosArray.push(url); renderImageThumbnailsInline('p_design_indicator', designPhotosArray); });
-        document.getElementById('cam_finished').onchange = (e) => handleBatchImageUpload(e.target.files, uniqueId, "finished", (url) => { finishedPhotosArray.push(url); renderImageThumbnailsInline('p_finished_indicator', finishedPhotosArray); });
+        document.getElementById('cam_design').onchange = (e) => handleBatchImageUpload(e.target.files, uniqueId, "design", (url) => { designPhotosArray.push(url); renderImageThumbnailsInline('p_design_indicator', designPhotosArray); });
+        document.getElementById('cam_finished').onchange = (e) => handleBatchImageUpload(e.target.files, uniqueId, "finished", (url) => { finishedPhotosArray.push(url); renderImageThumbnailsInline('p_finished_indicator', finishedPhotosArray); });
 
-        submit.onclick = () => {
-          const cost = parseFloat(document.getElementById('o_cost').value);
-          const paid = parseFloat(document.getElementById('o_paid').value);
-          if (isNaN(cost) || isNaN(paid)) { alert("Please enter valid numbers for Financials."); return; }
+        submit.onclick = () => {
+          const cost = parseFloat(document.getElementById('o_cost').value);
+          const paid = parseFloat(document.getElementById('o_paid').value);
+          if (isNaN(cost) || isNaN(paid)) { alert("Please enter valid numbers for Financials."); return; }
 
-          submit.disabled = true;
-          const payload = { 
-            orderId: uniqueId, customerId: isEdit?editData.customerId:cSel.value, 
-            designDescription: document.getElementById('o_desc').value, fabricNotes: document.getElementById('o_fabric').value, 
-            totalCost: cost, amountPaid: paid, dateDue: toSheetDate(document.getElementById('o_due').value), 
-            status: document.getElementById('o_status').value, notes: document.getElementById('o_notes').value, 
-            designPhotos: designPhotosArray.join(','), finishedPhotos: finishedPhotosArray.join(',') 
-          };
-          callApi(isEdit?'updateOrder':'saveOrder', payload).then(() => { closeModal(); refreshData('orders'); });
-        };
-      }
-    }
+          submit.disabled = true;
+          const payload = { 
+            orderId: uniqueId, customerId: isEdit?editData.customerId:cSel.value, 
+            designDescription: document.getElementById('o_desc').value, fabricNotes: document.getElementById('o_fabric').value, 
+            totalCost: cost, amountPaid: paid, dateDue: toSheetDate(document.getElementById('o_due').value), 
+            status: document.getElementById('o_status').value, notes: document.getElementById('o_notes').value, 
+            designPhotos: designPhotosArray.join(','), finishedPhotos: finishedPhotosArray.join(',') 
+          };
+          callApi(isEdit?'updateOrder':'saveOrder', payload).then(() => { closeModal(); refreshData('orders'); });
+        };
+      }
+    }
 
-    // ==========================================
-    // UTILS & HELPERS
-    // ==========================================
-    function parseMeasurementInches(v) { return parseFloat(v) || 0; }
-    function closeModal() { document.getElementById('modalOverlay').style.display = 'none'; updateDashboardCounters(); }
-    
-    // ISO Date Conversions for Robust Validation
-    function toSheetDate(dStr) { 
-      if (!dStr) return ""; 
-      return new Date(dStr).toLocaleDateString('en-GB'); 
-    }
-    function fromSheetDate(dStr) { 
-      if (!dStr || !dStr.includes('/')) return ""; 
-      const [d, m, y] = dStr.split('/'); return `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`; 
-    }
-    
-    function getDirectImageUrl(url) { 
-      if (!url || !url.includes('drive.google.com')) return url; 
-      const id = url.split('/d/')[1]?.split('/')[0] || url.split('id=')[1]?.split('&')[0]; 
-      return `https://drive.google.com/thumbnail?id=${id}&sz=w800`; 
-    }
+    // ==========================================
+    // UTILS & HELPERS
+    // ==========================================
+    function parseMeasurementInches(v) { return parseFloat(v) || 0; }
+    function closeModal() { document.getElementById('modalOverlay').style.display = 'none'; updateDashboardCounters(); }
+    
+    // ISO Date Conversions for Robust Validation
+    function toSheetDate(dStr) { 
+      if (!dStr) return ""; 
+      return new Date(dStr).toLocaleDateString('en-GB'); 
+    }
+    function fromSheetDate(dStr) { 
+      if (!dStr || !dStr.includes('/')) return ""; 
+      const [d, m, y] = dStr.split('/'); return `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`; 
+    }
+    
+    function getDirectImageUrl(url) { 
+      if (!url || !url.includes('drive.google.com')) return url; 
+      const id = url.split('/d/')[1]?.split('/')[0] || url.split('id=')[1]?.split('&')[0]; 
+      return `https://drive.google.com/thumbnail?id=${id}&sz=w800`; 
+    }
 
-    function renderImageThumbnailsInline(id, arr) {
-      const b = document.getElementById(id); if(!b) return;
-      b.innerHTML = arr.length === 0 ? '<span style="font-size:10px; color:#999;">No Photos</span>' : arr.map(u => `<img src="${getDirectImageUrl(u)}" class="gallery-img">`).join('');
-    }
+    function renderImageThumbnailsInline(id, arr) {
+      const b = document.getElementById(id); if(!b) return;
+      b.innerHTML = arr.length === 0 ? '<span style="font-size:10px; color:#999;">No Photos</span>' : arr.map(u => `<img src="${getDirectImageUrl(u)}" class="gallery-img">`).join('');
+    }
 
-    function handleBatchImageUpload(filesList, trackingId, prefix, cb) {
-      if(!filesList) return;
-      Array.from(filesList).forEach((file, i) => {
-        const r = new FileReader();
-        r.onload = async (e) => {
-          const comp = await compressImageToTargetLimit(e.target.result);
-          callApi('uploadImage', { base64: comp, name: `${prefix}_${trackingId}_${i}.jpg` }).then(res => { if(res?.url) cb(res.url); });
-        }; r.readAsDataURL(file);
-      });
-    }
+    function handleBatchImageUpload(filesList, trackingId, prefix, cb) {
+      if(!filesList) return;
+      Array.from(filesList).forEach((file, i) => {
+        const r = new FileReader();
+        r.onload = async (e) => {
+          const comp = await compressImageToTargetLimit(e.target.result);
+          callApi('uploadImage', { base64: comp, name: `${prefix}_${trackingId}_${i}.jpg` }).then(res => { if(res?.url) cb(res.url); });
+        }; r.readAsDataURL(file);
+      });
+    }
 
-    function compressImageToTargetLimit(b64) {
-      return new Promise((res) => {
-        const img = new Image(); img.src = b64; img.onload = () => {
-          const canvas = document.createElement('canvas'); let w = img.width; let h = img.height;
-          if (w > h) { if (w > 800) { h *= 800 / w; w = 800; } } else { if (h > 800) { w *= 800 / h; h = 800; } }
-          canvas.width = w; canvas.height = h; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, w, h);
-          res(canvas.toDataURL('image/jpeg', 0.6));
-        };
-      });
-    }
+    function compressImageToTargetLimit(b64) {
+      return new Promise((res) => {
+        const img = new Image(); img.src = b64; img.onload = () => {
+          const canvas = document.createElement('canvas'); let w = img.width; let h = img.height;
+          if (w > h) { if (w > 800) { h *= 800 / w; w = 800; } } else { if (h > 800) { w *= 800 / h; h = 800; } }
+          canvas.width = w; canvas.height = h; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, w, h);
+          res(canvas.toDataURL('image/jpeg', 0.6));
+        };
+      });
+    }
 
-    function renderDynamicGarmentSketch(sh, bst, ubst, wst, hp, sl, tl) {
-      const canvas = document.getElementById('studioSketchCanvas');
-      if (!canvas) return; document.getElementById('canvas-sketch-frame').style.display = "block";
-      const ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const cx = canvas.width / 2; const fX = 4.0; const [hSh, hBst, hWst, hHp] = [(sh||15)*fX/2, (bst||34)*fX/2.4, (wst||26)*fX/2.4, (hp||38)*fX/2.4];
-      const y = {n:40, s:52, b:92, w:147, h:192, hem:252};
-      ctx.strokeStyle = '#000'; ctx.lineWidth = 3; ctx.beginPath();
-      ctx.moveTo(cx-15, y.n); ctx.lineTo(cx-hSh, y.s); ctx.lineTo(cx-hBst, y.b); ctx.lineTo(cx-hWst, y.w); ctx.lineTo(cx-hHp, y.h); ctx.lineTo(cx, y.hem);
-      ctx.moveTo(cx+15, y.n); ctx.lineTo(cx+hSh, y.s); ctx.lineTo(cx+hBst, y.b); ctx.lineTo(cx+hWst, y.w); ctx.lineTo(cx+hHp, y.h); ctx.lineTo(cx, y.hem); ctx.stroke();
-    }
+    function renderDynamicGarmentSketch(sh, bst, ubst, wst, hp, sl, tl) {
+      const canvas = document.getElementById('studioSketchCanvas');
+      if (!canvas) return; document.getElementById('canvas-sketch-frame').style.display = "block";
+      const ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const cx = canvas.width / 2; const fX = 4.0; const [hSh, hBst, hWst, hHp] = [(sh||15)*fX/2, (bst||34)*fX/2.4, (wst||26)*fX/2.4, (hp||38)*fX/2.4];
+      const y = {n:40, s:52, b:92, w:147, h:192, hem:252};
+      ctx.strokeStyle = '#000'; ctx.lineWidth = 3; ctx.beginPath();
+      ctx.moveTo(cx-15, y.n); ctx.lineTo(cx-hSh, y.s); ctx.lineTo(cx-hBst, y.b); ctx.lineTo(cx-hWst, y.w); ctx.lineTo(cx-hHp, y.h); ctx.lineTo(cx, y.hem);
+      ctx.moveTo(cx+15, y.n); ctx.lineTo(cx+hSh, y.s); ctx.lineTo(cx+hBst, y.b); ctx.lineTo(cx+hWst, y.w); ctx.lineTo(cx+hHp, y.h); ctx.lineTo(cx, y.hem); ctx.stroke();
+    }
 
-    // ==========================================
-    // INVOICE & SHARING ENGINE
-    // ==========================================
-    window.onload = () => updateDashboardCounters();
+    // ==========================================
+    // INVOICE & SHARING ENGINE
+    // ==========================================
+    window.onload = () => updateDashboardCounters();
 
-    function initInvoiceConsoleEngine() {
-      callApi('getCustomers', {}).then(c => {
-        cache.customers = c || [];
-        callApi('getOrders', {}).then(o => {
-          cache.orders = o || [];
-          const oSel = document.getElementById('rep-order-sel');
-          oSel.innerHTML = '<option value="">-- Choose Client Order --</option>' + cache.orders.map(i => {
-            const client = cache.customers.find(cx => cx.customerId === i.customerId) || { fullName: 'Unknown' };
-            return `<option value="${i.orderId}">#${i.orderId} - ${client.fullName}</option>`;
-          }).join('');
-          document.getElementById('report-onscreen-preview-card').style.display = "none";
-        });
-      });
-    }
+    function initInvoiceConsoleEngine() {
+      callApi('getCustomers', {}).then(c => {
+        cache.customers = c || [];
+        callApi('getOrders', {}).then(o => {
+          cache.orders = o || [];
+          const oSel = document.getElementById('rep-order-sel');
+          oSel.innerHTML = '<option value="">-- Choose Client Order --</option>' + cache.orders.map(i => {
+            const client = cache.customers.find(cx => cx.customerId === i.customerId) || { fullName: 'Unknown' };
+            return `<option value="${i.orderId}">#${i.orderId} - ${client.fullName}</option>`;
+          }).join('');
+          document.getElementById('report-onscreen-preview-card').style.display = "none";
+        });
+      });
+    }
 
-    function compileStudioInvoice() {
-      const orderId = document.getElementById('rep-order-sel').value; if(!orderId) return;
-      const orderItem = cache.orders.find(o => o.orderId === orderId);
-      const clientItem = cache.customers.find(c => c.customerId === orderItem.customerId);
-      const balance = Number(orderItem.totalCost) - Number(orderItem.amountPaid);
-      
-      const designThumbs = orderItem.designPhotos ? orderItem.designPhotos.split(',').map(u => `<img src="${getDirectImageUrl(u)}" class="report-thumb">`).join('') : '';
+    function compileStudioInvoice() {
+      const orderId = document.getElementById('rep-order-sel').value; if(!orderId) return;
+      const orderItem = cache.orders.find(o => o.orderId === orderId);
+      const clientItem = cache.customers.find(c => c.customerId === orderItem.customerId);
+      const balance = Number(orderItem.totalCost) - Number(orderItem.amountPaid);
+      
+      const designThumbs = orderItem.designPhotos ? orderItem.designPhotos.split(',').map(u => `<img src="${getDirectImageUrl(u)}" class="report-thumb">`).join('') : '';
 
-      let html = `
-        <div style="display:flex; justify-content:space-between; border-bottom:3px solid #000; padding-bottom:10px; margin-bottom:15px;">
-          <div><h2 style="color:var(--primary); font-size:20px; margin:0;">STITCHTRACK BESPOKE</h2><p style="font-size:11px; color:#666; margin:0;">Apparel Specification & Balance</p></div>
-          <div style="text-align:right; font-size:12px; font-weight:800;">DATE:<br>${new Date().toLocaleDateString('en-GB')}</div>
-        </div>
-        <div style="background:#f8f9fa; border:1px solid #000; padding:12px; border-radius:10px; font-size:14px; font-weight:700; margin-bottom:15px; display:flex; gap:15px;">
-          <div style="flex:1;">CLIENT: ${clientItem.fullName}<br>MOBILE: ${clientItem.phone}</div>
-          <div style="text-align:right;">ORDER: #${orderItem.orderId}<br><span style="color:var(--danger)">DUE: ${orderItem.dateDue}</span></div>
-        </div>
-        <h4 style="font-size:12px; border-bottom:1px solid #000; margin-bottom:5px;">I. DESIGN BRIEF & LEDGER</h4>
-        <p style="font-size:14px; margin-bottom:2px;"><strong>Garment:</strong> ${orderItem.designDescription}</p>
-        <p style="font-size:14px; margin-bottom:10px;"><strong>Fabric:</strong> ${orderItem.fabricNotes || 'Standard'}</p>
-        <table class="print-table">
-          <thead><tr><th>Total Cost</th><th>Paid Amount</th><th>Balance</th></tr></thead>
-          <tbody><tr style="font-size:15px; font-weight:800;"><td>₦${Number(orderItem.totalCost).toLocaleString()}</td><td>₦${Number(orderItem.amountPaid).toLocaleString()}</td><td style="color:${balance>0?'var(--danger)':'var(--success)'};">₦${balance.toLocaleString()}</td></tr></tbody>
-        </table>
-        ${designThumbs ? `<div style="text-align:center; font-size:10px; font-weight:800; margin-top:10px;">STYLE BLUEPRINTS<br>${designThumbs}</div>` : ''}
-      `;
-      document.getElementById('report-preview-viewport').innerHTML = html;
-      document.getElementById('report-print-container').innerHTML = html;
-      document.getElementById('report-onscreen-preview-card').style.display = "block";
-    }
+      let html = `
+        <div style="display:flex; justify-content:space-between; border-bottom:3px solid #000; padding-bottom:10px; margin-bottom:15px;">
+          <div><h2 style="color:var(--primary); font-size:20px; margin:0;">STITCHTRACK BESPOKE</h2><p style="font-size:11px; color:#666; margin:0;">Apparel Specification & Balance</p></div>
+          <div style="text-align:right; font-size:12px; font-weight:800;">DATE:<br>${new Date().toLocaleDateString('en-GB')}</div>
+        </div>
+        <div style="background:#f8f9fa; border:1px solid #000; padding:12px; border-radius:10px; font-size:14px; font-weight:700; margin-bottom:15px; display:flex; gap:15px;">
+          <div style="flex:1;">CLIENT: ${clientItem.fullName}<br>MOBILE: ${clientItem.phone}</div>
+          <div style="text-align:right;">ORDER: #${orderItem.orderId}<br><span style="color:var(--danger)">DUE: ${orderItem.dateDue}</span></div>
+        </div>
+        <h4 style="font-size:12px; border-bottom:1px solid #000; margin-bottom:5px;">I. DESIGN BRIEF & LEDGER</h4>
+        <p style="font-size:14px; margin-bottom:2px;"><strong>Garment:</strong> ${orderItem.designDescription}</p>
+        <p style="font-size:14px; margin-bottom:10px;"><strong>Fabric:</strong> ${orderItem.fabricNotes || 'Standard'}</p>
+        <table class="print-table">
+          <thead><tr><th>Total Cost</th><th>Paid Amount</th><th>Balance</th></tr></thead>
+          <tbody><tr style="font-size:15px; font-weight:800;"><td>₦${Number(orderItem.totalCost).toLocaleString()}</td><td>₦${Number(orderItem.amountPaid).toLocaleString()}</td><td style="color:${balance>0?'var(--danger)':'var(--success)'};">₦${balance.toLocaleString()}</td></tr></tbody>
+        </table>
+        ${designThumbs ? `<div style="text-align:center; font-size:10px; font-weight:800; margin-top:10px;">STYLE BLUEPRINTS<br>${designThumbs}</div>` : ''}
+      `;
+      document.getElementById('report-preview-viewport').innerHTML = html;
+      document.getElementById('report-print-container').innerHTML = html;
+      document.getElementById('report-onscreen-preview-card').style.display = "block";
+    }
 
-    function sendWhatsAppSummary() {
-      const orderId = document.getElementById('rep-order-sel').value; if(!orderId) return;
-      const order = cache.orders.find(o => o.orderId === orderId);
-      const client = cache.customers.find(c => c.customerId === order.customerId);
-      const balance = Number(order.totalCost) - Number(order.amountPaid);
-      
-      const text = `*STITCHTRACK STUDIO*\nHello ${client.fullName},\nSummary for order *#${order.orderId}*:\n\n👗 *Design:* ${order.designDescription}\n📅 *Due Date:* ${order.dateDue||'TBD'}\n\n💰 *Total:* ₦${Number(order.totalCost).toLocaleString()}\n💵 *Paid:* ₦${Number(order.amountPaid).toLocaleString()}\n⚖️ *Balance:* ₦${balance.toLocaleString()}`;
-      
-      let phone = client.phone.replace(/\D/g, '');
-      if (phone.startsWith('0')) phone = '234' + phone.substring(1);
-      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, '_blank');
-    }
+    function sendWhatsAppSummary() {
+      const orderId = document.getElementById('rep-order-sel').value; if(!orderId) return;
+      const order = cache.orders.find(o => o.orderId === orderId);
+      const client = cache.customers.find(c => c.customerId === order.customerId);
+      const balance = Number(order.totalCost) - Number(order.amountPaid);
+      
+      const text = `*STITCHTRACK STUDIO*\nHello ${client.fullName},\nSummary for order *#${order.orderId}*:\n\n👗 *Design:* ${order.designDescription}\n📅 *Due Date:* ${order.dateDue||'TBD'}\n\n💰 *Total:* ₦${Number(order.totalCost).toLocaleString()}\n💵 *Paid:* ₦${Number(order.amountPaid).toLocaleString()}\n⚖️ *Balance:* ₦${balance.toLocaleString()}`;
+      
+      let phone = client.phone.replace(/\D/g, '');
+      if (phone.startsWith('0')) phone = '234' + phone.substring(1);
+      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, '_blank');
+    }
 
-    async function shareInvoicePDF() {
-      const orderId = document.getElementById('rep-order-sel').value; if(!orderId) return;
-      const order = cache.orders.find(o => o.orderId === orderId);
-      const client = cache.customers.find(c => c.customerId === order.customerId);
-      const filename = `Invoice_${orderId}_${client.fullName.replace(/\s+/g,'_')}.pdf`;
+    async function shareInvoicePDF() {
+      const orderId = document.getElementById('rep-order-sel').value; if(!orderId) return;
+      const order = cache.orders.find(o => o.orderId === orderId);
+      const client = cache.customers.find(c => c.customerId === order.customerId);
+      const filename = `Invoice_${orderId}_${client.fullName.replace(/\s+/g,'_')}.pdf`;
 
-      const toast = document.createElement('div'); toast.id = 'pdf-toast';
-      toast.style.cssText = 'position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:#212529; color:#ffffff; padding:16px 32px; border-radius:50px; font-weight:800; font-size:16px; z-index:99999; display:flex; align-items:center; gap:12px;';
-      toast.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
-      document.body.appendChild(toast);
+      const toast = document.createElement('div'); toast.id = 'pdf-toast';
+      toast.style.cssText = 'position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:#212529; color:#ffffff; padding:16px 32px; border-radius:50px; font-weight:800; font-size:16px; z-index:99999; display:flex; align-items:center; gap:12px;';
+      toast.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
+      document.body.appendChild(toast);
 
-      try {
-        const renderBox = document.getElementById('report-preview-viewport');
-        const opt = { margin: 10, filename: filename, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true, logging: false }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }};
-        const pdfBytes = await html2pdf().set(opt).from(renderBox).output('arraybuffer');
-        
-        const file = new File([pdfBytes], filename, { type: 'application/pdf' });
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          toast.innerHTML = '<i class="fas fa-check-circle" style="color:var(--success)"></i> Opening Share Sheet...';
-          await navigator.share({ title: `Studio Invoice #${orderId}`, files: [file] });
-        } else {
-          toast.innerHTML = '<i class="fas fa-download"></i> Downloading...';
-          const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-          const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = filename; link.click();
-        }
-      } catch (err) {
-        alert("PDF Error: " + err.message);
-      } finally {
-        setTimeout(() => { if (document.getElementById('pdf-toast')) document.getElementById('pdf-toast').remove(); }, 1000);
-      }
-    }
+      try {
+        const renderBox = document.getElementById('report-preview-viewport');
+        const opt = { margin: 10, filename: filename, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true, logging: false }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }};
+        const pdfBytes = await html2pdf().set(opt).from(renderBox).output('arraybuffer');
+        
+        const file = new File([pdfBytes], filename, { type: 'application/pdf' });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          toast.innerHTML = '<i class="fas fa-check-circle" style="color:var(--success)"></i> Opening Share Sheet...';
+          await navigator.share({ title: `Studio Invoice #${orderId}`, files: [file] });
+        } else {
+          toast.innerHTML = '<i class="fas fa-download"></i> Downloading...';
+          const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+          const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = filename; link.click();
+        }
+      } catch (err) {
+        alert("PDF Error: " + err.message);
+      } finally {
+        setTimeout(() => { if (document.getElementById('pdf-toast')) document.getElementById('pdf-toast').remove(); }, 1000);
+      }
+    }
 
-    // ==========================================
-// CUSTOM PWA INSTALLATION LOGIC
-// ==========================================
-let deferredPrompt;
-const installBtn = document.getElementById('installAppBtn');
+    // ==========================================
+    // CUSTOM PWA INSTALLATION LOGIC
+    // ==========================================
+    let deferredPrompt;
+    const installBtn = document.getElementById('installAppBtn');
 
-window.addEventListener('beforeinstallprompt', (e) => {
-  // Prevent the mini-infobar from appearing on mobile
-  e.preventDefault();
-  // Stash the event so it can be triggered later
-  deferredPrompt = e;
-  // Update UI to notify the user they can install the PWA
-  if (installBtn) {
-    installBtn.style.display = 'flex';
-  }
-});
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      if (installBtn) {
+        installBtn.style.display = 'flex';
+      }
+    });
 
-if (installBtn) {
-  installBtn.addEventListener('click', async () => {
-    // Hide the app provided install promotion
-    installBtn.style.display = 'none';
-    // Show the install prompt
-    deferredPrompt.prompt();
-    // Wait for the user to respond to the prompt
-    const { outcome } = await deferredPrompt.userChoice;
-    console.log(`User response to the install prompt: ${outcome}`);
-    // We've used the prompt, and can't use it again, throw it away
-    deferredPrompt = null;
-  });
-}
+    if (installBtn) {
+      installBtn.addEventListener('click', async () => {
+        installBtn.style.display = 'none';
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(`User response to the install prompt: ${outcome}`);
+        deferredPrompt = null;
+      });
+    }
 
-window.addEventListener('appinstalled', () => {
-  // Hide the install button if they successfully installed it
-  if (installBtn) installBtn.style.display = 'none';
-  console.log('StitchTrack Pro was successfully installed!');
-});
-    
-  </script>
+    window.addEventListener('appinstalled', () => {
+      if (installBtn) installBtn.style.display = 'none';
+      console.log('StitchTrack Pro was successfully installed!');
+    });
+    
+  </script>
 </body>
 </html>
