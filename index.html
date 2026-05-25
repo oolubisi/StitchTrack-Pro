@@ -497,15 +497,20 @@
           <div class="measurement-grid">
             <div><label>Bust</label><input id="m_ch" type="text" value="${isEdit?editData.chestBust||'':''}"></div>
             <div><label>Under-Bust</label><input id="m_underbust" type="text" value="${isEdit?editData.underbust || '':''}"></div>
+            <div><label>Across Chest</label><input id="m_ach" type="text" value="${isEdit?editData.acrossChest||'':''}"></div>
+            <div><label>Across Back</label><input id="m_abk" type="text" value="${isEdit?editData.acrossBack||'':''}"></div>
             <div><label>Shoulder</label><input id="m_sh" type="text" value="${isEdit?editData.shoulder||'':''}"></div>
             <div><label>Neck</label><input id="m_neck" type="text" value="${isEdit?editData.neck||'':''}"></div>
+            <div><label>Bicep</label><input id="m_bic" type="text" value="${isEdit?editData.bicep||'':''}"></div>
           </div>
 
           <div style="margin-top:20px; margin-bottom:10px; font-weight:800; font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">II. Lower Body</div>
           <div class="measurement-grid">
             <div><label>Waist</label><input id="m_wst" type="text" value="${isEdit?editData.waist||'':''}"></div>
+            <div><label>Low Waist</label><input id="m_lwst" type="text" value="${isEdit?editData.lowWaist||'':''}"></div>
             <div><label>Hips</label><input id="m_hip" type="text" value="${isEdit?editData.hips||'':''}"></div>
             <div><label>Thigh</label><input id="m_thg" type="text" value="${isEdit?editData.thigh||'':''}"></div>
+            <div><label>Crotch</label><input id="m_cr" type="text" value="${isEdit?editData.crotch||'':''}"></div>
             <div><label>Ankle</label><input id="m_ank" type="text" value="${isEdit?editData.ankle||'':''}"></div>
           </div>
 
@@ -514,6 +519,7 @@
             <div><label>Top Length</label><input id="m_top" type="text" value="${isEdit?editData.shirtLength||'':''}"></div>
             <div><label>Sleeve Length</label><input id="m_slv" type="text" value="${isEdit?editData.sleeveLength||'':''}"></div>
             <div><label>Trouser Length</label><input id="m_trs" type="text" value="${isEdit?editData.trouserLength||'':''}"></div>
+            <div><label>Skirt Length</label><input id="m_sk_len" type="text" value="${isEdit?editData.skirtLength||'':''}"></div>
             <div><label>Gown Length</label><input id="m_gown_len" type="text" value="${isEdit?editData.gownLength||'':''}"></div>
           </div>
 
@@ -552,11 +558,35 @@
         submit.onclick = () => {
           submit.disabled = true;
           const payload = { 
-            customerId: uniqueId, fullName: document.getElementById('c_name').value, phone: document.getElementById('c_phone').value, 
+            customerId: uniqueId, 
+            fullName: document.getElementById('c_name').value, 
+            phone: document.getElementById('c_phone').value, 
             email: clientProfilePhoto, 
-            neck: document.getElementById('m_neck').value, shoulder: document.getElementById('m_sh').value, chestBust: document.getElementById('m_ch').value, underbust: document.getElementById('m_underbust').value,
-            waist: document.getElementById('m_wst').value, hips: document.getElementById('m_hip').value, thigh: document.getElementById('m_thg').value, ankle: document.getElementById('m_ank').value, 
-            shirtLength: document.getElementById('m_top').value, gownLength: document.getElementById('m_gown_len').value, sleeveLength: document.getElementById('m_slv').value, trouserLength: document.getElementById('m_trs').value, 
+            
+            // Upper Body
+            neck: document.getElementById('m_neck').value, 
+            shoulder: document.getElementById('m_sh').value, 
+            chestBust: document.getElementById('m_ch').value, 
+            underbust: document.getElementById('m_underbust').value,
+            acrossChest: document.getElementById('m_ach').value,
+            acrossBack: document.getElementById('m_abk').value,
+            bicep: document.getElementById('m_bic').value,
+            
+            // Lower Body
+            waist: document.getElementById('m_wst').value, 
+            lowWaist: document.getElementById('m_lwst').value,
+            hips: document.getElementById('m_hip').value, 
+            thigh: document.getElementById('m_thg').value, 
+            crotch: document.getElementById('m_cr').value,
+            ankle: document.getElementById('m_ank').value, 
+            
+            // Lengths
+            shirtLength: document.getElementById('m_top').value, 
+            gownLength: document.getElementById('m_gown_len').value, 
+            sleeveLength: document.getElementById('m_slv').value, 
+            skirtLength: document.getElementById('m_sk_len').value,
+            trouserLength: document.getElementById('m_trs').value, 
+            
             notes: document.getElementById('c_notes').value 
           };
           callApi(isEdit?'updateCustomer':'saveCustomer', payload).then(() => { closeModal(); refreshData('customers'); });
