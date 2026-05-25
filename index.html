@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <link rel="manifest" href="manifest.json">
   
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -46,7 +46,7 @@
     
     .main { 
       width: 100%; 
-      max-width: 100%;   /* Changed from 500px to 100% */
+      max-width: 100%; 
       margin: 0 auto; 
       padding: env(safe-area-inset-top, 20px) 16px calc(80px + env(safe-area-inset-bottom)) 16px; 
       min-height: 100vh; 
@@ -61,13 +61,17 @@
     }
 
     /* Modern App Dashboard UI */
-    .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+    .nav-grid { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
+      gap: 12px; 
+      margin-bottom: 20px; 
+    }
     .nav-card {
       background: var(--card); 
       border-radius: 20px; 
-      padding: 16px;
+      padding: 24px 12px;
       text-align: center; 
-      aspect-ratio: 1.1 / 1; 
       display: flex; 
       flex-direction: column;
       justify-content: center; 
@@ -78,12 +82,12 @@
     .nav-card i { font-size: 24px; color: var(--primary); margin-bottom: 8px; }
     .nav-card .count { font-size: 28px; font-weight: 800; color: var(--text); letter-spacing: -0.5px;}
     .nav-card small { 
-  font-size: 18px !important;    /* Increased massively from 11px */
-  font-weight: 900 !important;   /* Made it extra bold */
-  text-transform: uppercase; 
-  color: var(--muted); 
-  margin-top: 6px;               /* Gave it a little more breathing room */
-}
+      font-size: 18px !important; 
+      font-weight: 900 !important; 
+      text-transform: uppercase; 
+      color: var(--muted); 
+      margin-top: 6px;
+    }
 
     .page-header { 
       display: flex; 
@@ -94,7 +98,7 @@
     }
     h2 { font-size: 28px; font-weight: 800; color: var(--text); letter-spacing: -0.5px;}
 
-    /* --- FIXED AND CONSOLIDATED LARGE TEXT STYLES --- */
+    /* --- LARGE TEXT & CARD STYLES --- */
     .card {
       background: var(--card);
       border-radius: 20px;
@@ -113,7 +117,7 @@
     label { 
       display: block; 
       font-weight: 700; 
-      font-size: 24px !important; 
+      font-size: 16px !important; 
       color: var(--muted); 
       margin-bottom: 6px; 
       margin-top: 12px; 
@@ -152,10 +156,13 @@
     .action-btn { 
       background: var(--text); color: white; border: none; padding: 18px 16px; 
       border-radius: 16px; width: 100%; 
-      font-weight: 900 !important;       /* Made the text extra bold */
-      font-size: 22px !important;        /* Increased size significantly */
+      font-weight: 900 !important;       
+      font-size: 22px !important;        
       cursor: pointer; transition: transform 0.1s, opacity 0.2s;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      white-space: normal;       
+      word-wrap: break-word;     
+      line-height: 1.2;          
     }
     .action-btn:active { transform: scale(0.97); opacity: 0.9; }
 
@@ -168,20 +175,22 @@
       display: flex; justify-content: space-around; align-items: center;
       padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
       z-index: 4000;
-      max-width: 100%;   /* Changed from 500px to 100% */
+      max-width: 100%; 
       margin: 0 auto;
     }
     .nav-item { 
       display: flex; flex-direction: column; align-items: center; gap: 4px; 
       color: var(--muted); text-decoration: none; 
-      font-size: 16px !important;     /* Increased text from 10px */
-      font-weight: 900 !important;    /* Extra bold */
+      font-size: 16px !important;     
+      font-weight: 900 !important;    
       cursor: pointer; transition: color 0.2s; width: 25%;
     }
     .nav-item i { 
-      font-size: 28px !important;     /* Increased icon size to match */
+      font-size: 28px !important;     
       margin-bottom: 4px;
     }
+    .nav-item.active { color: var(--primary); }
+
     /* Modals & Views */
     .modal-overlay { 
       position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); display: none; 
@@ -189,7 +198,7 @@
     }
     .modal { 
       background: var(--card); width: 100%; 
-      max-width: 100%;   /* Changed from 500px to 100% */
+      max-width: 100%; 
       padding: 25px 20px calc(20px + env(safe-area-inset-bottom)); 
       border-radius: 24px 24px 0 0; max-height: 90vh; overflow-y: auto; 
       animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -235,7 +244,7 @@
             <i class="fas fa-plus"></i>
           </div>
         </div>
-        <button id="installAppBtn" class="action-btn" style="margin-top:12px; background:#1C1C1E; display:none; gap:8px; justify-content:center; align-items:center;">
+        <button id="installAppBtn" class="action-btn" style="margin-top:12px; margin-bottom:20px; background:#1C1C1E; display:none; gap:8px; justify-content:center; align-items:center;">
           <i class="fas fa-download"></i> Install StitchTrack App
         </button>
         <div class="nav-grid">
@@ -307,13 +316,13 @@
           <div id="report-preview-viewport" style="max-height:350px; overflow-y:auto; background:#fff; border:1px solid var(--border); border-radius:12px; padding:15px; font-size:14px !important; font-weight:normal !important;"></div>
           
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:15px;">
-            <button class="action-btn" style="background:#25D366; font-size:14px; padding:14px;" onclick="sendWhatsAppSummary()">
+            <button class="action-btn" style="background:#25D366; font-size:14px !important; padding:14px;" onclick="sendWhatsAppSummary()">
               <i class="fab fa-whatsapp"></i> WhatsApp
             </button>
-            <button class="action-btn" style="background:var(--success); font-size:14px; padding:14px;" onclick="window.print()">
+            <button class="action-btn" style="background:var(--success); font-size:14px !important; padding:14px;" onclick="window.print()">
               <i class="fas fa-print"></i> Print A4
             </button>
-            <button class="action-btn" style="background:var(--primary); grid-column:span 2; padding:14px;" onclick="shareInvoicePDF()">
+            <button class="action-btn" style="background:var(--primary); grid-column:span 2; padding:14px; font-size: 16px !important;" onclick="shareInvoicePDF()">
               <i class="fas fa-share-nodes"></i> Share PDF
             </button>
           </div>
@@ -345,8 +354,8 @@
       <h3 id="modalTitle" style="font-size:22px; font-weight:800; margin-bottom:15px;">Form</h3>
       <div id="modalBody"></div>
       <div style="display:flex; gap:10px; margin-top:20px;">
-        <button class="action-btn" style="background:#E5E5EA; color:#1C1C1E;" onclick="closeModal()">Cancel</button>
-        <button class="action-btn" style="background:var(--primary);" id="modalSubmit">Save</button>
+        <button class="action-btn" style="background:#E5E5EA; color:#1C1C1E; font-size: 18px !important; padding: 14px;" onclick="closeModal()">Cancel</button>
+        <button class="action-btn" style="background:var(--primary); font-size: 18px !important; padding: 14px;" id="modalSubmit">Save</button>
       </div>
     </div>
   </div>
@@ -451,7 +460,7 @@
       const listEl = document.getElementById(idMap[p]); if (!listEl) return;
       
       let apiCmd = p === 'customers' ? 'getCustomers' : 'getOrders';
-      listEl.innerHTML = `<p style="text-align:center; padding:20px; font-weight:800; color:var(--muted);"><i class="fas fa-spinner fa-spin"></i> Reading atelier registers...</p>`;
+      listEl.innerHTML = `<p style="text-align:center; padding:20px; font-size: 16px; font-weight:800; color:var(--muted);"><i class="fas fa-spinner fa-spin"></i> Reading atelier registers...</p>`;
       
       callApi(apiCmd, {}).then(data => {
         let displayData = data || [];
@@ -461,8 +470,8 @@
             <div class="card" onclick="openRecordRow('customer', '${c.customerId}')" style="cursor:pointer; display:flex; align-items:center; gap:15px;">
               ${c.email ? `<img src="${getDirectImageUrl(c.email)}" class="gallery-img" style="width:60px; height:60px; border-radius:50%; border:2px solid var(--border);">` : `<div style="width:60px; height:60px; border-radius:50%; background:var(--card-light); border:2px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:22px; color:var(--muted);"><i class="fas fa-user"></i></div>`}
               <div style="flex:1;">
-                <strong style="font-size:18px; color:var(--text);">${c.fullName}</strong><br>
-                <span style="font-weight:600; color:var(--muted); font-size:13px;"><i class="fas fa-phone" style="font-size:11px;"></i> ${c.phone}</span>
+                <strong style="color:var(--text);">${c.fullName}</strong><br>
+                <span style="font-weight:600; color:var(--muted); font-size:16px !important;"><i class="fas fa-phone" style="font-size:14px;"></i> ${c.phone}</span>
               </div>
             </div>`).join('');
         } else {
@@ -470,7 +479,7 @@
           const filter = document.getElementById('order-status-filter').value;
           if (filter !== "ALL") displayData = displayData.filter(o => o.status === filter);
           
-          if(displayData.length === 0) { listEl.innerHTML = `<p style="font-style:italic; color:var(--muted); text-align:center; padding:20px;">No clothing orders matching this status.</p>`; return;}
+          if(displayData.length === 0) { listEl.innerHTML = `<p style="font-style:italic; color:var(--muted); text-align:center; padding:20px; font-size: 16px;">No clothing orders matching this status.</p>`; return;}
           
           listEl.innerHTML = displayData.map(o => {
             const clientObj = cache.customers.find(c => c.customerId === o.customerId) || { fullName: "Unlinked Profile" };
@@ -479,11 +488,11 @@
               <div class="card" onclick="openRecordRow('order', '${o.orderId}')" style="cursor:pointer; position:relative; overflow:hidden;">
                 <div style="position:absolute; left:0; top:0; bottom:0; width:6px; background:${balance > 0 ? 'var(--danger)' : 'var(--success)'};"></div>
                 <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:6px; gap:5px;">
-                  <div style="flex:1;"><strong style="font-size:16px;">${clientObj.fullName}</strong><br><small style="font-family:monospace; font-weight:700; color:var(--muted);">#${o.orderId}</small></div>
-                  <span style="font-size:10px; font-weight:800; background:var(--primary-light); color:var(--primary); padding:4px 8px; border-radius:8px; text-transform:uppercase; text-align:center;">${o.status}</span>
+                  <div style="flex:1;"><strong>${clientObj.fullName}</strong><br><small style="font-family:monospace; font-size:16px !important; color:var(--muted);">#${o.orderId}</small></div>
+                  <span style="font-size:12px !important; background:var(--primary-light); color:var(--primary); padding:6px 10px; border-radius:8px; text-transform:uppercase; text-align:center;">${o.status}</span>
                 </div>
-                <div style="font-size:14px; font-weight:600; color:var(--text); margin-bottom:10px;">${o.designDescription}</div>
-                <div style="display:grid; grid-template-columns:1fr 1fr; font-size:13px; font-weight:700; background:var(--card-light); padding:10px; border-radius:10px;">
+                <div style="color:var(--text); margin-bottom:10px; font-size: 18px !important;">${o.designDescription}</div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; background:var(--card-light); padding:12px; border-radius:10px; font-size: 18px !important;">
                   <div>Cost: ₦${Number(o.totalCost).toLocaleString()}</div>
                   <div style="text-align:right; color:${balance > 0 ? 'var(--danger)':'var(--success)'};">Bal: ₦${balance.toLocaleString()}</div>
                 </div>
@@ -530,12 +539,12 @@
             <img id="p_avatar_view" src="${clientProfilePhoto ? getDirectImageUrl(clientProfilePhoto) : 'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 width=%2280%22 height=%2280%22><circle cx=%2212%22 cy=%2212%22 r=%2212%22 fill=%22%23e9ecef%22/></svg>'}" class="profile-avatar">
             <label style="position: absolute; bottom: 0; right: 0; background: var(--primary); color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; cursor: pointer; margin:0;"><i class="fas fa-camera"></i><input type="file" id="cam_avatar" accept="image/*" style="display:none"></label>
           </div>
-          <div id="p_avatar_indicator" style="text-align:center; font-size:11px; font-weight:700; color:var(--success); margin-bottom:10px;"></div>
+          <div id="p_avatar_indicator" style="text-align:center; font-size:14px; font-weight:700; color:var(--success); margin-bottom:10px;"></div>
 
           <label>Full Name</label><input id="c_name" value="${isEdit?editData.fullName:''}">
           <label>Mobile Number</label><input id="c_phone" type="tel" value="${isEdit?editData.phone:''}">
           
-          <div style="margin-top:20px; margin-bottom:10px; font-weight:800; font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">I. Upper Body</div>
+          <div style="margin-top:20px; margin-bottom:10px; font-weight:800; font-size:16px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">I. Upper Body</div>
           <div class="measurement-grid">
             <div><label>Bust</label><input id="m_ch" type="text" value="${isEdit?editData.chestBust||'':''}"></div>
             <div><label>Under-Bust</label><input id="m_underbust" type="text" value="${isEdit?editData.underbust || '':''}"></div>
@@ -546,7 +555,7 @@
             <div><label>Bicep</label><input id="m_bic" type="text" value="${isEdit?editData.bicep||'':''}"></div>
           </div>
 
-          <div style="margin-top:20px; margin-bottom:10px; font-weight:800; font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">II. Lower Body</div>
+          <div style="margin-top:20px; margin-bottom:10px; font-weight:800; font-size:16px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">II. Lower Body</div>
           <div class="measurement-grid">
             <div><label>Waist</label><input id="m_wst" type="text" value="${isEdit?editData.waist||'':''}"></div>
             <div><label>Low Waist</label><input id="m_lwst" type="text" value="${isEdit?editData.lowWaist||'':''}"></div>
@@ -556,7 +565,7 @@
             <div><label>Ankle</label><input id="m_ank" type="text" value="${isEdit?editData.ankle||'':''}"></div>
           </div>
 
-          <div style="margin-top:20px; margin-bottom:10px; font-weight:800; font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">III. Lengths</div>
+          <div style="margin-top:20px; margin-bottom:10px; font-weight:800; font-size:16px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">III. Lengths</div>
           <div class="measurement-grid">
             <div><label>Top Length</label><input id="m_top" type="text" value="${isEdit?editData.shirtLength||'':''}"></div>
             <div><label>Sleeve Length</label><input id="m_slv" type="text" value="${isEdit?editData.sleeveLength||'':''}"></div>
@@ -568,7 +577,7 @@
           <label>Special Body Notes</label><textarea id="c_notes" rows="2">${isEdit?editData.notes||'':''}</textarea>
           
           <div class="card" id="canvas-sketch-frame" style="margin-top: 15px; text-align: center; display:none; background:var(--card-light); border:none; box-shadow:none;">
-            <span style="font-size:11px; font-weight:800; color:var(--primary); display:block; margin-bottom:10px; text-transform:uppercase; letter-spacing:1px;">Proportion Blueprint</span>
+            <span style="font-size:14px !important; font-weight:800; color:var(--primary); display:block; margin-bottom:10px; text-transform:uppercase; letter-spacing:1px;">Proportion Blueprint</span>
             <canvas id="studioSketchCanvas" width="300" height="480" style="background:#fff; border-radius:12px; max-width:100%; border:1px solid var(--border);"></canvas>
           </div>
         `;
@@ -666,13 +675,13 @@
           
           <div class="photo-strip">
             <div class="photo-box">
-              <span style="font-size:10px; font-weight:800; color:var(--primary); text-transform:uppercase; display:block; margin-bottom:8px;">Style Photos</span>
-              <label style="background:#FFF; border:1px solid var(--border); padding:8px; border-radius:10px; display:block; font-size:12px; cursor:pointer; margin:0;"><i class="fas fa-camera"></i> Upload<input type="file" id="cam_design" accept="image/*" multiple style="display:none"></label>
+              <span style="font-size:12px !important; font-weight:800; color:var(--primary); text-transform:uppercase; display:block; margin-bottom:8px;">Style Photos</span>
+              <label style="background:#FFF; border:1px solid var(--border); padding:8px; border-radius:10px; display:block; font-size:14px !important; cursor:pointer; margin:0;"><i class="fas fa-camera"></i> Upload<input type="file" id="cam_design" accept="image/*" multiple style="display:none"></label>
               <div id="p_design_indicator" class="gallery-preview"></div>
             </div>
             <div class="photo-box">
-              <span style="font-size:10px; font-weight:800; color:var(--success); text-transform:uppercase; display:block; margin-bottom:8px;">Finished QC</span>
-              <label style="background:#FFF; border:1px solid var(--border); padding:8px; border-radius:10px; display:block; font-size:12px; cursor:pointer; margin:0;"><i class="fas fa-camera"></i> Upload<input type="file" id="cam_finished" accept="image/*" multiple style="display:none"></label>
+              <span style="font-size:12px !important; font-weight:800; color:var(--success); text-transform:uppercase; display:block; margin-bottom:8px;">Finished QC</span>
+              <label style="background:#FFF; border:1px solid var(--border); padding:8px; border-radius:10px; display:block; font-size:14px !important; cursor:pointer; margin:0;"><i class="fas fa-camera"></i> Upload<input type="file" id="cam_finished" accept="image/*" multiple style="display:none"></label>
               <div id="p_finished_indicator" class="gallery-preview"></div>
             </div>
           </div>
@@ -733,7 +742,7 @@
 
     function renderImageThumbnailsInline(id, arr) {
       const b = document.getElementById(id); if(!b) return;
-      b.innerHTML = arr.length === 0 ? '<span style="font-size:10px; color:#999;">No Photos</span>' : arr.map(u => `<img src="${getDirectImageUrl(u)}" class="gallery-img">`).join('');
+      b.innerHTML = arr.length === 0 ? '<span style="font-size:12px; color:#999;">No Photos</span>' : arr.map(u => `<img src="${getDirectImageUrl(u)}" class="gallery-img">`).join('');
     }
 
     function handleBatchImageUpload(filesList, trackingId, prefix, cb) {
@@ -799,21 +808,21 @@
 
       let html = `
         <div style="display:flex; justify-content:space-between; border-bottom:3px solid #000; padding-bottom:10px; margin-bottom:15px;">
-          <div><h2 style="color:var(--primary); font-size:20px; margin:0;">STITCHTRACK BESPOKE</h2><p style="font-size:11px; color:#666; margin:0;">Apparel Specification & Balance</p></div>
-          <div style="text-align:right; font-size:12px; font-weight:800;">DATE:<br>${new Date().toLocaleDateString('en-GB')}</div>
+          <div><h2 style="color:var(--primary); font-size:20px; margin:0;">STITCHTRACK BESPOKE</h2><p style="font-size:12px; color:#666; margin:0;">Apparel Specification & Balance</p></div>
+          <div style="text-align:right; font-size:14px; font-weight:800;">DATE:<br>${new Date().toLocaleDateString('en-GB')}</div>
         </div>
         <div style="background:#f8f9fa; border:1px solid #000; padding:12px; border-radius:10px; font-size:14px; font-weight:700; margin-bottom:15px; display:flex; gap:15px;">
           <div style="flex:1;">CLIENT: ${clientItem.fullName}<br>MOBILE: ${clientItem.phone}</div>
           <div style="text-align:right;">ORDER: #${orderItem.orderId}<br><span style="color:var(--danger)">DUE: ${orderItem.dateDue}</span></div>
         </div>
-        <h4 style="font-size:12px; border-bottom:1px solid #000; margin-bottom:5px;">I. DESIGN BRIEF & LEDGER</h4>
+        <h4 style="font-size:14px; border-bottom:1px solid #000; margin-bottom:5px;">I. DESIGN BRIEF & LEDGER</h4>
         <p style="font-size:14px; margin-bottom:2px;"><strong>Garment:</strong> ${orderItem.designDescription}</p>
         <p style="font-size:14px; margin-bottom:10px;"><strong>Fabric:</strong> ${orderItem.fabricNotes || 'Standard'}</p>
         <table class="print-table">
           <thead><tr><th>Total Cost</th><th>Paid Amount</th><th>Balance</th></tr></thead>
-          <tbody><tr style="font-size:15px; font-weight:800;"><td>₦${Number(orderItem.totalCost).toLocaleString()}</td><td>₦${Number(orderItem.amountPaid).toLocaleString()}</td><td style="color:${balance>0?'var(--danger)':'var(--success)'};">₦${balance.toLocaleString()}</td></tr></tbody>
+          <tbody><tr style="font-size:16px; font-weight:800;"><td>₦${Number(orderItem.totalCost).toLocaleString()}</td><td>₦${Number(orderItem.amountPaid).toLocaleString()}</td><td style="color:${balance>0?'var(--danger)':'var(--success)'};">₦${balance.toLocaleString()}</td></tr></tbody>
         </table>
-        ${designThumbs ? `<div style="text-align:center; font-size:10px; font-weight:800; margin-top:10px;">STYLE BLUEPRINTS<br>${designThumbs}</div>` : ''}
+        ${designThumbs ? `<div style="text-align:center; font-size:12px; font-weight:800; margin-top:10px;">STYLE BLUEPRINTS<br>${designThumbs}</div>` : ''}
       `;
       document.getElementById('report-preview-viewport').innerHTML = html;
       document.getElementById('report-print-container').innerHTML = html;
