@@ -88,23 +88,32 @@
     }
     h2 { font-size: 28px; font-weight: 800; color: var(--text); letter-spacing: -0.5px;}
 
-    .card { 
-      background: var(--card); 
-      border-radius: 20px; 
-      padding: 20px; 
-      margin-bottom: 16px; 
-      box-shadow: 0 4px 15px rgba(0,0,0,0.04);
-      border: 1px solid rgba(0,0,0,0.02);
-      font-size: 24px;      /* Increased from default */
-      font-weight: 900;     /* Slightly heavier */
-    }
+    .card, .card * { 
+  font-size: 24px !important; 
+  font-weight: 900 !important;
+}
+
+/* Also ensure your inputs are forced to be huge */
+input, select, textarea { 
+  width: 100%; 
+  padding: 16px 20px !important; 
+  margin-bottom: 6px; 
+  border-radius: 14px; 
+  border: 1px solid var(--border); 
+  background: #FAFAFC; 
+  color: var(--text); 
+  font-size: 26px !important; 
+  font-weight: 900 !important;
+  appearance: none; 
+  -webkit-appearance: none;
+}
     
     /* Native-like Forms */
     label { display: block; font-weight: 700; font-size: 13px; color: var(--muted); margin-bottom: 6px; margin-top: 12px; text-transform: uppercase; letter-spacing: 0.5px;}
     input, select, textarea { 
       width: 100%; padding: 14px 16px; margin-bottom: 6px; border-radius: 14px; 
       border: 1px solid var(--border); background: #FAFAFC; color: var(--text); 
-      font-size: 26px !important; font-weight: 500; transition: all 0.2s;
+      font-size: 16px !important; font-weight: 500; transition: all 0.2s;
       appearance: none; -webkit-appearance: none;
     }
     input:focus, select:focus, textarea:focus {
