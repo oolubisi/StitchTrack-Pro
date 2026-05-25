@@ -77,7 +77,13 @@
     }
     .nav-card i { font-size: 24px; color: var(--primary); margin-bottom: 8px; }
     .nav-card .count { font-size: 28px; font-weight: 800; color: var(--text); letter-spacing: -0.5px;}
-    .nav-card small { font-size: 11px; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-top: 2px;}
+    .nav-card small { 
+  font-size: 18px !important;    /* Increased massively from 11px */
+  font-weight: 900 !important;   /* Made it extra bold */
+  text-transform: uppercase; 
+  color: var(--muted); 
+  margin-top: 6px;               /* Gave it a little more breathing room */
+}
 
     .page-header { 
       display: flex; 
@@ -166,12 +172,15 @@
     }
     .nav-item { 
       display: flex; flex-direction: column; align-items: center; gap: 4px; 
-      color: var(--muted); text-decoration: none; font-size: 10px; font-weight: 700; cursor: pointer;
-      transition: color 0.2s; width: 25%;
+      color: var(--muted); text-decoration: none; 
+      font-size: 16px !important;     /* Increased text from 10px */
+      font-weight: 900 !important;    /* Extra bold */
+      cursor: pointer; transition: color 0.2s; width: 25%;
     }
-    .nav-item i { font-size: 20px; margin-bottom: 2px;}
-    .nav-item.active { color: var(--primary); }
-
+    .nav-item i { 
+      font-size: 28px !important;     /* Increased icon size to match */
+      margin-bottom: 4px;
+    }
     /* Modals & Views */
     .modal-overlay { 
       position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); display: none; 
