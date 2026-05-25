@@ -4,12 +4,18 @@
   "description": "Bespoke studio and atelier tracking platform.",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#6f42c1",
+  "background_color": "#F2F2F7",
+  "theme_color": "#6B4CE6",
   "icons": [
     {
       "src": "tailor.png",
-      "sizes": "192x192 512x512",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "tailor.png",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }
