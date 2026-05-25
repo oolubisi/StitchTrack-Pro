@@ -194,6 +194,9 @@
           <div style="background:var(--primary-light); color:var(--primary); width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="openModal('order')">
             <i class="fas fa-plus"></i>
           </div>
+          <button id="installAppBtn" class="action-btn" style="margin-top:12px; background:#1C1C1E; display:none; gap:8px; justify-content:center; align-items:center;">
+  <i class="fas fa-download"></i> Install StitchTrack App
+</button>
         </div>
         
         <div class="nav-grid">
@@ -822,6 +825,44 @@
         setTimeout(() => { if (document.getElementById('pdf-toast')) document.getElementById('pdf-toast').remove(); }, 1000);
       }
     }
+
+    // ==========================================
+// CUSTOM PWA INSTALLATION LOGIC
+// ==========================================
+let deferredPrompt;
+const installBtn = document.getElementById('installAppBtn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  // Prevent the mini-infobar from appearing on mobile
+  e.preventDefault();
+  // Stash the event so it can be triggered later
+  deferredPrompt = e;
+  // Update UI to notify the user they can install the PWA
+  if (installBtn) {
+    installBtn.style.display = 'flex';
+  }
+});
+
+if (installBtn) {
+  installBtn.addEventListener('click', async () => {
+    // Hide the app provided install promotion
+    installBtn.style.display = 'none';
+    // Show the install prompt
+    deferredPrompt.prompt();
+    // Wait for the user to respond to the prompt
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log(`User response to the install prompt: ${outcome}`);
+    // We've used the prompt, and can't use it again, throw it away
+    deferredPrompt = null;
+  });
+}
+
+window.addEventListener('appinstalled', () => {
+  // Hide the install button if they successfully installed it
+  if (installBtn) installBtn.style.display = 'none';
+  console.log('StitchTrack Pro was successfully installed!');
+});
+    
   </script>
 </body>
 </html>
