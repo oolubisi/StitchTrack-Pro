@@ -18,175 +18,50 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    
-    :root {
-      --bg: #F2F2F7;            /* Native iOS light gray background */
-      --card: #FFFFFF;          
-      --card-light: #F8F9FA;
-      --primary: #6B4CE6;       /* Slightly softer, modern purple */
-      --primary-light: #EBE5FF;
-      --text: #1C1C1E;          /* Off-black for better readability */
-      --muted: #8E8E93;         
-      --danger: #FF3B30;        
-      --success: #34C759;       
-      --border: #E5E5EA;        
-    }
+    /* ... Keep your variables/root block the same ... */
 
-    body { 
-      font-family: 'Inter', sans-serif; 
-      background: var(--bg); 
-      color: var(--text); 
-      width: 100%; 
-      overflow-x: hidden; 
-      line-height: 1.5;
-      -webkit-tap-highlight-color: transparent;
-      padding-bottom: env(safe-area-inset-bottom);
-    }
-    
-    .main { 
-      width: 100%; 
-      max-width: 500px; 
-      margin: 0 auto; 
-      padding: env(safe-area-inset-top, 20px) 16px calc(80px + env(safe-area-inset-bottom)) 16px; 
-      min-height: 100vh; 
-    }
-
-    /* Page Transitions */
-    .page-view { display: none; opacity: 0; }
-    .active-view { display: block; animation: slideUpFade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    @keyframes slideUpFade {
-      from { opacity: 0; transform: translateY(15px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Modern App Dashboard UI */
-    .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-    .nav-card {
+    /* 1. Updated Card Styles */
+    .card { 
       background: var(--card); 
       border-radius: 20px; 
-      padding: 16px;
-      text-align: center; 
-      aspect-ratio: 1.1 / 1; 
-      display: flex; 
-      flex-direction: column;
-      justify-content: center; 
-      align-items: center; 
+      padding: 20px; 
+      margin-bottom: 16px; 
       box-shadow: 0 4px 15px rgba(0,0,0,0.04);
       border: 1px solid rgba(0,0,0,0.02);
+      font-size: 24px !important;    /* Forces text inside cards to be big */
+      font-weight: 900 !important;
     }
-    .nav-card i { font-size: 24px; color: var(--primary); margin-bottom: 8px; }
-    .nav-card .count { font-size: 28px; font-weight: 800; color: var(--text); letter-spacing: -0.5px;}
-    .nav-card small { font-size: 11px; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-top: 2px;}
-
-    .page-header { 
-      display: flex; 
-      align-items: center; 
-      justify-content: space-between; 
-      margin-bottom: 20px; 
-      padding-top: 10px;
-    }
-    h2 { font-size: 28px; font-weight: 800; color: var(--text); letter-spacing: -0.5px;}
-
-    .card * { 
-  font-size: 24px !important; 
-  font-weight: 900 !important;
-}
-
-/* Also ensure your inputs are forced to be huge */
-input, select, textarea { 
-  width: 100%; 
-  padding: 16px 20px !important; 
-  margin-bottom: 6px; 
-  border-radius: 14px; 
-  border: 1px solid var(--border); 
-  background: #FAFAFC; 
-  color: var(--text); 
-  font-size: 26px !important; 
-  font-weight: 900 !important;
-  appearance: none; 
-  -webkit-appearance: none;
-}
     
-    /* Native-like Forms */
-    label { display: block; font-weight: 700; font-size: 13px; color: var(--muted); margin-bottom: 6px; margin-top: 12px; text-transform: uppercase; letter-spacing: 0.5px;}
+    /* 2. Unified Input Styles (Removed the duplicate that was overriding this) */
     input, select, textarea { 
-      width: 100%; padding: 14px 16px; margin-bottom: 6px; border-radius: 14px; 
-      border: 1px solid var(--border); background: #FAFAFC; color: var(--text); 
-      font-size: 16px !important; font-weight: 500; transition: all 0.2s;
-      appearance: none; -webkit-appearance: none;
+      width: 100%; 
+      padding: 16px 20px !important; 
+      margin-bottom: 6px; 
+      border-radius: 14px; 
+      border: 1px solid var(--border); 
+      background: #FAFAFC; 
+      color: var(--text); 
+      font-size: 26px !important;      /* Setting to Large */
+      font-weight: 900 !important;
+      appearance: none; 
+      -webkit-appearance: none;
+      transition: all 0.2s;
     }
+    
     input:focus, select:focus, textarea:focus {
       outline: none; border-color: var(--primary); background: #FFF; box-shadow: 0 0 0 4px var(--primary-light);
     }
 
-    .measurement-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
-      background: var(--card-light); padding: 16px; border-radius: 16px; margin-bottom: 10px;
-    }
-    .measurement-grid > div { display: flex; flex-direction: column; }
-    .measurement-grid label { margin-top: 0; font-size: 12px; }
-    .measurement-grid input { padding: 12px; text-align: center; background: #FFF;}
-
-    .action-btn { 
-      background: var(--text); color: white; border: none; padding: 16px; 
-      border-radius: 16px; font-weight: 700; width: 100%; font-size: 16px; 
-      cursor: pointer; transition: transform 0.1s, opacity 0.2s;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    .action-btn:active { transform: scale(0.97); opacity: 0.9; }
-
-    /* Bottom Tab Bar */
-    .bottom-nav {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-      border-top: 1px solid var(--border);
-      display: flex; justify-content: space-around; align-items: center;
-      padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
-      z-index: 4000;
-      max-width: 500px; margin: 0 auto;
-    }
-    .nav-item { 
-      display: flex; flex-direction: column; align-items: center; gap: 4px; 
-      color: var(--muted); text-decoration: none; font-size: 10px; font-weight: 700; cursor: pointer;
-      transition: color 0.2s; width: 25%;
-    }
-    .nav-item i { font-size: 20px; margin-bottom: 2px;}
-    .nav-item.active { color: var(--primary); }
-
-    /* Modals & Views */
-    .modal-overlay { 
-      position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); display: none; 
-      justify-content: center; align-items: flex-end; z-index: 5000; 
-    }
-    .modal { 
-      background: var(--card); width: 100%; max-width: 500px; padding: 25px 20px calc(20px + env(safe-area-inset-bottom)); 
-      border-radius: 24px 24px 0 0; max-height: 90vh; overflow-y: auto; 
-      animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-
-    .photo-strip { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-    .photo-box { border: 2px dashed var(--border); padding: 15px 10px; border-radius: 16px; text-align: center; background:var(--card-light);}
-    .gallery-preview { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 10px; }
-    .gallery-img { width: 50px; height: 50px; object-fit: cover; border-radius: 10px; }
-    .profile-avatar { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; display: block; }
-
-    /* Print & Invoice Styles */
-    #report-print-container { display: none; background: #fff; color: #000; padding: 0; }
-    .print-table { width: 100%; border-collapse: collapse; margin-top: 12px; margin-bottom: 18px; font-size: 14px; }
-    .print-table th, .print-table td { border: 1px solid #000; padding: 8px 10px; text-align: left; }
-    .print-table th { background: #f2f2f2 !important; font-weight: 800; }
-    .report-thumb { max-width: 140px; max-height: 140px; object-fit: cover; border: 2px solid #000000; margin: 6px; border-radius: 6px; }
-
-    @media print {
-      body { background: #ffffff !important; margin: 0; padding: 0; }
-      .app, .modal-overlay, #sync-status, #pdf-toast, .bottom-nav { display: none !important; }
-      #report-print-container { display: block !important; position: relative !important; width: 100%; left: auto; top: auto; }
-      #report-print-container * { visibility: visible; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-      .print-table { border: 1px solid #000; }
-      @page { size: A4 portrait; margin: 15mm; }
+    /* 3. Label Styles */
+    label { 
+      display: block; 
+      font-weight: 700; 
+      font-size: 16px !important; /* Increased from 13px */
+      color: var(--muted); 
+      margin-bottom: 6px; 
+      margin-top: 12px; 
+      text-transform: uppercase; 
+      letter-spacing: 0.5px;
     }
   </style>
 </head>
