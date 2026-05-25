@@ -21,15 +21,16 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
     :root {
-      --bg: #FFFFFF;           
-      --card: #F8F9FA;        
-      --card-light: #E9ECEF;
-      --primary: #6f42c1;     
-      --text: #000000;        
-      --muted: #495057;       
-      --danger: #D9534F;      
-      --success: #28A745;     
-      --border: #CED4DA;      
+      --bg: #F2F2F7;            /* Native iOS light gray background */
+      --card: #FFFFFF;          
+      --card-light: #F8F9FA;
+      --primary: #6B4CE6;       /* Slightly softer, modern purple */
+      --primary-light: #EBE5FF;
+      --text: #1C1C1E;          /* Off-black for better readability */
+      --muted: #8E8E93;         
+      --danger: #FF3B30;        
+      --success: #34C759;       
+      --border: #E5E5EA;        
     }
 
     body { 
@@ -39,98 +40,127 @@
       width: 100%; 
       overflow-x: hidden; 
       line-height: 1.5;
-      -webkit-tap-highlight-color: transparent; /* Smoother mobile taps */
+      -webkit-tap-highlight-color: transparent;
+      padding-bottom: env(safe-area-inset-bottom);
     }
     
     .main { 
       width: 100%; 
       max-width: 500px; 
       margin: 0 auto; 
-      padding: env(safe-area-inset-top, 20px) 16px 100px 16px; 
+      padding: env(safe-area-inset-top, 20px) 16px calc(80px + env(safe-area-inset-bottom)) 16px; 
       min-height: 100vh; 
     }
 
-    /* Dashboard UI */
+    /* Page Transitions */
+    .page-view { display: none; opacity: 0; }
+    .active-view { display: block; animation: slideUpFade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    @keyframes slideUpFade {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Modern App Dashboard UI */
     .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
     .nav-card {
       background: var(--card); 
-      border: 2px solid var(--text); 
-      border-radius: 24px; 
-      padding: 15px;
+      border-radius: 20px; 
+      padding: 16px;
       text-align: center; 
       aspect-ratio: 1.1 / 1; 
       display: flex; 
       flex-direction: column;
       justify-content: center; 
       align-items: center; 
-      cursor: pointer; 
+      box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+      border: 1px solid rgba(0,0,0,0.02);
     }
-    .nav-card:active { background: var(--card-light); transform: scale(0.98); }
-    .nav-card i { font-size: 26px; color: var(--primary); margin-bottom: 6px; }
-    .nav-card .count { font-size: 30px; font-weight: 900; color: var(--text); }
-    .nav-card small { font-size: 11px; text-transform: uppercase; color: var(--text); font-weight: 800; }
+    .nav-card i { font-size: 24px; color: var(--primary); margin-bottom: 8px; }
+    .nav-card .count { font-size: 28px; font-weight: 800; color: var(--text); letter-spacing: -0.5px;}
+    .nav-card small { font-size: 11px; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-top: 2px;}
 
     .page-header { 
       display: flex; 
       align-items: center; 
       justify-content: space-between; 
-      margin-bottom: 25px; 
-      padding-bottom: 15px; 
-      border-bottom: 3px solid var(--text); 
+      margin-bottom: 20px; 
+      padding-top: 10px;
     }
-    .header-group { display: flex; align-items: center; gap: 12px; }
-    .home-btn { background: var(--text); border: none; color: white; width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size:16px; cursor: pointer;}
-    h2 { font-size: 24px; font-weight: 800; color: var(--text); }
+    h2 { font-size: 28px; font-weight: 800; color: var(--text); letter-spacing: -0.5px;}
 
     .card { 
-      background: var(--bg); 
+      background: var(--card); 
       border-radius: 20px; 
       padding: 20px; 
-      border: 2px solid #000; 
-      margin-bottom: 15px; 
-      box-shadow: 0 4px 0px #000;
+      margin-bottom: 16px; 
+      box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+      border: 1px solid rgba(0,0,0,0.02);
     }
     
-    /* Forms */
-    label { display: block; font-weight: 800; font-size: 15px; color: var(--text); margin-bottom: 4px; margin-top: 10px; }
+    /* Native-like Forms */
+    label { display: block; font-weight: 700; font-size: 13px; color: var(--muted); margin-bottom: 6px; margin-top: 12px; text-transform: uppercase; letter-spacing: 0.5px;}
     input, select, textarea { 
-      width: 100%; padding: 14px; margin-bottom: 10px; border-radius: 12px; 
-      border: 2px solid var(--text); background: white; color: black; 
-      font-size: 16px !important; font-weight: 600;
+      width: 100%; padding: 14px 16px; margin-bottom: 6px; border-radius: 14px; 
+      border: 1px solid var(--border); background: #FAFAFC; color: var(--text); 
+      font-size: 16px !important; font-weight: 500; transition: all 0.2s;
+      appearance: none; -webkit-appearance: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none; border-color: var(--primary); background: #FFF; box-shadow: 0 0 0 4px var(--primary-light);
     }
 
     .measurement-grid {
       display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
-      background: #f8f9fa; padding: 12px; border-radius: 14px; border: 1px solid #000; margin-bottom: 10px;
+      background: var(--card-light); padding: 16px; border-radius: 16px; margin-bottom: 10px;
     }
-    .measurement-grid > div { width: 85%; margin: 0 auto; display: flex; flex-direction: column; justify-content: flex-end; }
-    .measurement-grid label { margin-top: 4px; font-size:13px; color:var(--muted); }
-    .measurement-grid input { padding: 10px; font-size:16px !important; margin-bottom:4px; text-align:center;}
+    .measurement-grid > div { display: flex; flex-direction: column; }
+    .measurement-grid label { margin-top: 0; font-size: 12px; }
+    .measurement-grid input { padding: 12px; text-align: center; background: #FFF;}
 
     .action-btn { 
-      background: var(--text); color: white; border: none; padding: 18px; 
-      border-radius: 14px; font-weight: 900; width: 100%; font-size: 16px; 
-      text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer;
+      background: var(--text); color: white; border: none; padding: 16px; 
+      border-radius: 16px; font-weight: 700; width: 100%; font-size: 16px; 
+      cursor: pointer; transition: transform 0.1s, opacity 0.2s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-    .action-btn:active { opacity:0.9; transform:scale(0.98); }
+    .action-btn:active { transform: scale(0.97); opacity: 0.9; }
+
+    /* Bottom Tab Bar */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
+      display: flex; justify-content: space-around; align-items: center;
+      padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
+      z-index: 4000;
+      max-width: 500px; margin: 0 auto;
+    }
+    .nav-item { 
+      display: flex; flex-direction: column; align-items: center; gap: 4px; 
+      color: var(--muted); text-decoration: none; font-size: 10px; font-weight: 700; cursor: pointer;
+      transition: color 0.2s; width: 25%;
+    }
+    .nav-item i { font-size: 20px; margin-bottom: 2px;}
+    .nav-item.active { color: var(--primary); }
 
     /* Modals & Views */
     .modal-overlay { 
-      position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; 
-      justify-content: center; align-items: center; z-index: 5000; padding: 15px; 
+      position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); display: none; 
+      justify-content: center; align-items: flex-end; z-index: 5000; 
     }
     .modal { 
-      background: var(--bg); width: 100%; max-width: 480px; padding: 25px; 
-      border-radius: 24px; border: 3px solid var(--text); max-height: 90vh; overflow-y: auto; 
+      background: var(--card); width: 100%; max-width: 500px; padding: 25px 20px calc(20px + env(safe-area-inset-bottom)); 
+      border-radius: 24px 24px 0 0; max-height: 90vh; overflow-y: auto; 
+      animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-    .page-view { display: none; }
-    .active-view { display: block; }
-    .photo-strip { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-    .photo-box { border: 2px dashed #000; padding: 10px; border-radius: 12px; text-align: center; background:#fff;}
-    .gallery-preview { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; margin-top: 6px; }
-    .gallery-img { width: 45px; height: 45px; object-fit: cover; border: 1px solid #000; border-radius: 6px; }
-    .profile-avatar { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 2px solid #000; display: block; }
+    .photo-strip { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+    .photo-box { border: 2px dashed var(--border); padding: 15px 10px; border-radius: 16px; text-align: center; background:var(--card-light);}
+    .gallery-preview { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 10px; }
+    .gallery-img { width: 50px; height: 50px; object-fit: cover; border-radius: 10px; }
+    .profile-avatar { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; display: block; }
 
     /* Print & Invoice Styles */
     #report-print-container { display: none; background: #fff; color: #000; padding: 0; }
@@ -141,7 +171,7 @@
 
     @media print {
       body { background: #ffffff !important; margin: 0; padding: 0; }
-      .app, .modal-overlay, #sync-status, #pdf-toast { display: none !important; }
+      .app, .modal-overlay, #sync-status, #pdf-toast, .bottom-nav { display: none !important; }
       #report-print-container { display: block !important; position: relative !important; width: 100%; left: auto; top: auto; }
       #report-print-container * { visibility: visible; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
       .print-table { border: 1px solid #000; }
@@ -159,58 +189,56 @@
     <main class="main">
       
       <div id="view-dashboard" class="page-view active-view">
-        <h2 style="margin-bottom:20px; color:var(--primary); font-weight:800; font-size:26px;"><i class="fas fa-scissors"></i> StitchTrack Bespoke</h2>
+        <div class="page-header" style="margin-top: 10px;">
+          <h2><i class="fas fa-scissors" style="color:var(--primary); font-size:24px; margin-right:8px;"></i>StitchTrack</h2>
+          <div style="background:var(--primary-light); color:var(--primary); width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="openModal('order')">
+            <i class="fas fa-plus"></i>
+          </div>
+        </div>
         
         <div class="nav-grid">
-          <div class="nav-card" onclick="showPage('customers')">
+          <div class="nav-card">
             <i class="fas fa-users"></i>
             <div id="s-clients" class="count">--</div>
             <small>Clients Profile</small>
           </div>
-          <div class="nav-card" onclick="showPage('orders');">
+          <div class="nav-card">
             <i class="fas fa-tape"></i>
             <div id="s-pending" class="count">--</div>
             <small>Active Jobs</small>
           </div>
-          <div class="nav-card" onclick="showPage('orders');">
+          <div class="nav-card">
             <i class="fas fa-mitten"></i>
             <div id="s-review" class="count">--</div>
             <small>Fitting Alerts</small>
           </div>
-          <div class="nav-card" onclick="showPage('reports');">
+          <div class="nav-card">
             <i class="fas fa-file-invoice"></i>
-            <div style="font-size:18px; margin-top:4px;"><i class="fas fa-print"></i></div>
-            <small>Print Invoices</small>
+            <div style="font-size:26px; margin-top:2px; font-weight:800; color:var(--text);"><i class="fas fa-print"></i></div>
+            <small>Invoices</small>
           </div>
         </div>
 
         <div style="margin-top:20px;">
           <button class="action-btn" onclick="openModal('customer')"><i class="fas fa-user-plus"></i> Register Client Profile</button>
-          <button class="action-btn" style="margin-top:10px; background:var(--primary);" onclick="openModal('order')"><i class="fas fa-file-signature"></i> Create New Design Order</button>
+          <button class="action-btn" style="margin-top:12px; background:var(--primary);" onclick="openModal('order')"><i class="fas fa-file-signature"></i> Create New Design Order</button>
         </div>
       </div>
 
       <div id="view-customers" class="page-view">
         <div class="page-header">
-          <div class="header-group">
-            <button class="home-btn" onclick="showPage('dashboard')"><i class="fas fa-home"></i></button>
-            <h2>Studio Clients</h2>
-          </div>
+          <h2>Studio Clients</h2>
         </div>
         <div id="customer-master-list"></div>
       </div>
 
       <div id="view-orders" class="page-view">
         <div class="page-header">
-          <div class="header-group">
-            <button class="home-btn" onclick="showPage('dashboard')"><i class="fas fa-home"></i></button>
-            <h2>Production Tracker</h2>
-          </div>
+          <h2>Tracker</h2>
         </div>
         <div style="margin-bottom: 20px;">
-          <label>WORKFLOW PRODUCTION PHASE FILTER:</label>
-          <select id="order-status-filter" onchange="refreshData('orders')" style="border: 2px solid #000; font-weight:700;">
-            <option value="ALL">-- ALL PRODUCTION JOBS --</option>
+          <select id="order-status-filter" onchange="refreshData('orders')" style="background:#fff; border-color:transparent; box-shadow:0 2px 8px rgba(0,0,0,0.05); font-weight:700;">
+            <option value="ALL">All Production Jobs</option>
             <option value="Measurements Taken">Measurements Taken</option>
             <option value="Cutting Phase">Cutting Phase</option>
             <option value="Sewing Construction">Sewing Construction</option>
@@ -224,47 +252,59 @@
 
       <div id="view-reports" class="page-view">
         <div class="page-header">
-          <div class="header-group">
-            <button class="home-btn" onclick="showPage('dashboard')"><i class="fas fa-home"></i></button>
-            <h2>Atelier Invoices</h2>
-          </div>
+          <h2>Invoices</h2>
         </div>
         <div class="card">
-          <label>CHOOSE ACTIVE STUDIO ORDER BRIEF:</label>
+          <label>Choose Active Studio Order Brief:</label>
           <select id="rep-order-sel"></select>
-          <button class="action-btn" style="background:var(--primary); margin-top:15px;" onclick="compileStudioInvoice()">Generate Design Invoice</button>
+          <button class="action-btn" style="background:var(--primary); margin-top:15px; box-shadow: 0 4px 12px rgba(107, 76, 230, 0.3);" onclick="compileStudioInvoice()">Generate Invoice</button>
         </div>
 
-        <div id="report-onscreen-preview-card" class="card" style="display:none; border:3px dashed var(--text);">
-          <h4 style="text-transform:uppercase; font-weight:800; margin-bottom:10px;"><i class="fas fa-eye"></i> Production Invoice Preview</h4>
-          <div id="report-preview-viewport" style="max-height:350px; overflow-y:auto; background:#fff; border:1px solid #000; padding:10px;"></div>
+        <div id="report-onscreen-preview-card" class="card" style="display:none;">
+          <h4 style="text-transform:uppercase; font-weight:800; margin-bottom:15px; font-size:14px; color:var(--muted);"><i class="fas fa-eye"></i> Preview</h4>
+          <div id="report-preview-viewport" style="max-height:350px; overflow-y:auto; background:#fff; border:1px solid var(--border); border-radius:12px; padding:15px;"></div>
           
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:15px;">
-            <button class="action-btn" style="background:#25D366; font-size:15px; padding:14px;" onclick="sendWhatsAppSummary()">
-              <i class="fab fa-whatsapp" style="font-size:18px;"></i> WhatsApp
+            <button class="action-btn" style="background:#25D366; font-size:14px; padding:14px;" onclick="sendWhatsAppSummary()">
+              <i class="fab fa-whatsapp"></i> WhatsApp
             </button>
-            <button class="action-btn" style="background:var(--success); font-size:15px; padding:14px;" onclick="window.print()">
+            <button class="action-btn" style="background:var(--success); font-size:14px; padding:14px;" onclick="window.print()">
               <i class="fas fa-print"></i> Print A4
             </button>
             <button class="action-btn" style="background:var(--primary); grid-column:span 2; padding:14px;" onclick="shareInvoicePDF()">
-              <i class="fas fa-share-nodes"></i> Share PDF Document
+              <i class="fas fa-share-nodes"></i> Share PDF
             </button>
           </div>
         </div>
       </div>
 
     </main>
+    
+    <nav class="bottom-nav">
+      <div class="nav-item active" id="nav-dashboard" onclick="showPage('dashboard')">
+        <i class="fas fa-home"></i><span>Home</span>
+      </div>
+      <div class="nav-item" id="nav-customers" onclick="showPage('customers')">
+        <i class="fas fa-users"></i><span>Clients</span>
+      </div>
+      <div class="nav-item" id="nav-orders" onclick="showPage('orders')">
+        <i class="fas fa-tape"></i><span>Jobs</span>
+      </div>
+      <div class="nav-item" id="nav-reports" onclick="showPage('reports')">
+        <i class="fas fa-file-invoice"></i><span>Invoices</span>
+      </div>
+    </nav>
   </div>
 
   <div id="report-print-container"></div>
 
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal">
-      <h3 id="modalTitle" style="font-size:22px; font-weight:800;">Form</h3>
-      <div id="modalBody" style="margin-top:15px;"></div>
+      <h3 id="modalTitle" style="font-size:22px; font-weight:800; margin-bottom:15px;">Form</h3>
+      <div id="modalBody"></div>
       <div style="display:flex; gap:10px; margin-top:20px;">
-        <button class="action-btn" style="background:#444" onclick="closeModal()">Cancel</button>
-        <button class="action-btn" id="modalSubmit">Save</button>
+        <button class="action-btn" style="background:#E5E5EA; color:#1C1C1E;" onclick="closeModal()">Cancel</button>
+        <button class="action-btn" style="background:var(--primary);" id="modalSubmit">Save</button>
       </div>
     </div>
   </div>
@@ -345,9 +385,17 @@
     }
 
     function showPage(p) {
+      // Swap views
       document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active-view'));
       const target = document.getElementById('view-' + p);
       if (target) { target.classList.add('active-view'); window.scrollTo(0,0); }
+      
+      // Update Bottom Nav Active State
+      document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+      const activeNav = document.getElementById('nav-' + p);
+      if (activeNav) activeNav.classList.add('active');
+
+      // Trigger logic
       if (p === 'dashboard') updateDashboardCounters(); 
       else if (p === 'reports') initInvoiceConsoleEngine();
       else refreshData(p);
@@ -361,7 +409,7 @@
       const listEl = document.getElementById(idMap[p]); if (!listEl) return;
       
       let apiCmd = p === 'customers' ? 'getCustomers' : 'getOrders';
-      listEl.innerHTML = `<p style="text-align:center; padding:20px; font-weight:800;"><i class="fas fa-spinner fa-spin"></i> Reading atelier registers...</p>`;
+      listEl.innerHTML = `<p style="text-align:center; padding:20px; font-weight:800; color:var(--muted);"><i class="fas fa-spinner fa-spin"></i> Reading atelier registers...</p>`;
       
       callApi(apiCmd, {}).then(data => {
         let displayData = data || [];
@@ -369,10 +417,10 @@
           cache.customers = displayData;
           listEl.innerHTML = displayData.map(c => `
             <div class="card" onclick="openRecordRow('customer', '${c.customerId}')" style="cursor:pointer; display:flex; align-items:center; gap:15px;">
-              ${c.email ? `<img src="${getDirectImageUrl(c.email)}" class="gallery-img" style="width:60px; height:60px; border-radius:50%; border:2px solid #000;">` : `<div style="width:60px; height:60px; border-radius:50%; background:#e9ecef; border:2px solid #000; display:flex; align-items:center; justify-content:center; font-size:22px;"><i class="fas fa-user"></i></div>`}
+              ${c.email ? `<img src="${getDirectImageUrl(c.email)}" class="gallery-img" style="width:60px; height:60px; border-radius:50%; border:2px solid var(--border);">` : `<div style="width:60px; height:60px; border-radius:50%; background:var(--card-light); border:2px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:22px; color:var(--muted);"><i class="fas fa-user"></i></div>`}
               <div style="flex:1;">
-                <strong style="font-size:20px;">${c.fullName}</strong><br>
-                <span style="font-weight:700; color:var(--primary); font-size:14px;"><i class="fas fa-phone"></i> ${c.phone}</span>
+                <strong style="font-size:18px; color:var(--text);">${c.fullName}</strong><br>
+                <span style="font-weight:600; color:var(--muted); font-size:13px;"><i class="fas fa-phone" style="font-size:11px;"></i> ${c.phone}</span>
               </div>
             </div>`).join('');
         } else {
@@ -386,13 +434,14 @@
             const clientObj = cache.customers.find(c => c.customerId === o.customerId) || { fullName: "Unlinked Profile" };
             const balance = Number(o.totalCost) - Number(o.amountPaid);
             return `
-              <div class="card" onclick="openRecordRow('order', '${o.orderId}')" style="cursor:pointer; border-left: 6px solid ${balance > 0 ? 'var(--danger)' : 'var(--success)'};">
+              <div class="card" onclick="openRecordRow('order', '${o.orderId}')" style="cursor:pointer; position:relative; overflow:hidden;">
+                <div style="position:absolute; left:0; top:0; bottom:0; width:6px; background:${balance > 0 ? 'var(--danger)' : 'var(--success)'};"></div>
                 <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:6px; gap:5px;">
-                  <div style="flex:1;"><strong style="font-size:18px;">${clientObj.fullName}</strong><br><small style="font-family:monospace; font-weight:800; color:var(--muted);">#${o.orderId}</small></div>
-                  <span style="font-size:10px; font-weight:900; background:#000; color:#fff; padding:4px 8px; border-radius:6px; text-transform:uppercase; text-align:center;">${o.status}</span>
+                  <div style="flex:1;"><strong style="font-size:16px;">${clientObj.fullName}</strong><br><small style="font-family:monospace; font-weight:700; color:var(--muted);">#${o.orderId}</small></div>
+                  <span style="font-size:10px; font-weight:800; background:var(--primary-light); color:var(--primary); padding:4px 8px; border-radius:8px; text-transform:uppercase; text-align:center;">${o.status}</span>
                 </div>
-                <div style="font-size:15px; font-weight:700; color:var(--primary);"><i class="fas fa-cut"></i> ${o.designDescription}</div>
-                <div style="display:grid; grid-template-columns:1fr 1fr; font-size:13px; font-weight:800; background:var(--card-light); padding:8px; border-radius:8px; margin-top:8px;">
+                <div style="font-size:14px; font-weight:600; color:var(--text); margin-bottom:10px;">${o.designDescription}</div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; font-size:13px; font-weight:700; background:var(--card-light); padding:10px; border-radius:10px;">
                   <div>Cost: ₦${Number(o.totalCost).toLocaleString()}</div>
                   <div style="text-align:right; color:${balance > 0 ? 'var(--danger)':'var(--success)'};">Bal: ₦${balance.toLocaleString()}</div>
                 </div>
@@ -435,16 +484,16 @@
         let clientProfilePhoto = isEdit ? editData.email : ""; 
 
         body.innerHTML = `
-          <div style="position: relative; width: 90px; height: 90px; margin: 0 auto 15px auto;">
+          <div style="position: relative; width: 90px; height: 90px; margin: 0 auto 20px auto;">
             <img id="p_avatar_view" src="${clientProfilePhoto ? getDirectImageUrl(clientProfilePhoto) : 'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 width=%2280%22 height=%2280%22><circle cx=%2212%22 cy=%2212%22 r=%2212%22 fill=%22%23e9ecef%22/></svg>'}" class="profile-avatar">
-            <label style="position: absolute; bottom: 0; right: 0; background: var(--primary); color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; cursor: pointer;"><i class="fas fa-camera"></i><input type="file" id="cam_avatar" accept="image/*" style="display:none"></label>
+            <label style="position: absolute; bottom: 0; right: 0; background: var(--primary); color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; cursor: pointer; margin:0;"><i class="fas fa-camera"></i><input type="file" id="cam_avatar" accept="image/*" style="display:none"></label>
           </div>
           <div id="p_avatar_indicator" style="text-align:center; font-size:11px; font-weight:700; color:var(--success); margin-bottom:10px;"></div>
 
           <label>Full Name</label><input id="c_name" value="${isEdit?editData.fullName:''}">
           <label>Mobile Number</label><input id="c_phone" type="tel" value="${isEdit?editData.phone:''}">
           
-          <div style="margin-top:15px; margin-bottom:4px; font-weight:900; font-size:14px; border-bottom:2px solid #000; color:var(--primary);">I. UPPER BODY</div>
+          <div style="margin-top:20px; margin-bottom:10px; font-weight:800; font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">I. Upper Body</div>
           <div class="measurement-grid">
             <div><label>Bust</label><input id="m_ch" type="text" value="${isEdit?editData.chestBust||'':''}"></div>
             <div><label>Under-Bust</label><input id="m_underbust" type="text" value="${isEdit?editData.underbust || '':''}"></div>
@@ -452,7 +501,7 @@
             <div><label>Neck</label><input id="m_neck" type="text" value="${isEdit?editData.neck||'':''}"></div>
           </div>
 
-          <div style="margin-top:15px; margin-bottom:4px; font-weight:900; font-size:14px; border-bottom:2px solid #000; color:var(--primary);">II. LOWER BODY</div>
+          <div style="margin-top:20px; margin-bottom:10px; font-weight:800; font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">II. Lower Body</div>
           <div class="measurement-grid">
             <div><label>Waist</label><input id="m_wst" type="text" value="${isEdit?editData.waist||'':''}"></div>
             <div><label>Hips</label><input id="m_hip" type="text" value="${isEdit?editData.hips||'':''}"></div>
@@ -460,7 +509,7 @@
             <div><label>Ankle</label><input id="m_ank" type="text" value="${isEdit?editData.ankle||'':''}"></div>
           </div>
 
-          <div style="margin-top:15px; margin-bottom:4px; font-weight:900; font-size:14px; border-bottom:2px solid #000; color:var(--primary);">III. LENGTHS</div>
+          <div style="margin-top:20px; margin-bottom:10px; font-weight:800; font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">III. Lengths</div>
           <div class="measurement-grid">
             <div><label>Top Length</label><input id="m_top" type="text" value="${isEdit?editData.shirtLength||'':''}"></div>
             <div><label>Sleeve Length</label><input id="m_slv" type="text" value="${isEdit?editData.sleeveLength||'':''}"></div>
@@ -470,9 +519,9 @@
 
           <label>Special Body Notes</label><textarea id="c_notes" rows="2">${isEdit?editData.notes||'':''}</textarea>
           
-          <div class="card" id="canvas-sketch-frame" style="margin-top: 15px; text-align: center; display:none; background:#fff;">
-            <span style="font-size:12px; font-weight:800; color:var(--primary); display:block; margin-bottom:8px;">PROPORTION BLUEPRINT</span>
-            <canvas id="studioSketchCanvas" width="300" height="480" style="background:#fff; border:2px solid #000; border-radius:12px; max-width:100%;"></canvas>
+          <div class="card" id="canvas-sketch-frame" style="margin-top: 15px; text-align: center; display:none; background:var(--card-light); border:none; box-shadow:none;">
+            <span style="font-size:11px; font-weight:800; color:var(--primary); display:block; margin-bottom:10px; text-transform:uppercase; letter-spacing:1px;">Proportion Blueprint</span>
+            <canvas id="studioSketchCanvas" width="300" height="480" style="background:#fff; border-radius:12px; max-width:100%; border:1px solid var(--border);"></canvas>
           </div>
         `;
 
@@ -545,13 +594,13 @@
           
           <div class="photo-strip">
             <div class="photo-box">
-              <span style="font-size:11px; font-weight:800; color:var(--primary);">STYLE PHOTOS</span>
-              <label style="background:var(--card-light); padding:8px; border-radius:6px; display:block; font-size:12px; cursor:pointer;"><i class="fas fa-camera"></i> Upload<input type="file" id="cam_design" accept="image/*" multiple style="display:none"></label>
+              <span style="font-size:10px; font-weight:800; color:var(--primary); text-transform:uppercase; display:block; margin-bottom:8px;">Style Photos</span>
+              <label style="background:#FFF; border:1px solid var(--border); padding:8px; border-radius:10px; display:block; font-size:12px; cursor:pointer; margin:0;"><i class="fas fa-camera"></i> Upload<input type="file" id="cam_design" accept="image/*" multiple style="display:none"></label>
               <div id="p_design_indicator" class="gallery-preview"></div>
             </div>
             <div class="photo-box">
-              <span style="font-size:11px; font-weight:800; color:var(--success);">FINISHED QC</span>
-              <label style="background:var(--card-light); padding:8px; border-radius:6px; display:block; font-size:12px; cursor:pointer;"><i class="fas fa-camera"></i> Upload<input type="file" id="cam_finished" accept="image/*" multiple style="display:none"></label>
+              <span style="font-size:10px; font-weight:800; color:var(--success); text-transform:uppercase; display:block; margin-bottom:8px;">Finished QC</span>
+              <label style="background:#FFF; border:1px solid var(--border); padding:8px; border-radius:10px; display:block; font-size:12px; cursor:pointer; margin:0;"><i class="fas fa-camera"></i> Upload<input type="file" id="cam_finished" accept="image/*" multiple style="display:none"></label>
               <div id="p_finished_indicator" class="gallery-preview"></div>
             </div>
           </div>
