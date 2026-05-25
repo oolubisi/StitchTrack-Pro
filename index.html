@@ -63,10 +63,13 @@
     /* Modern App Dashboard UI */
     .nav-grid { 
       display: grid; 
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
+      /* The magic fix: minmax(0, 1fr) forces columns to NEVER exceed screen width */
+      grid-template-columns: repeat(2, minmax(0, 1fr)); 
       gap: 12px; 
       margin-bottom: 20px; 
+      width: 100%;
     }
+    
     .nav-card {
       background: var(--card); 
       border-radius: 20px; 
@@ -78,6 +81,11 @@
       align-items: center; 
       box-shadow: 0 4px 15px rgba(0,0,0,0.04);
       border: 1px solid rgba(0,0,0,0.02);
+      
+      /* Force text to wrap instead of stretching the card */
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      width: 100%;
     }
     .nav-card i { font-size: 24px; color: var(--primary); margin-bottom: 8px; }
     .nav-card .count { font-size: 28px; font-weight: 800; color: var(--text); letter-spacing: -0.5px;}
