@@ -73,17 +73,14 @@ function updateDashboardCounters() {
 }
 
 function showPage(p) {
-  // Swap views
   document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active-view'));
   const target = document.getElementById('view-' + p);
   if (target) { target.classList.add('active-view'); window.scrollTo(0,0); }
   
-  // Update Bottom Nav Active State
   document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
   const activeNav = document.getElementById('nav-' + p);
   if (activeNav) activeNav.classList.add('active');
 
-  // Trigger logic
   if (p === 'dashboard') updateDashboardCounters(); 
   else if (p === 'reports') initInvoiceConsoleEngine();
   else refreshData(p);
@@ -162,9 +159,14 @@ function openRecordRow(type, id) {
 // FORMS & DATA ENTRY
 // ==========================================
 function openModal(type, editData = null) {
-  const body = document.getElementById('modalBody'); const submit = document.getElementById('modalSubmit');
-  const title = document.getElementById('modalTitle'); const overlay = document.getElementById('modalOverlay');
-  const isEdit = !!editData; overlay.style.display = 'flex'; body.innerHTML = ''; submit.disabled = false;
+  const body = document.getElementById('modalBody'); 
+  const submit = document.getElementById('modalSubmit');
+  const title = document.getElementById('modalTitle'); 
+  const overlay = document.getElementById('modalOverlay');
+  const isEdit = !!editData; 
+  overlay.style.display = 'flex'; 
+  body.innerHTML = ''; 
+  submit.disabled = false;
 
   if (type === 'customer') {
     const uniqueId = isEdit ? editData.customerId : "TLR-" + Math.random().toString(36).substr(2, 5).toUpperCase();
@@ -196,4 +198,351 @@ function openModal(type, editData = null) {
       <div class="measurement-grid">
         <div><label>Waist</label><input id="m_wst" type="text" value="${isEdit?editData.waist||'':''}"></div>
         <div><label>Low Waist</label><input id="m_lwst" type="text" value="${isEdit?editData.lowWaist||'':''}"></div>
-        <div><label>Hips</label><input id="m_hip"
+        <div><label>Hips</label><input id="m_hip" type="text" value="${isEdit?editData.hips||'':''}"></div>
+        <div><label>Thigh</label><input id="m_thg" type="text" value="${isEdit?editData.thigh||'':''}"></div>
+        <div><label>Crotch</label><input id="m_cr" type="text" value="${isEdit?editData.crotch||'':''}"></div>
+        <div><label>Ankle</label><input id="m_ank" type="text" value="${isEdit?editData.ankle||'':''}"></div>
+      </div>
+
+      <div style="margin-top:20px; margin-bottom:10px; font-weight:800; font-size:16px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">III. Lengths</div>
+      <div class="measurement-grid">
+        <div><label>Top Length</label><input id="m_top" type="text" value="${isEdit?editData.shirtLength||'':''}"></div>
+        <div><label>Sleeve Length</label><input id="m_slv" type="text" value="${isEdit?editData.sleeveLength||'':''}"></div>
+        <div><label>Trouser Length</label><input id="m_trs" type="text" value="${isEdit?editData.trouserLength||'':''}"></div>
+        <div><label>Skirt Length</label><input id="m_sk_len" type="text" value="${isEdit?editData.skirtLength||'':''}"></div>
+        <div><label>Gown Length</label><input id="m_gown_len" type="text" value="${isEdit?editData.gownLength||'':''}"></div>
+      </div>
+
+      <label>Special Body Notes</label><textarea id="c_notes" rows="2">${isEdit?editData.notes||'':''}</textarea>
+      
+      <div class="card" id="canvas-sketch-frame" style="margin-top: 15px; text-align: center; display:none; background:var(--card-light); border:none; box-shadow:none;">
+        <span style="font-size:14px !important; font-weight:800; color:var(--primary); display:block; margin-bottom:10px; text-transform:uppercase; letter-spacing:1px;">Proportion Blueprint</span>
+        <canvas id="studioSketchCanvas" width="300" height="480" style="background:#fff; border-radius:12px; max-width:100%; border:1px solid var(--border);"></canvas>
+      </div>
+    `;
+
+    document.getElementById('cam_avatar').onchange = (e) => {
+      const file = e.target.files[0]; if(!file) return;
+      const r = new FileReader(); r.onload = async (evt) => {
+        const comp = await compressImageToTargetLimit(evt.target.result);
+        document.getElementById('p_avatar_indicator').innerText = "UPLOADING...";
+        callApi('uploadImage', { base64: comp, name: "avatar_" + uniqueId + ".jpg" }).then(res => {
+          if(res && res.url) {
+            clientProfilePhoto = res.url;
+            document.getElementById('p_avatar_view').src = getDirectImageUrl(res.url);
+            document.getElementById('p_avatar_indicator').innerText = "✅ UPLOADED";
+          }
+        });
+      }; r.readAsDataURL(file);
+    };
+
+    if (isEdit) {
+      setTimeout(() => renderDynamicGarmentSketch(
+        parseMeasurementInches(editData.shoulder), parseMeasurementInches(editData.chestBust), 
+        parseMeasurementInches(editData.underbust), parseMeasurementInches(editData.waist), 
+        parseMeasurementInches(editData.hips), parseMeasurementInches(editData.shirtLength), 
+        parseMeasurementInches(editData.trouserLength)
+      ), 150);
+    }
+
+    submit.onclick = () => {
+      submit.disabled = true;
+      const payload = { 
+        customerId: uniqueId, 
+        fullName: document.getElementById('c_name').value, 
+        phone: document.getElementById('c_phone').value, 
+        email: clientProfilePhoto, 
+        
+        neck: document.getElementById('m_neck').value, 
+        shoulder: document.getElementById('m_sh').value, 
+        chestBust: document.getElementById('m_ch').value, 
+        underbust: document.getElementById('m_underbust').value,
+        acrossChest: document.getElementById('m_ach').value,
+        acrossBack: document.getElementById('m_abk').value,
+        bicep: document.getElementById('m_bic').value,
+        
+        waist: document.getElementById('m_wst').value, 
+        lowWaist: document.getElementById('m_lwst').value,
+        hips: document.getElementById('m_hip').value, 
+        thigh: document.getElementById('m_thg').value, 
+        crotch: document.getElementById('m_cr').value,
+        ankle: document.getElementById('m_ank').value, 
+        
+        shirtLength: document.getElementById('m_top').value, 
+        gownLength: document.getElementById('m_gown_len').value, 
+        sleeveLength: document.getElementById('m_slv').value, 
+        skirtLength: document.getElementById('m_sk_len').value,
+        trouserLength: document.getElementById('m_trs').value, 
+        
+        notes: document.getElementById('c_notes').value 
+      };
+      callApi(isEdit?'updateCustomer':'saveCustomer', payload).then(() => { closeModal(); refreshData('customers'); });
+    };
+  }
+  else if (type === 'order') {
+    const nextNum = (cache.orders.length + 1).toString().padStart(4, '0');
+    const uniqueId = isEdit ? editData.orderId : nextNum;
+    title.innerText = isEdit ? `Modify Order #${uniqueId}` : `Create Order #${uniqueId}`;
+    
+    let designPhotosArray = isEdit && editData.designPhotos ? editData.designPhotos.split(',') : [];
+    let finishedPhotosArray = isEdit && editData.finishedPhotos ? editData.finishedPhotos.split(',') : [];
+
+    body.innerHTML = `
+      <label>Select Client</label><select id="o_cust" ${isEdit?'disabled':''}></select>
+      <label>Design Description</label><input id="o_desc" value="${isEdit?editData.designDescription:''}">
+      <label>Fabric Details</label><input id="o_fabric" value="${isEdit?editData.fabricNotes||'':''}">
+      
+      <label>Total Price (₦)</label><input id="o_cost" type="number" value="${isEdit?editData.totalCost:''}">
+      <label>Deposit Paid (₦)</label><input id="o_paid" type="number" value="${isEdit?editData.amountPaid:''}">
+      
+      <label>Target Delivery Date</label><input id="o_due" type="date" value="${isEdit?fromSheetDate(editData.dateDue):''}">
+      
+      <label>Production Status</label>
+      <select id="o_status">
+        <option value="Measurements Taken">Measurements Taken</option>
+        <option value="Cutting Phase">Cutting Phase</option>
+        <option value="Sewing Construction">Sewing Construction</option>
+        <option value="Fitting / Review">Fitting / Review</option>
+        <option value="Completed Ready">Completed Ready</option>
+        <option value="Delivered">Delivered & Handed Over</option>
+      </select>
+      
+      <label>Styling Remarks</label><textarea id="o_notes" rows="2">${isEdit?editData.notes||'':''}</textarea>
+      
+      <div class="photo-strip">
+        <div class="photo-box">
+          <span style="font-size:12px !important; font-weight:800; color:var(--primary); text-transform:uppercase; display:block; margin-bottom:8px;">Style Photos</span>
+          <label style="background:#FFF; border:1px solid var(--border); padding:8px; border-radius:10px; display:block; font-size:14px !important; cursor:pointer; margin:0;"><i class="fas fa-camera"></i> Upload<input type="file" id="cam_design" accept="image/*" multiple style="display:none"></label>
+          <div id="p_design_indicator" class="gallery-preview"></div>
+        </div>
+        <div class="photo-box">
+          <span style="font-size:12px !important; font-weight:800; color:var(--success); text-transform:uppercase; display:block; margin-bottom:8px;">Finished QC</span>
+          <label style="background:#FFF; border:1px solid var(--border); padding:8px; border-radius:10px; display:block; font-size:14px !important; cursor:pointer; margin:0;"><i class="fas fa-camera"></i> Upload<input type="file" id="cam_finished" accept="image/*" multiple style="display:none"></label>
+          <div id="p_finished_indicator" class="gallery-preview"></div>
+        </div>
+      </div>
+    `;
+    
+    const cSel = document.getElementById('o_cust');
+    const fillSelector = () => { (cache.customers || []).forEach(c => { const o=document.createElement('option'); o.value=c.customerId; o.innerText=c.fullName; if(isEdit&&c.customerId===editData.customerId) o.selected=true; cSel.appendChild(o); }); };
+    if(cache.customers.length === 0) { callApi('getCustomers', {}).then(res => { cache.customers = res || []; fillSelector(); }); } else { fillSelector(); }
+    
+    if(isEdit) {
+      document.getElementById('o_status').value = editData.status;
+      renderImageThumbnailsInline('p_design_indicator', designPhotosArray);
+      renderImageThumbnailsInline('p_finished_indicator', finishedPhotosArray);
+    }
+
+    document.getElementById('cam_design').onchange = (e) => handleBatchImageUpload(e.target.files, uniqueId, "design", (url) => { designPhotosArray.push(url); renderImageThumbnailsInline('p_design_indicator', designPhotosArray); });
+    document.getElementById('cam_finished').onchange = (e) => handleBatchImageUpload(e.target.files, uniqueId, "finished", (url) => { finishedPhotosArray.push(url); renderImageThumbnailsInline('p_finished_indicator', finishedPhotosArray); });
+
+    submit.onclick = () => {
+      const cost = parseFloat(document.getElementById('o_cost').value);
+      const paid = parseFloat(document.getElementById('o_paid').value);
+      if (isNaN(cost) || isNaN(paid)) { alert("Please enter valid numbers for Financials."); return; }
+
+      submit.disabled = true;
+      const payload = { 
+        orderId: uniqueId, customerId: isEdit?editData.customerId:cSel.value, 
+        designDescription: document.getElementById('o_desc').value, fabricNotes: document.getElementById('o_fabric').value, 
+        totalCost: cost, amountPaid: paid, dateDue: toSheetDate(document.getElementById('o_due').value), 
+        status: document.getElementById('o_status').value, notes: document.getElementById('o_notes').value, 
+        designPhotos: designPhotosArray.join(','), finishedPhotos: finishedPhotosArray.join(',') 
+      };
+      callApi(isEdit?'updateOrder':'saveOrder', payload).then(() => { closeModal(); refreshData('orders'); });
+    };
+  }
+}
+
+// ==========================================
+// UTILS & HELPERS
+// ==========================================
+function parseMeasurementInches(v) { return parseFloat(v) || 0; }
+function closeModal() { document.getElementById('modalOverlay').style.display = 'none'; updateDashboardCounters(); }
+
+function toSheetDate(dStr) { 
+  if (!dStr) return ""; 
+  return new Date(dStr).toLocaleDateString('en-GB'); 
+}
+function fromSheetDate(dStr) { 
+  if (!dStr || !dStr.includes('/')) return ""; 
+  const [d, m, y] = dStr.split('/'); return `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`; 
+}
+
+function getDirectImageUrl(url) { 
+  if (!url || !url.includes('drive.google.com')) return url; 
+  const id = url.split('/d/')[1]?.split('/')[0] || url.split('id=')[1]?.split('&')[0]; 
+  return `https://drive.google.com/thumbnail?id=${id}&sz=w800`; 
+}
+
+function renderImageThumbnailsInline(id, arr) {
+  const b = document.getElementById(id); if(!b) return;
+  b.innerHTML = arr.length === 0 ? '<span style="font-size:12px; color:#999;">No Photos</span>' : arr.map(u => `<img src="${getDirectImageUrl(u)}" class="gallery-img">`).join('');
+}
+
+function handleBatchImageUpload(filesList, trackingId, prefix, cb) {
+  if(!filesList) return;
+  Array.from(filesList).forEach((file, i) => {
+    const r = new FileReader();
+    r.onload = async (e) => {
+      const comp = await compressImageToTargetLimit(e.target.result);
+      callApi('uploadImage', { base64: comp, name: `${prefix}_${trackingId}_${i}.jpg` }).then(res => { if(res?.url) cb(res.url); });
+    }; r.readAsDataURL(file);
+  });
+}
+
+function compressImageToTargetLimit(b64) {
+  return new Promise((res) => {
+    const img = new Image(); img.src = b64; img.onload = () => {
+      const canvas = document.createElement('canvas'); let w = img.width; let h = img.height;
+      if (w > h) { if (w > 800) { h *= 800 / w; w = 800; } } else { if (h > 800) { w *= 800 / h; h = 800; } }
+      canvas.width = w; canvas.height = h; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, w, h);
+      res(canvas.toDataURL('image/jpeg', 0.6));
+    };
+  });
+}
+
+function renderDynamicGarmentSketch(sh, bst, ubst, wst, hp, sl, tl) {
+  const canvas = document.getElementById('studioSketchCanvas');
+  if (!canvas) return; 
+  const frame = document.getElementById('canvas-sketch-frame');
+  if (frame) frame.style.display = "block";
+  const ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const cx = canvas.width / 2; const fX = 4.0; 
+  const [hSh, hBst, hWst, hHp] = [(sh||15)*fX/2, (bst||34)*fX/2.4, (wst||26)*fX/2.4, (hp||38)*fX/2.4];
+  const y = {n:40, s:52, b:92, w:147, h:192, hem:252};
+  ctx.strokeStyle = '#000'; ctx.lineWidth = 3; ctx.beginPath();
+  ctx.moveTo(cx-15, y.n); ctx.lineTo(cx-hSh, y.s); ctx.lineTo(cx-hBst, y.b); ctx.lineTo(cx-hWst, y.w); ctx.lineTo(cx-hHp, y.h); ctx.lineTo(cx, y.hem);
+  ctx.moveTo(cx+15, y.n); ctx.lineTo(cx+hSh, y.s); ctx.lineTo(cx+hBst, y.b); ctx.lineTo(cx+hWst, y.w); ctx.lineTo(cx+hHp, y.h); ctx.lineTo(cx, y.hem); ctx.stroke();
+}
+
+// ==========================================
+// INVOICE & SHARING ENGINE
+// ==========================================
+window.onload = () => updateDashboardCounters();
+
+function initInvoiceConsoleEngine() {
+  callApi('getCustomers', {}).then(c => {
+    cache.customers = c || [];
+    callApi('getOrders', {}).then(o => {
+      cache.orders = o || [];
+      const oSel = document.getElementById('rep-order-sel');
+      if (oSel) {
+        oSel.innerHTML = '<option value="">-- Choose Client Order --</option>' + cache.orders.map(i => {
+          const client = cache.customers.find(cx => cx.customerId === i.customerId) || { fullName: 'Unknown' };
+          return `<option value="${i.orderId}">#${i.orderId} - ${client.fullName}</option>`;
+        }).join('');
+      }
+      const previewCard = document.getElementById('report-onscreen-preview-card');
+      if (previewCard) previewCard.style.display = "none";
+    });
+  });
+}
+
+function compileStudioInvoice() {
+  const orderId = document.getElementById('rep-order-sel').value; if(!orderId) return;
+  const orderItem = cache.orders.find(o => o.orderId === orderId);
+  const clientItem = cache.customers.find(c => c.customerId === orderItem.customerId);
+  const balance = Number(orderItem.totalCost) - Number(orderItem.amountPaid);
+  
+  const designThumbs = orderItem.designPhotos ? orderItem.designPhotos.split(',').map(u => `<img src="${getDirectImageUrl(u)}" class="report-thumb">`).join('') : '';
+
+  let html = `
+    <div style="display:flex; justify-content:space-between; border-bottom:3px solid #000; padding-bottom:10px; margin-bottom:15px;">
+      <div><h2 style="color:var(--primary); font-size:20px; margin:0;">STITCHTRACK BESPOKE</h2><p style="font-size:12px; color:#666; margin:0;">Apparel Specification & Balance</p></div>
+      <div style="text-align:right; font-size:14px; font-weight:800;">DATE:<br>${new Date().toLocaleDateString('en-GB')}</div>
+    </div>
+    <div style="background:#f8f9fa; border:1px solid #000; padding:12px; border-radius:10px; font-size:14px; font-weight:700; margin-bottom:15px; display:flex; gap:15px;">
+      <div style="flex:1;">CLIENT: ${clientItem.fullName}<br>MOBILE: ${clientItem.phone}</div>
+      <div style="text-align:right;">ORDER: #${orderItem.orderId}<br><span style="color:var(--danger)">DUE: ${orderItem.dateDue}</span></div>
+    </div>
+    <h4 style="font-size:14px; border-bottom:1px solid #000; margin-bottom:5px;">I. DESIGN BRIEF & LEDGER</h4>
+    <p style="font-size:14px; margin-bottom:2px;"><strong>Garment:</strong> ${orderItem.designDescription}</p>
+    <p style="font-size:14px; margin-bottom:10px;"><strong>Fabric:</strong> ${orderItem.fabricNotes || 'Standard'}</p>
+    <table class="print-table">
+      <thead><tr><th>Total Cost</th><th>Paid Amount</th><th>Balance</th></tr></thead>
+      <tbody><tr style="font-size:16px; font-weight:800;"><td>₦${Number(orderItem.totalCost).toLocaleString()}</td><td>₦${Number(orderItem.amountPaid).toLocaleString()}</td><td style="color:${balance>0?'var(--danger)':'var(--success)'};">₦${balance.toLocaleString()}</td></tr></tbody>
+    </table>
+    ${designThumbs ? `<div style="text-align:center; font-size:12px; font-weight:800; margin-top:10px;">STYLE BLUEPRINTS<br>${designThumbs}</div>` : ''}
+  `;
+  const previewDiv = document.getElementById('report-preview-viewport');
+  if (previewDiv) previewDiv.innerHTML = html;
+  const printContainer = document.getElementById('report-print-container');
+  if (printContainer) printContainer.innerHTML = html;
+  const previewCard = document.getElementById('report-onscreen-preview-card');
+  if (previewCard) previewCard.style.display = "block";
+}
+
+function sendWhatsAppSummary() {
+  const orderId = document.getElementById('rep-order-sel').value; if(!orderId) return;
+  const order = cache.orders.find(o => o.orderId === orderId);
+  const client = cache.customers.find(c => c.customerId === order.customerId);
+  const balance = Number(order.totalCost) - Number(order.amountPaid);
+  
+  const text = `*STITCHTRACK STUDIO*\nHello ${client.fullName},\nSummary for order *#${order.orderId}*:\n\n👗 *Design:* ${order.designDescription}\n📅 *Due Date:* ${order.dateDue||'TBD'}\n\n💰 *Total:* ₦${Number(order.totalCost).toLocaleString()}\n💵 *Paid:* ₦${Number(order.amountPaid).toLocaleString()}\n⚖️ *Balance:* ₦${balance.toLocaleString()}`;
+  
+  let phone = client.phone.replace(/\D/g, '');
+  if (phone.startsWith('0')) phone = '234' + phone.substring(1);
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, '_blank');
+}
+
+async function shareInvoicePDF() {
+  const orderId = document.getElementById('rep-order-sel').value; if(!orderId) return;
+  const order = cache.orders.find(o => o.orderId === orderId);
+  const client = cache.customers.find(c => c.customerId === order.customerId);
+  const filename = `Invoice_${orderId}_${client.fullName.replace(/\s+/g,'_')}.pdf`;
+
+  const toast = document.createElement('div'); toast.id = 'pdf-toast';
+  toast.style.cssText = 'position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:#212529; color:#ffffff; padding:16px 32px; border-radius:50px; font-weight:800; font-size:16px; z-index:99999; display:flex; align-items:center; gap:12px;';
+  toast.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
+  document.body.appendChild(toast);
+
+  try {
+    const renderBox = document.getElementById('report-preview-viewport');
+    const opt = { margin: 10, filename: filename, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true, logging: false }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }};
+    const pdfBytes = await html2pdf().set(opt).from(renderBox).output('arraybuffer');
+    
+    const file = new File([pdfBytes], filename, { type: 'application/pdf' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      toast.innerHTML = '<i class="fas fa-check-circle" style="color:var(--success)"></i> Opening Share Sheet...';
+      await navigator.share({ title: `Studio Invoice #${orderId}`, files: [file] });
+    } else {
+      toast.innerHTML = '<i class="fas fa-download"></i> Downloading...';
+      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = filename; link.click();
+    }
+  } catch (err) {
+    alert("PDF Error: " + err.message);
+  } finally {
+    setTimeout(() => { if (document.getElementById('pdf-toast')) document.getElementById('pdf-toast').remove(); }, 1000);
+  }
+}
+
+// ==========================================
+// CUSTOM PWA INSTALLATION LOGIC
+// ==========================================
+let deferredPrompt;
+const installBtn = document.getElementById('installAppBtn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  if (installBtn) {
+    installBtn.style.display = 'flex';
+  }
+});
+
+if (installBtn) {
+  installBtn.addEventListener('click', async () => {
+    installBtn.style.display = 'none';
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log(`User response to the install prompt: ${outcome}`);
+    deferredPrompt = null;
+  });
+}
+
+window.addEventListener('appinstalled', () => {
+  if (installBtn) installBtn.style.display = 'none';
+  console.log('StitchTrack Pro was successfully installed!');
+});
