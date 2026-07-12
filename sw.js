@@ -1,4 +1,4 @@
-const CACHE_NAME = 'stitchtrack-cache-v3'; 
+const CACHE_NAME = 'stitchtrack-cache-v4'; 
 
 // Only explicitly pre-cache your guaranteed local files
 const urlsToCache = [
