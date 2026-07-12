@@ -231,11 +231,14 @@ function openModal(type, editData = null) {
     let clientProfilePhoto = isEdit ? (editData.photoUrl || '') : ""; 
 
     body.innerHTML = `
-      <div style="position: relative; width: 90px; height: 90px; margin: 0 auto 20px auto;">
+      <div style="position: relative; width: 90px; height: 90px; margin: 0 auto 12px auto;">
         <img id="p_avatar_view" src="${clientProfilePhoto ? getDirectImageUrl(clientProfilePhoto) : 'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 width=%2280%22 height=%2280%22><circle cx=%2212%22 cy=%2212%22 r=%2212%22 fill=%22%23e9ecef%22/></svg>'}" class="profile-avatar">
-        <label style="position: absolute; bottom: 0; right: 0; background: var(--primary); color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; cursor: pointer; margin:0;"><i class="fas fa-camera"></i><input type="file" id="cam_avatar" accept="image/*" style="display:none"></label>
       </div>
-      <div id="p_avatar_indicator" style="text-align:center; font-size:14px; font-weight:700; color:var(--success); margin-bottom:10px;">Tap the camera icon — take a new photo or pick one from your gallery</div>
+      <div style="display:flex; gap:8px; justify-content:center; margin-bottom:10px;">
+        <label style="background:var(--primary); color:#fff; padding:10px 16px; border-radius:12px; font-size:13px !important; font-weight:800; cursor:pointer; margin:0; display:flex; align-items:center; gap:6px;"><i class="fas fa-camera"></i> Take Photo<input type="file" id="cam_avatar_camera" accept="image/*" capture="environment" style="display:none"></label>
+        <label style="background:#E5E5EA; color:#1C1C1E; padding:10px 16px; border-radius:12px; font-size:13px !important; font-weight:800; cursor:pointer; margin:0; display:flex; align-items:center; gap:6px;"><i class="fas fa-image"></i> Gallery<input type="file" id="cam_avatar_gallery" accept="image/*" style="display:none"></label>
+      </div>
+      <div id="p_avatar_indicator" style="text-align:center; font-size:14px; font-weight:700; color:var(--success); margin-bottom:10px;"></div>
 
       <label>Full Name <span style="color:var(--danger)">*</span></label><input id="c_name" value="${isEdit?editData.fullName:''}">
       <label>Mobile Number <span style="color:var(--danger)">*</span></label><input id="c_phone" type="tel" value="${isEdit?editData.phone:''}">
@@ -278,8 +281,8 @@ function openModal(type, editData = null) {
       </div>
     `;
 
-    document.getElementById('cam_avatar').onchange = (e) => {
-      const file = e.target.files[0]; if(!file) return;
+    const handleAvatarFile = (file) => {
+      if(!file) return;
       const r = new FileReader(); r.onload = async (evt) => {
         const comp = await compressImageToTargetLimit(evt.target.result);
         document.getElementById('p_avatar_indicator').innerText = "UPLOADING...";
@@ -292,6 +295,8 @@ function openModal(type, editData = null) {
         });
       }; r.readAsDataURL(file);
     };
+    document.getElementById('cam_avatar_camera').onchange = (e) => handleAvatarFile(e.target.files[0]);
+    document.getElementById('cam_avatar_gallery').onchange = (e) => handleAvatarFile(e.target.files[0]);
 
     if (isEdit) {
       setTimeout(() => renderDynamicGarmentSketch(
@@ -373,12 +378,18 @@ function openModal(type, editData = null) {
       <div class="photo-strip">
         <div class="photo-box">
           <span style="font-size:12px !important; font-weight:800; color:var(--primary); text-transform:uppercase; display:block; margin-bottom:8px;">Style Photos</span>
-          <label style="background:#FFF; border:1px solid var(--border); padding:8px; border-radius:10px; display:block; font-size:14px !important; cursor:pointer; margin:0;"><i class="fas fa-camera"></i> Camera / Gallery<input type="file" id="cam_design" accept="image/*" multiple style="display:none"></label>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <label style="background:var(--primary); color:#fff; padding:8px; border-radius:10px; display:flex; align-items:center; justify-content:center; gap:6px; font-size:13px !important; font-weight:800; cursor:pointer; margin:0;"><i class="fas fa-camera"></i> Camera<input type="file" id="cam_design_camera" accept="image/*" capture="environment" style="display:none"></label>
+            <label style="background:#FFF; border:1px solid var(--border); padding:8px; border-radius:10px; display:flex; align-items:center; justify-content:center; gap:6px; font-size:13px !important; cursor:pointer; margin:0;"><i class="fas fa-image"></i> Gallery<input type="file" id="cam_design_gallery" accept="image/*" multiple style="display:none"></label>
+          </div>
           <div id="p_design_indicator" class="gallery-preview"></div>
         </div>
         <div class="photo-box">
           <span style="font-size:12px !important; font-weight:800; color:var(--success); text-transform:uppercase; display:block; margin-bottom:8px;">Finished QC</span>
-          <label style="background:#FFF; border:1px solid var(--border); padding:8px; border-radius:10px; display:block; font-size:14px !important; cursor:pointer; margin:0;"><i class="fas fa-camera"></i> Camera / Gallery<input type="file" id="cam_finished" accept="image/*" multiple style="display:none"></label>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <label style="background:var(--success); color:#fff; padding:8px; border-radius:10px; display:flex; align-items:center; justify-content:center; gap:6px; font-size:13px !important; font-weight:800; cursor:pointer; margin:0;"><i class="fas fa-camera"></i> Camera<input type="file" id="cam_finished_camera" accept="image/*" capture="environment" style="display:none"></label>
+            <label style="background:#FFF; border:1px solid var(--border); padding:8px; border-radius:10px; display:flex; align-items:center; justify-content:center; gap:6px; font-size:13px !important; cursor:pointer; margin:0;"><i class="fas fa-image"></i> Gallery<input type="file" id="cam_finished_gallery" accept="image/*" multiple style="display:none"></label>
+          </div>
           <div id="p_finished_indicator" class="gallery-preview"></div>
         </div>
       </div>
@@ -411,8 +422,10 @@ function openModal(type, editData = null) {
       renderPaymentsSection(uniqueId, editData.totalCost);
     }
 
-    document.getElementById('cam_design').onchange = (e) => handleBatchImageUpload(e.target.files, uniqueId, "design", (url) => { designPhotosArray.push(url); renderImageThumbnailsInline('p_design_indicator', designPhotosArray); });
-    document.getElementById('cam_finished').onchange = (e) => handleBatchImageUpload(e.target.files, uniqueId, "finished", (url) => { finishedPhotosArray.push(url); renderImageThumbnailsInline('p_finished_indicator', finishedPhotosArray); });
+    document.getElementById('cam_design_camera').onchange = (e) => handleBatchImageUpload(e.target.files, uniqueId, "design", (url) => { designPhotosArray.push(url); renderImageThumbnailsInline('p_design_indicator', designPhotosArray); });
+    document.getElementById('cam_design_gallery').onchange = (e) => handleBatchImageUpload(e.target.files, uniqueId, "design", (url) => { designPhotosArray.push(url); renderImageThumbnailsInline('p_design_indicator', designPhotosArray); });
+    document.getElementById('cam_finished_camera').onchange = (e) => handleBatchImageUpload(e.target.files, uniqueId, "finished", (url) => { finishedPhotosArray.push(url); renderImageThumbnailsInline('p_finished_indicator', finishedPhotosArray); });
+    document.getElementById('cam_finished_gallery').onchange = (e) => handleBatchImageUpload(e.target.files, uniqueId, "finished", (url) => { finishedPhotosArray.push(url); renderImageThumbnailsInline('p_finished_indicator', finishedPhotosArray); });
 
     submit.onclick = () => {
       const cost = parseFloat(document.getElementById('o_cost').value);

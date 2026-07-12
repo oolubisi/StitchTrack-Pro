@@ -173,7 +173,7 @@ input:focus, select:focus, textarea:focus {
 
 .measurement-grid {
   display: grid; 
-  grid-template-columns: 1fr 1fr; 
+  grid-template-columns: 1fr; 
   gap: 10px;
   background: var(--card-light); 
   padding: 16px; 
