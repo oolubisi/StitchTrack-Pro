@@ -147,10 +147,10 @@ function openRecordRow(type, id) {
     if(type === 'customer') {
       setTimeout(() => {
         renderDynamicGarmentSketch(
-          parseMeasurementInches(match.shoulder), parseMeasurementInches(match.chestBust), 
-          parseMeasurementInches(match.underbust), parseMeasurementInches(match.waist), 
-          parseMeasurementInches(match.hips), parseMeasurementInches(match.shirtLength), 
-          parseMeasurementInches(match.trouserLength)
+          parseMeasurementInches(match.blouseShoulder), parseMeasurementInches(match.blouseBust), 
+          parseMeasurementInches(match.blouseUndercut), parseMeasurementInches(match.blouseWaist), 
+          parseMeasurementInches(match.skirtHip), parseMeasurementInches(match.blouseLength), 
+          parseMeasurementInches(match.gownFullLength)
         );
       }, 200);
     }
@@ -243,34 +243,48 @@ function openModal(type, editData = null) {
       <label>Full Name <span style="color:var(--danger)">*</span></label><input id="c_name" value="${isEdit?editData.fullName:''}">
       <label>Mobile Number <span style="color:var(--danger)">*</span></label><input id="c_phone" type="tel" value="${isEdit?editData.phone:''}">
       
-      <div style="margin-top:20px; margin-bottom:10px; font-weight:800; font-size:16px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">I. Upper Body <small style="text-transform:none; font-weight:600; letter-spacing:0; color:var(--muted);">(inches, whole + fraction)</small></div>
+      <div style="margin-top:20px; margin-bottom:10px; font-weight:800; font-size:16px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">I. Blouse <small style="text-transform:none; font-weight:600; letter-spacing:0; color:var(--muted);">(inches, whole + fraction)</small></div>
       <div class="measurement-grid">
-        ${measurementField('m_ch', 'Bust', isEdit ? editData.chestBust : '')}
-        ${measurementField('m_underbust', 'Under-Bust', isEdit ? editData.underbust : '')}
-        ${measurementField('m_ach', 'Across Chest', isEdit ? editData.acrossChest : '')}
-        ${measurementField('m_abk', 'Across Back', isEdit ? editData.acrossBack : '')}
-        ${measurementField('m_sh', 'Shoulder', isEdit ? editData.shoulder : '')}
-        ${measurementField('m_neck', 'Neck', isEdit ? editData.neck : '')}
-        ${measurementField('m_bic', 'Bicep', isEdit ? editData.bicep : '')}
+        ${measurementField('m_bl_bust', 'Bust', isEdit ? editData.blouseBust : '')}
+        ${measurementField('m_bl_waist', 'Waist', isEdit ? editData.blouseWaist : '')}
+        ${measurementField('m_bl_hip', 'Hip', isEdit ? editData.blouseHip : '')}
+        ${measurementField('m_bl_shoulder', 'Shoulder', isEdit ? editData.blouseShoulder : '')}
+        ${measurementField('m_bl_undercut', 'Undercut', isEdit ? editData.blouseUndercut : '')}
+        ${measurementField('m_bl_np', 'Nipple Point', isEdit ? editData.blouseNipplePoint : '')}
+        ${measurementField('m_bl_nn', 'Nipple-Nipple', isEdit ? editData.blouseNippleToNipple : '')}
+        ${measurementField('m_bl_half', 'Half Length', isEdit ? editData.blouseHalfLength : '')}
+        ${measurementField('m_bl_len', 'Blouse Length', isEdit ? editData.blouseLength : '')}
       </div>
 
-      <div style="margin-top:20px; margin-bottom:10px; font-weight:800; font-size:16px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">II. Lower Body</div>
+      <div style="margin-top:20px; margin-bottom:10px; font-weight:800; font-size:16px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">II. Skirt</div>
       <div class="measurement-grid">
-        ${measurementField('m_wst', 'Waist', isEdit ? editData.waist : '')}
-        ${measurementField('m_lwst', 'Low Waist', isEdit ? editData.lowWaist : '')}
-        ${measurementField('m_hip', 'Hips', isEdit ? editData.hips : '')}
-        ${measurementField('m_thg', 'Thigh', isEdit ? editData.thigh : '')}
-        ${measurementField('m_cr', 'Crotch', isEdit ? editData.crotch : '')}
-        ${measurementField('m_ank', 'Ankle', isEdit ? editData.ankle : '')}
+        ${measurementField('m_sk_waist', 'Waist', isEdit ? editData.skirtWaist : '')}
+        ${measurementField('m_sk_hip', 'Hip', isEdit ? editData.skirtHip : '')}
+        ${measurementField('m_sk_full', 'Full Length', isEdit ? editData.skirtFullLength : '')}
+        ${measurementField('m_sk_short', 'Short Length', isEdit ? editData.skirtShortLength : '')}
+        ${measurementField('m_sk_half', 'Half Length', isEdit ? editData.skirtHalfLength : '')}
       </div>
 
-      <div style="margin-top:20px; margin-bottom:10px; font-weight:800; font-size:16px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">III. Lengths</div>
+      <div style="margin-top:20px; margin-bottom:10px; font-weight:800; font-size:16px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">III. Sleeve</div>
       <div class="measurement-grid">
-        ${measurementField('m_top', 'Top Length', isEdit ? editData.shirtLength : '')}
-        ${measurementField('m_slv', 'Sleeve Length', isEdit ? editData.sleeveLength : '')}
-        ${measurementField('m_trs', 'Trouser Length', isEdit ? editData.trouserLength : '')}
-        ${measurementField('m_sk_len', 'Skirt Length', isEdit ? editData.skirtLength : '')}
-        ${measurementField('m_gown_len', 'Gown Length', isEdit ? editData.gownLength : '')}
+        ${measurementField('m_sl_short', 'Short', isEdit ? editData.sleeveShort : '')}
+        ${measurementField('m_sl_34', '3/4', isEdit ? editData.sleeveThreeQuarter : '')}
+        ${measurementField('m_sl_full', 'Full Length', isEdit ? editData.sleeveFullLength : '')}
+      </div>
+
+      <div style="margin-top:20px; margin-bottom:10px; font-weight:800; font-size:16px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">IV. Gown</div>
+      <div class="measurement-grid">
+        ${measurementField('m_gw_full', 'Full Length', isEdit ? editData.gownFullLength : '')}
+        ${measurementField('m_gw_short', 'Short', isEdit ? editData.gownShort : '')}
+        ${measurementField('m_gw_34', '3/4', isEdit ? editData.gownThreeQuarter : '')}
+        ${measurementField('m_gw_half', 'Half Length', isEdit ? editData.gownHalfLength : '')}
+      </div>
+
+      <div style="margin-top:20px; margin-bottom:10px; font-weight:800; font-size:16px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">V. Sleeve Circumference</div>
+      <div class="measurement-grid">
+        ${measurementField('m_sc_short', 'Short', isEdit ? editData.sleeveCircShort : '')}
+        ${measurementField('m_sc_34', '3/4', isEdit ? editData.sleeveCircThreeQuarter : '')}
+        ${measurementField('m_sc_wrist', 'Wrist', isEdit ? editData.sleeveCircWrist : '')}
       </div>
 
       <label>Special Body Notes</label><textarea id="c_notes" rows="2">${isEdit?editData.notes||'':''}</textarea>
@@ -300,10 +314,10 @@ function openModal(type, editData = null) {
 
     if (isEdit) {
       setTimeout(() => renderDynamicGarmentSketch(
-        parseMeasurementInches(editData.shoulder), parseMeasurementInches(editData.chestBust), 
-        parseMeasurementInches(editData.underbust), parseMeasurementInches(editData.waist), 
-        parseMeasurementInches(editData.hips), parseMeasurementInches(editData.shirtLength), 
-        parseMeasurementInches(editData.trouserLength)
+        parseMeasurementInches(editData.blouseShoulder), parseMeasurementInches(editData.blouseBust), 
+        parseMeasurementInches(editData.blouseUndercut), parseMeasurementInches(editData.blouseWaist), 
+        parseMeasurementInches(editData.skirtHip), parseMeasurementInches(editData.blouseLength), 
+        parseMeasurementInches(editData.gownFullLength)
       ), 150);
     }
 
@@ -319,27 +333,35 @@ function openModal(type, editData = null) {
         phone: phone, 
         photoUrl: clientProfilePhoto, 
         
-        neck: getMeasurementValue('m_neck'), 
-        shoulder: getMeasurementValue('m_sh'), 
-        chestBust: getMeasurementValue('m_ch'), 
-        underbust: getMeasurementValue('m_underbust'),
-        acrossChest: getMeasurementValue('m_ach'),
-        acrossBack: getMeasurementValue('m_abk'),
-        bicep: getMeasurementValue('m_bic'),
-        
-        waist: getMeasurementValue('m_wst'), 
-        lowWaist: getMeasurementValue('m_lwst'),
-        hips: getMeasurementValue('m_hip'), 
-        thigh: getMeasurementValue('m_thg'), 
-        crotch: getMeasurementValue('m_cr'),
-        ankle: getMeasurementValue('m_ank'), 
-        
-        shirtLength: getMeasurementValue('m_top'), 
-        gownLength: getMeasurementValue('m_gown_len'), 
-        sleeveLength: getMeasurementValue('m_slv'), 
-        skirtLength: getMeasurementValue('m_sk_len'),
-        trouserLength: getMeasurementValue('m_trs'), 
-        
+        blouseBust: getMeasurementValue('m_bl_bust'),
+        blouseWaist: getMeasurementValue('m_bl_waist'),
+        blouseHip: getMeasurementValue('m_bl_hip'),
+        blouseShoulder: getMeasurementValue('m_bl_shoulder'),
+        blouseUndercut: getMeasurementValue('m_bl_undercut'),
+        blouseNipplePoint: getMeasurementValue('m_bl_np'),
+        blouseNippleToNipple: getMeasurementValue('m_bl_nn'),
+        blouseHalfLength: getMeasurementValue('m_bl_half'),
+        blouseLength: getMeasurementValue('m_bl_len'),
+
+        skirtWaist: getMeasurementValue('m_sk_waist'),
+        skirtHip: getMeasurementValue('m_sk_hip'),
+        skirtFullLength: getMeasurementValue('m_sk_full'),
+        skirtShortLength: getMeasurementValue('m_sk_short'),
+        skirtHalfLength: getMeasurementValue('m_sk_half'),
+
+        sleeveShort: getMeasurementValue('m_sl_short'),
+        sleeveThreeQuarter: getMeasurementValue('m_sl_34'),
+        sleeveFullLength: getMeasurementValue('m_sl_full'),
+
+        gownFullLength: getMeasurementValue('m_gw_full'),
+        gownShort: getMeasurementValue('m_gw_short'),
+        gownThreeQuarter: getMeasurementValue('m_gw_34'),
+        gownHalfLength: getMeasurementValue('m_gw_half'),
+
+        sleeveCircShort: getMeasurementValue('m_sc_short'),
+        sleeveCircThreeQuarter: getMeasurementValue('m_sc_34'),
+        sleeveCircWrist: getMeasurementValue('m_sc_wrist'),
+
         notes: document.getElementById('c_notes').value 
       };
       callApi(isEdit?'updateCustomer':'saveCustomer', payload).then(() => { closeModal(); refreshData('customers'); });
