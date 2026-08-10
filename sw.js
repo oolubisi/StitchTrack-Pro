@@ -1,11 +1,16 @@
-const CACHE_NAME = 'stitchtrack-cache-v5'; 
+const CACHE_NAME = 'stitchtrack-cache-v6'; 
 
-// Only explicitly pre-cache your guaranteed local files
+// Explicitly pre-cache every local file the app needs to boot fully offline
 const urlsToCache = [
   './',
   './index.html',
+  './app.js',
+  './styles.css',
   './manifest.json',
-  './tailor.png' 
+  './tailor.png',
+  './launchericon144x144.png',
+  './launchericon192x192.png',
+  './launchericon512x512.png'
 ];
 
 // 1. INSTALL: Cache local core files
@@ -86,9 +91,17 @@ self.addEventListener('fetch', event => {
   }
 
   // RULE D: Standard Cache-First for everything else (Images, manifest, etc.)
+  // Cache whatever we fetch so it's available next time we're offline too.
   event.respondWith(
-    caches.match(req).then(response => {
-      return response || fetch(req);
+    caches.match(req).then(cachedRes => {
+      if (cachedRes) return cachedRes;
+      return fetch(req).then(networkRes => {
+        if (networkRes && networkRes.ok) {
+          const clone = networkRes.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(req, clone));
+        }
+        return networkRes;
+      }).catch(() => cachedRes);
     })
   );
 });

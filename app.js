@@ -364,7 +364,15 @@ function openModal(type, editData = null) {
 
         notes: document.getElementById('c_notes').value 
       };
-      callApi(isEdit?'updateCustomer':'saveCustomer', payload).then(() => { closeModal(); refreshData('customers'); });
+      callApi(isEdit?'updateCustomer':'saveCustomer', payload).then((res) => {
+        if (res && res.status === "queued") { closeModal(); refreshData('customers'); return; }
+        if (!res || res.success === false) {
+          alert("Could not save client: " + (res && res.error ? res.error : "Unknown error")); 
+          submit.disabled = false; 
+          return;
+        }
+        closeModal(); refreshData('customers');
+      });
     };
   }
   else if (type === 'order') {
@@ -466,7 +474,12 @@ function openModal(type, editData = null) {
         status: document.getElementById('o_status').value, notes: document.getElementById('o_notes').value, 
         designPhotos: designPhotosArray.join(','), finishedPhotos: finishedPhotosArray.join(',') 
       };
-      callApi(isEdit?'updateOrder':'saveOrder', payload).then(async () => {
+      callApi(isEdit?'updateOrder':'saveOrder', payload).then(async (res) => {
+        if (res && res.status !== "queued" && (!res || res.success === false)) {
+          alert("Could not save order: " + (res && res.error ? res.error : "Unknown error")); 
+          submit.disabled = false; 
+          return;
+        }
         if (!isEdit && deposit > 0) {
           await callApi('addPayment', { orderId: uniqueId, amount: deposit, method: 'Deposit', date: new Date().toLocaleDateString('en-GB') });
         }
@@ -509,7 +522,11 @@ async function recordStagedPayment(orderId) {
   if (!amt || amt <= 0) { alert("Enter a valid payment amount."); return; }
   const method = document.getElementById('pay_method').value;
 
-  await callApi('addPayment', { orderId, amount: amt, method, date: new Date().toLocaleDateString('en-GB') });
+  const res = await callApi('addPayment', { orderId, amount: amt, method, date: new Date().toLocaleDateString('en-GB') });
+  if (res && res.status !== "queued" && res.success === false) {
+    alert("Could not record payment: " + (res.error || "Unknown error"));
+    return;
+  }
   amtEl.value = '';
 
   const order = cache.orders.find(o => o.orderId === orderId);

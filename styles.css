@@ -132,10 +132,13 @@ h2 {
   border: 1px solid rgba(0,0,0,0.02);
 }
 
-.card, .card * { 
-  font-size: 24px !important; 
-  font-weight: 900 !important;
+.card { 
+  font-size: 24px; 
+  font-weight: 900;
 }
+/* font-size/weight are inherited automatically — the old ".card *" clause
+   force-overrode intentional inline sizes on badges, order IDs, and payment
+   rows. Removing it restores those without changing the card's own default. */
 
 /* Native-like Forms */
 label { 
