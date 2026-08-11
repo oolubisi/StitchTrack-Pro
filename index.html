@@ -155,11 +155,13 @@
     <div class="modal">
       <h3 id="modalTitle" style="font-size:22px; font-weight:800; margin-bottom:15px;">Form</h3>
       <div id="modalBody"></div>
-      <div style="display:flex; gap:10px; margin-top:20px;">
-        <button class="action-btn" style="background:#E5E5EA; color:#1C1C1E; font-size: 18px !important; padding: 14px;" onclick="closeModal()">Cancel</button>
-        <button class="action-btn" style="background:var(--primary); font-size: 18px !important; padding: 14px;" id="modalSubmit">Save</button>
+      <div id="modalActionsBar" class="modal-actions-sticky">
+        <div style="display:flex; gap:10px;">
+          <button class="action-btn" style="background:#E5E5EA; color:#1C1C1E; font-size: 18px !important; padding: 14px;" onclick="closeModal()">Cancel</button>
+          <button class="action-btn" style="background:var(--primary); font-size: 18px !important; padding: 14px;" id="modalSubmit">Save</button>
+        </div>
+        <button class="action-btn" id="modalArchive" style="margin-top:10px; background:var(--danger); font-size:16px !important; padding:12px; display:none;" onclick="toggleArchiveCurrentRecord()"></button>
       </div>
-      <button class="action-btn" id="modalArchive" style="margin-top:10px; background:var(--danger); font-size:16px !important; padding:12px; display:none;" onclick="toggleArchiveCurrentRecord()"></button>
     </div>
   </div>
 

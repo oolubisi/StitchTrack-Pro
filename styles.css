@@ -325,6 +325,19 @@ input[type="checkbox"] {
   animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* Cancel/Save (and Archive) float at the bottom of the modal's own scroll
+   area, staying visible while a long form (e.g. all the measurement
+   fields) scrolls underneath them. */
+.modal-actions-sticky {
+  position: sticky;
+  bottom: 0;
+  margin: 20px -20px calc(-1 * (20px + env(safe-area-inset-bottom)));
+  padding: 14px 20px calc(14px + env(safe-area-inset-bottom));
+  background: var(--card);
+  box-shadow: 0 -8px 16px -8px rgba(0,0,0,0.12);
+  z-index: 10;
+}
+
 @keyframes slideUp { 
   from { 
     transform: translateY(100%); 
