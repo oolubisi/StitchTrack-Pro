@@ -79,11 +79,18 @@ body {
   align-items: center; 
   box-shadow: 0 4px 15px rgba(0,0,0,0.04);
   border: 1px solid rgba(0,0,0,0.02);
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.15s;
   
   /* Force text to wrap instead of stretching the card */
   word-wrap: break-word;
   overflow-wrap: break-word;
   width: 100%;
+}
+
+.nav-card:active {
+  transform: scale(0.96);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
 
 .nav-card i { 

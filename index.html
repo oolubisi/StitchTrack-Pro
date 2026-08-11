@@ -21,8 +21,7 @@
 </head>
 <body>
 
-  <div id="sync-status" style="position:fixed; top:0; right:10px; z-index:9999; font-size:11px; background:rgba(0,0,0,0.7); color:#fff; padding:4px 10px; border-radius:0 0 8px 8px; font-weight:bold; display:none;">
-    <i class="fas fa-sync-alt fa-spin"></i> Syncing Offline Data...
+  <div id="sync-status" style="position:fixed; top:0; left:0; right:0; z-index:9999; font-size:12px; background:rgba(28,28,30,0.85); color:#fff; padding:7px 14px; font-weight:800; display:none; align-items:center; justify-content:center; gap:8px; text-align:center;">
   </div>
 
   <div class="app">
@@ -39,22 +38,22 @@
           <i class="fas fa-download"></i> Install StitchTrack App
         </button>
         <div class="nav-grid">
-          <div class="nav-card">
+          <div class="nav-card" onclick="goToClients()">
             <i class="fas fa-users"></i>
             <div id="s-clients" class="count">--</div>
             <small>Clients Profile</small>
           </div>
-          <div class="nav-card">
+          <div class="nav-card" onclick="goToActiveJobs()">
             <i class="fas fa-tape"></i>
             <div id="s-pending" class="count">--</div>
             <small>Active Jobs</small>
           </div>
-          <div class="nav-card">
+          <div class="nav-card" onclick="goToFittingAlerts()">
             <i class="fas fa-mitten"></i>
             <div id="s-review" class="count">--</div>
             <small>Fitting Alerts</small>
           </div>
-          <div class="nav-card">
+          <div class="nav-card" onclick="goToInvoices()">
             <i class="fas fa-file-invoice"></i>
             <div style="font-size:26px; margin-top:2px; font-weight:800; color:var(--text);"><i class="fas fa-print"></i></div>
             <small>Invoices</small>
