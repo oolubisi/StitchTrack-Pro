@@ -493,18 +493,18 @@ function openRecordRow(type, id) {
 // ==========================================
 // INTERNATIONAL PHONE NUMBERS
 // Numbers are stored as full international format, e.g. "+2348031234567".
-// Nigeria/UK use an 11-digit local format with a leading 0 that gets
-// dropped when combined with the country code; the US uses a 10-digit
-// local format with no leading 0.
+// Nigeria and the US use a 10-digit local format with no leading 0; the UK
+// uses an 11-digit local format with a leading 0 that gets dropped when
+// combined with the country code.
 // ==========================================
 const PHONE_COUNTRIES = {
   NG: {
     code: "+234",
     flag: "🇳🇬",
     name: "Nigeria",
-    digits: 11,
-    stripLeadingZero: true,
-    placeholder: "08031234567",
+    digits: 10,
+    stripLeadingZero: false,
+    placeholder: "8031234567",
   },
   UK: {
     code: "+44",
@@ -526,14 +526,14 @@ const PHONE_COUNTRIES = {
 
 // Splits a stored "+234..." style number back into { country, local } for
 // editing. Also handles legacy numbers saved before this feature existed
-// (plain 11-digit Nigerian local numbers with no country code).
+// (plain 11-digit Nigerian local numbers with a leading 0, no country code).
 function parsePhoneForEdit(phone) {
   const p = String(phone || "").replace(/\s+/g, "");
-  if (p.startsWith("+234")) return { country: "NG", local: "0" + p.slice(4) };
+  if (p.startsWith("+234")) return { country: "NG", local: p.slice(4) };
   if (p.startsWith("+44")) return { country: "UK", local: "0" + p.slice(3) };
   if (p.startsWith("+1")) return { country: "US", local: p.slice(2) };
-  if (/^\d{11}$/.test(p)) return { country: "NG", local: p }; // legacy pre-country-code data
-  return { country: "NG", local: p.replace(/\D/g, "") };
+  if (/^\d{11}$/.test(p)) return { country: "NG", local: p.replace(/^0/, "") }; // legacy 11-digit local data
+  return { country: "NG", local: p.replace(/\D/g, "").replace(/^0/, "") };
 }
 
 function formatPhoneDisplay(phone) {
@@ -551,7 +551,9 @@ function updatePhoneFieldForCountry() {
   const cfg = PHONE_COUNTRIES[countrySel.value];
   input.maxLength = cfg.digits;
   input.placeholder = cfg.placeholder;
-  input.value = input.value.replace(/\D/g, "").slice(0, cfg.digits);
+  let digits = input.value.replace(/\D/g, "");
+  if (!cfg.stripLeadingZero) digits = digits.replace(/^0+/, ""); // guard against a habitual leading 0
+  input.value = digits.slice(0, cfg.digits);
 }
 
 function sanitizePhoneInput() {
@@ -559,7 +561,9 @@ function sanitizePhoneInput() {
   const input = document.getElementById("c_phone");
   if (!countrySel || !input) return;
   const cfg = PHONE_COUNTRIES[countrySel.value];
-  input.value = input.value.replace(/\D/g, "").slice(0, cfg.digits);
+  let digits = input.value.replace(/\D/g, "");
+  if (!cfg.stripLeadingZero) digits = digits.replace(/^0+/, ""); // guard against a habitual leading 0
+  input.value = digits.slice(0, cfg.digits);
 }
 
 const FRACTION_OPTIONS = ["0", "1/8", "1/4", "3/8", "1/2", "5/8", "3/4", "7/8"];
