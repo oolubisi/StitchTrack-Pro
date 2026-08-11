@@ -1,4 +1,4 @@
-const CACHE_NAME = "stitchtrack-cache-v7";
+const CACHE_NAME = "stitchtrack-cache-v8";
 
 // Explicitly pre-cache every local file the app needs to boot fully offline
 const urlsToCache = [

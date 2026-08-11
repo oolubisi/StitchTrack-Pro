@@ -28,13 +28,13 @@
     <main class="main">
       
       <div id="view-dashboard" class="page-view active-view">
-        <div class="page-header" style="margin-top: 10px;">
-          <h2><i class="fas fa-scissors" style="color:var(--primary); font-size:24px; margin-right:8px;"></i>StitchTrack</h2>
-          <div style="background:var(--primary-light); color:var(--primary); width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="openModal('order')">
+        <div class="page-header" style="margin-top: 6px;">
+          <h2><i class="fas fa-scissors" style="color:var(--primary); font-size:clamp(20px, 5.5vw, 24px); margin-right:8px;"></i>StitchTrack</h2>
+          <div style="background:var(--primary-light); color:var(--primary); width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;" onclick="openModal('order')">
             <i class="fas fa-plus"></i>
           </div>
         </div>
-        <button id="installAppBtn" class="action-btn" style="margin-top:12px; margin-bottom:20px; background:#1C1C1E; display:none; gap:8px; justify-content:center; align-items:center;">
+        <button id="installAppBtn" class="action-btn" style="margin-bottom:clamp(14px, 4vw, 20px); background:#1C1C1E; display:none; gap:8px; justify-content:center; align-items:center;">
           <i class="fas fa-download"></i> Install StitchTrack App
         </button>
         <div class="nav-grid">
@@ -55,14 +55,14 @@
           </div>
           <div class="nav-card" onclick="goToInvoices()">
             <i class="fas fa-file-invoice"></i>
-            <div style="font-size:26px; margin-top:2px; font-weight:800; color:var(--text);"><i class="fas fa-print"></i></div>
+            <div style="font-size:clamp(20px, 5.5vw, 26px); margin-top:2px; font-weight:800; color:var(--text);"><i class="fas fa-print"></i></div>
             <small>Invoices</small>
           </div>
         </div>
 
-        <div style="margin-top:20px;">
+        <div style="margin-top:clamp(14px, 4vw, 20px); display:flex; flex-direction:column; gap:12px;">
           <button class="action-btn" onclick="openModal('customer')"><i class="fas fa-user-plus"></i> Register Client Profile</button>
-          <button class="action-btn" style="margin-top:12px; background:var(--primary);" onclick="openModal('order')"><i class="fas fa-file-signature"></i> Create New Design Order</button>
+          <button class="action-btn" style="background:var(--primary);" onclick="openModal('order')"><i class="fas fa-file-signature"></i> Create New Design Order</button>
         </div>
       </div>
 
