@@ -232,6 +232,16 @@ if ("serviceWorker" in navigator) {
       .register("sw.js")
       .catch((err) => console.error("SW Failed:", err));
   });
+
+  // When a new SW version activates and takes control, the page already
+  // has the OLD app.js running in memory — reload once so the person
+  // actually sees the update instead of needing to manually refresh twice.
+  let swRefreshed = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (swRefreshed) return;
+    swRefreshed = true;
+    window.location.reload();
+  });
 }
 
 // ==========================================
