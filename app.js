@@ -674,12 +674,12 @@ function openModal(type, editData = null) {
       <label>Full Name <span style="color:var(--danger)">*</span></label><input id="c_name" value="${isEdit ? editData.fullName : ""}">
       <label>Mobile Number <span style="color:var(--danger)">*</span></label>
       <div class="measure-pair">
-        <select id="c_phone_country" onchange="updatePhoneFieldForCountry()" style="flex:1.1;">
+        <select id="c_phone_country" onchange="updatePhoneFieldForCountry()" style="flex:1.1; font-size:19.5px !important;">
           <option value="NG" ${parsedPhone.country === "NG" ? "selected" : ""}>🇳🇬 +234</option>
           <option value="UK" ${parsedPhone.country === "UK" ? "selected" : ""}>🇬🇧 +44</option>
           <option value="US" ${parsedPhone.country === "US" ? "selected" : ""}>🇺🇸 +1</option>
         </select>
-        <input id="c_phone" type="tel" inputmode="numeric" style="flex:2;" maxlength="${phoneCfg.digits}" placeholder="${phoneCfg.placeholder}" value="${parsedPhone.local}" oninput="sanitizePhoneInput()">
+        <input id="c_phone" type="tel" inputmode="numeric" style="flex:2; font-size:19.5px !important;" maxlength="${phoneCfg.digits}" placeholder="${phoneCfg.placeholder}" value="${parsedPhone.local}" oninput="sanitizePhoneInput()">
       </div>
       
       <div style="margin-top:20px; margin-bottom:10px; font-weight:800; font-size:16px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">I. Blouse <small style="text-transform:none; font-weight:600; letter-spacing:0; color:var(--muted);">(inches, whole + fraction)</small></div>
